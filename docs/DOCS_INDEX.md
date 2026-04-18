@@ -10,6 +10,7 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [M1 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-18/2026-04-18_M1_handoff.md) | M1 shared foundations — StoreHeader, StoreFooter, layout, primitives |
 | [M2 complete handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-18/2026-04-18_M2-complete_handoff.md) | M2 all storefront pages — 18 routes, clean build |
 | [M3 complete handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-18/2026-04-18_M3-complete_handoff.md) | M3 admin back-office — 20 routes, 2 shared component files, clean build |
+| [M4 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-18/2026-04-18_M4_handoff.md) | M4 legal + transactional — 5 legal routes, not-found, error, manutencao, clean build |
 
 ## Session Prompts (Ready-to-paste)
 
