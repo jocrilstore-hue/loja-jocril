@@ -484,3 +484,104 @@ textarea:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================
+   React inline-style format patch
+   Next.js renders "property:value" without a space after the
+   colon; the selectors above use "property: value" (with space)
+   and never match React DOM output. These rules fix that.
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  /* repeat(3) and repeat(4) → 2 columns on tablet */
+  [style*="grid-template-columns:repeat(3"],
+  [style*="grid-template-columns:repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Footer 5-col layout (1.4fr repeat(4,1fr)) → 2 cols on tablet */
+  [style*="grid-template-columns:1.4fr repeat("] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
+  }
+  /* Footer padding (footer is not caught by section selectors) */
+  footer[style*="px 40px"],
+  footer[style*="px 48px"],
+  footer[style*="px 56px"] {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  /* Fixed-rail + 1fr sidebar layouts → stack */
+  [style*="grid-template-columns:240px 1fr"],
+  [style*="grid-template-columns:260px 1fr"],
+  [style*="grid-template-columns:280px 1fr"],
+  [style*="grid-template-columns:320px 1fr"],
+  [style*="grid-template-columns:1fr 360px"],
+  [style*="grid-template-columns:1fr 420px"],
+  [style*="grid-template-columns:1.35fr 1fr"],
+  [style*="grid-template-columns:1.3fr 1fr"],
+  [style*="grid-template-columns:1.2fr 1fr"],
+  [style*="grid-template-columns:1.4fr 1fr"],
+  [style*="grid-template-columns:1fr 1.4fr"],
+  [style*="grid-template-columns:1fr 1.2fr"],
+  [style*="grid-template-columns:1.5fr 1fr"],
+  [style*="grid-template-columns:1fr 1.5fr"],
+  [style*="grid-template-columns:1fr 1.3fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  /* Section padding: any "Npx 40px" inline padding tightens on tablet */
+  section[style*="px 40px"],
+  section[style*="px 48px"],
+  section[style*="px 56px"] {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Collapse ALL repeat() grids to 1 column on mobile */
+  [style*="grid-template-columns:repeat("] {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  /* Collapse 2-col and asymmetric fr layouts */
+  [style*="grid-template-columns:1fr 1fr"],
+  [style*="grid-template-columns:1.35fr 1fr"],
+  [style*="grid-template-columns:1.3fr 1fr"],
+  [style*="grid-template-columns:1.2fr 1fr"],
+  [style*="grid-template-columns:1.4fr 1fr"],
+  [style*="grid-template-columns:1fr 1.4fr"],
+  [style*="grid-template-columns:1fr 1.2fr"],
+  [style*="grid-template-columns:1.5fr 1fr"],
+  [style*="grid-template-columns:1fr 1.5fr"],
+  [style*="grid-template-columns:1fr 1.3fr"],
+  [style*="grid-template-columns:1fr 1fr 1fr"],
+  [style*="grid-template-columns:110px 1fr"],
+  [style*="grid-template-columns:120px 1fr"],
+  [style*="grid-template-columns:220px 1fr"],
+  [style*="grid-template-columns:240px 1fr"],
+  [style*="grid-template-columns:260px 1fr"],
+  [style*="grid-template-columns:280px 1fr"],
+  [style*="grid-template-columns:320px 1fr"],
+  [style*="grid-template-columns:1fr 360px"],
+  [style*="grid-template-columns:1fr 420px"],
+  [style*="grid-template-columns:60px 1fr auto"] {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  /* Section/footer horizontal padding: override the 1024px rule above */
+  section[style*="px 40px"],
+  section[style*="px 48px"],
+  section[style*="px 56px"],
+  footer[style*="px 40px"],
+  footer[style*="px 48px"],
+  footer[style*="px 56px"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  /* Footer 5-col → 1 col on mobile */
+  [style*="grid-template-columns:1.4fr repeat("] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+}

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Jocril — Loja Online",
+  title: {
+    template: '%s | Jocril',
+    default: 'Jocril — Loja Online',
+  },
   description:
     "Materiais para Ponto de Venda e Hotelaria em madeira e acrílico. Precisão industrial desde 1994.",
   icons: {
@@ -21,6 +24,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="/styles/colors_and_type.css" />
         <link rel="stylesheet" href="/styles/store-responsive.css" />
+        <link rel="preload" href="/assets/portfolio/carm-premium.avif" as="image" type="image/avif" />
       </head>
       <body>{children}</body>
     </html>

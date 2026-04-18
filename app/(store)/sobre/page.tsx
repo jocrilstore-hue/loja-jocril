@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
+
+export const metadata: Metadata = {
+  title: 'Sobre Nós',
+  description: 'Desde 1994 que a Jocril produz materiais PLV e Hotelaria com precisão industrial — corte laser, impressão UV e termoformação.',
+};
 
 const PROCESSES = [
   { id: 1, short: 'Corte laser',   title: 'Corte laser de precisão',   desc: 'Duas máquinas de corte laser de 150 W, área de trabalho 1300×900 mm. Cortamos acrílico até 15 mm, contraplacado, MDF e cortiça.',   details: 'Tolerância ±0,1 mm. Gravação a níveis de potência até 256 níveis de cinzento.',                                                     img: '/assets/portfolio/carm-premium.avif' },

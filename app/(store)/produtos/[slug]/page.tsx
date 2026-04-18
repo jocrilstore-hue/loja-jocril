@@ -133,7 +133,7 @@ export default function PDPPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: 28 }}>
             <div>
               <Badge size="sm">Produtos relacionados</Badge>
-              <h3 className="heading-2" style={{ margin: '14px 0 0', color: 'var(--color-light-base-primary)' }}>Da mesma família</h3>
+              <h2 className="heading-2" style={{ margin: '14px 0 0', color: 'var(--color-light-base-primary)' }}>Da mesma família</h2>
             </div>
             <Link href="/produtos" className="text-mono-sm" style={{ color: 'var(--color-base-300)', textDecoration: 'none' }}>Ver categoria →</Link>
           </div>
@@ -175,7 +175,7 @@ function Gallery({ images, cur, setCur }: { images: string[]; cur: number; setCu
       </div>
       <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: `repeat(${images.length}, 1fr)`, gap: 8 }}>
         {images.map((im, i) => (
-          <button key={i} onClick={() => setCur(i)} style={{
+          <button key={i} onClick={() => setCur(i)} aria-label={`Ver imagem ${i + 1}`} style={{
             aspectRatio: '1/1', padding: 0,
             border: `1px dashed ${i === cur ? 'var(--color-accent-100)' : 'var(--color-base-700)'}`,
             borderRadius: 4, cursor: 'pointer',
@@ -323,7 +323,7 @@ function QtyStepper({ qty, setQty, size }: { qty: number; setQty: (q: number) =>
   return (
     <div style={{ display: 'inline-flex', border: '1px solid var(--color-base-700)', borderRadius: 2, alignItems: 'center' }}>
       <button onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: w, height: h, background: 'transparent', color: 'var(--color-light-base-primary)', border: 'none', cursor: 'pointer', fontSize: fs }}>−</button>
-      <input value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} style={{ width: wInp, height: h, textAlign: 'center', background: 'transparent', border: 'none', outline: 'none', color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-sans)', fontSize: size === 'lg' ? 18 : 15, letterSpacing: size === 'lg' ? '-.03em' : '-.02em' }}/>
+      <input aria-label="Quantidade" value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} style={{ width: wInp, height: h, textAlign: 'center', background: 'transparent', border: 'none', outline: 'none', color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-sans)', fontSize: size === 'lg' ? 18 : 15, letterSpacing: size === 'lg' ? '-.03em' : '-.02em' }}/>
       <button onClick={() => setQty(qty + 1)} style={{ width: w, height: h, background: 'transparent', color: 'var(--color-light-base-primary)', border: 'none', cursor: 'pointer', fontSize: fs }}>+</button>
     </div>
   );
