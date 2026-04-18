@@ -21,6 +21,11 @@
  * because the files live in public/styles/ and @import doesn't resolve public paths at build time.
  */
 
+/* Supplementary tokens not in colors_and_type.css */
+:root {
+  --color-destructive: #c11212;
+}
+
 html,
 body {
   margin: 0;
