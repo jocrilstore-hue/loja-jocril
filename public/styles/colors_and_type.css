@@ -1,0 +1,233 @@
+/* =========================================================
+   JOCRIL DESIGN SYSTEM — Colors & Typography
+   Extracted from standalone-v2/ (css/main.css, css/components.css,
+   css/fonts.css, css/z-index-system.css, index.html)
+   ========================================================= */
+
+/* ---------- FONTS ---------- */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/geist-sans.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial");
+  ascent-override: 95.94%;
+  descent-override: 28.16%;
+  line-gap-override: 0.00%;
+  size-adjust: 104.76%;
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/geist-mono.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Arial");
+  ascent-override: 74.67%;
+  descent-override: 21.92%;
+  line-gap-override: 0.00%;
+  size-adjust: 134.59%;
+}
+
+:root {
+  /* ---------- TYPE FAMILIES ---------- */
+  --font-geist-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---------- ACCENT (cyan/teal) — Jocril signature color ---------- */
+  --accent-100: #2dd4cd;
+  --accent-200: #16b7b2;
+  --accent-300: #00ded7;   /* primary brand accent (theme-color meta) */
+
+  /* ---------- BASE PRIMITIVES (dark & light anchors) ---------- */
+  --dark-base-primary:    #0a0a0a;   /* page background dark */
+  --dark-base-secondary:  #171717;   /* card / enterprise bg dark */
+  --light-base-primary:   #fafafa;   /* fg on dark / bg on light */
+  --light-base-secondary: #e5e5e5;   /* subtle fg / border */
+
+  /* ---------- NEUTRAL RAMP (Tailwind neutral, oklch) ---------- */
+  --neutral-100:  oklch(97%  0 0);
+  --neutral-200:  oklch(92.2% 0 0);
+  --neutral-300:  oklch(87%  0 0);
+  --neutral-400:  oklch(70.8% 0 0);
+  --neutral-500:  oklch(55.6% 0 0);
+  --neutral-600:  oklch(43.9% 0 0);
+  --neutral-700:  oklch(37.1% 0 0);
+  --neutral-800:  oklch(26.9% 0 0);
+  --neutral-900:  oklch(20.5% 0 0);
+  --neutral-1000: oklch(14.5% 0 0);
+
+  /* ---------- SEMANTIC COLOR TOKENS (dark theme defaults) ---------- */
+  --color-background:          var(--dark-base-primary);
+  --color-foreground:          var(--light-base-primary);
+  --color-dark-base-primary:   var(--dark-base-primary);
+  --color-dark-base-secondary: var(--dark-base-secondary);
+  --color-light-base-primary:  var(--light-base-primary);
+  --color-light-base-secondary:var(--light-base-secondary);
+  --color-accent-100:          var(--accent-100);
+  --color-accent-200:          var(--accent-200);
+  --color-accent-300:          var(--accent-300);
+
+  /* base-* reads darkest→lightest in dark mode (flips on light) */
+  --color-base-100:  var(--neutral-100);
+  --color-base-200:  var(--neutral-200);
+  --color-base-300:  var(--neutral-300);
+  --color-base-400:  var(--neutral-400);
+  --color-base-500:  var(--neutral-500);
+  --color-base-600:  var(--neutral-600);
+  --color-base-700:  var(--neutral-700);
+  --color-base-800:  var(--neutral-800);
+  --color-base-900:  var(--neutral-900);
+  --color-base-1000: var(--neutral-1000);
+
+  /* ---------- SPACING (Tailwind 4px base) ---------- */
+  --spacing: 0.25rem;
+
+  /* ---------- RADII ---------- */
+  --radius-xs:  0.125rem;
+  --radius-sm:  0.25rem;
+  --radius-md:  0.375rem;
+  --radius-lg:  0.5rem;
+  --radius-xl:  0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* ---------- MOTION ---------- */
+  --ease-out:    cubic-bezier(0, 0, .2, 1);
+  --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+  --default-transition-duration: .15s;
+
+  /* ---------- Z-INDEX SYSTEM ---------- */
+  --z-below: -1;
+  --z-base: 0;
+  --z-above: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-backdrop: 40;
+  --z-modal: 50;
+  --z-notification: 60;
+  --z-maximum: 100;
+}
+
+/* Light-theme flip (activated via [data-theme="light"] on <html>) */
+[data-theme="light"] {
+  --color-background:         var(--light-base-primary);
+  --color-foreground:         var(--dark-base-primary);
+  --color-dark-base-primary:  var(--light-base-primary);
+  --color-dark-base-secondary:var(--light-base-secondary);
+  --color-light-base-primary: var(--dark-base-primary);
+  --color-light-base-secondary:var(--dark-base-secondary);
+  --color-base-100:  var(--neutral-1000);
+  --color-base-200:  var(--neutral-900);
+  --color-base-300:  var(--neutral-800);
+  --color-base-400:  var(--neutral-700);
+  --color-base-500:  var(--neutral-600);
+  --color-base-600:  var(--neutral-500);
+  --color-base-700:  var(--neutral-400);
+  --color-base-800:  var(--neutral-300);
+  --color-base-900:  var(--neutral-200);
+  --color-base-1000: var(--neutral-100);
+}
+
+/* =========================================================
+   SEMANTIC TEXT STYLES — use these on real elements
+   ========================================================= */
+
+/* Mono micro-label, all-caps. Ubiquitous "badge" label style. */
+.text-mono-xs {
+  font-family: var(--font-geist-mono);
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: -0.015rem;
+  text-transform: uppercase;
+  text-wrap: pretty;
+}
+.text-mono-sm {
+  font-family: var(--font-geist-mono);
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: -0.0175rem;
+  text-transform: uppercase;
+  text-wrap: pretty;
+}
+/* Mono body — intro paragraphs, descriptions */
+.text-mono-md {
+  font-family: var(--font-geist-mono);
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: -0.02rem;
+  text-wrap: pretty;
+}
+@media (min-width: 1024px) {
+  .text-mono-md { font-size: 18px; letter-spacing: -0.0225rem; }
+}
+.text-mono-meta {
+  font-family: var(--font-geist-mono);
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: -0.0175rem;
+  text-wrap: pretty;
+}
+@media (min-width: 1024px) {
+  .text-mono-meta { font-size: 16px; letter-spacing: -0.02rem; }
+}
+
+/* Hero display — canonical H1, em-based so tracking scales with size */
+.heading-1 {
+  font-family: var(--font-geist-sans);
+  font-size: 80px;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+/* Section heading — canonical H2 */
+.heading-2 {
+  font-family: var(--font-geist-sans);
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+
+/* Body sans (used for captions and card subtitles) */
+.text-body {
+  font-family: var(--font-geist-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--color-base-500);
+}
+
+/* SVG logo filter: paths are fill="#101010" (dark) */
+:root {
+  --logo-filter: brightness(0) invert(1); /* dark mode → white logo */
+}
+[data-theme="light"] {
+  --logo-filter: brightness(0); /* light mode → black logo */
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-geist-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* No bold. Ever. Differentiation is by size only. */
+h1, h2, h3, h4, h5, h6,
+strong, b, th, dt,
+button, input, select, textarea {
+  font-weight: 400;
+}
+
+/* Selection uses accent-100 */
+::selection { background-color: var(--color-accent-100); color: var(--color-dark-base-primary); }

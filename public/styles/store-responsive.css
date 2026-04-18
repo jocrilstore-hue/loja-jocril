@@ -1,0 +1,486 @@
+/* =========================================================
+   JOCRIL STORE — Responsive + theme helpers
+   One file, loaded by every customer-facing page.
+   Breakpoints: mobile ≤640, tablet 641–1024, desktop ≥1025.
+   ========================================================= */
+
+/* ---------- Theme transition guard ---------- */
+html.theme-no-transition * {
+  transition: none !important;
+}
+
+/* ---------- Utility bar at top of header ---------- */
+.store-util-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 40px;
+  border-bottom: 1px solid var(--color-base-900);
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  letter-spacing: -.01rem;
+  text-transform: uppercase;
+  color: var(--color-base-500);
+}
+
+/* ---------- Header main bar ---------- */
+.store-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-fixed);
+  background: color-mix(in oklab, var(--color-background) 85%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px dashed var(--color-base-800);
+}
+.store-header-main {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 18px 40px;
+}
+.store-header-nav {
+  display: flex;
+  gap: 22px;
+  margin-left: 20px;
+}
+.store-header-search {
+  flex: 1;
+  max-width: 420px;
+  margin-left: auto;
+}
+.store-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.store-header-tertiary {
+  display: flex;
+  gap: 26px;
+  padding: 10px 40px;
+  border-top: 1px solid var(--color-base-900);
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  letter-spacing: -.015rem;
+  text-transform: uppercase;
+  color: var(--color-base-400);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.store-header-tertiary::-webkit-scrollbar { display: none; }
+.store-header-tertiary a { white-space: nowrap; cursor: pointer; }
+
+/* Hamburger — only visible on mobile */
+.store-burger {
+  display: none;
+  width: 36px; height: 36px;
+  background: transparent;
+  border: 1px solid var(--color-base-800);
+  border-radius: 2px;
+  color: var(--color-base-300);
+  cursor: pointer;
+  place-items: center;
+}
+.store-burger svg { display: block; }
+
+/* Theme toggle pill */
+.store-theme-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-base-800);
+  border-radius: 999px;
+  padding: 2px;
+  background: transparent;
+}
+.store-theme-toggle button {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  color: var(--color-base-500);
+  cursor: pointer;
+  transition: color .15s, background .15s;
+}
+.store-theme-toggle button[data-on="true"] {
+  background: var(--color-light-base-primary);
+  color: var(--color-dark-base-primary);
+}
+
+/* Mobile drawer */
+.store-drawer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: var(--z-backdrop);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s var(--ease-in-out);
+}
+.store-drawer-backdrop[data-open="true"] {
+  opacity: 1; pointer-events: auto;
+}
+.store-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(88vw, 360px);
+  background: var(--color-background);
+  border-left: 1px dashed var(--color-base-800);
+  z-index: var(--z-modal);
+  transform: translateX(100%);
+  transition: transform .25s var(--ease-in-out);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.store-drawer[data-open="true"] {
+  transform: translateX(0);
+}
+
+/* ==========================================================
+   RESPONSIVE — generic helpers (element-selector based so they
+   catch the common inline-style patterns without rewriting JSX)
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  /* Header + sections: loosen desktop padding */
+  .store-util-bar,
+  .store-header-main,
+  .store-header-tertiary { padding-left: 20px; padding-right: 20px; }
+
+  /* Two-column sections commonly use 1.3fr 1fr / 1.2fr 1fr etc */
+  .resp-two-col { grid-template-columns: 1fr !important; gap: 24px !important; }
+
+  /* 4-col footer → 2 cols */
+  .store-footer-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
+}
+
+@media (max-width: 900px) {
+  /* 3-col grids collapse to 2 */
+  .resp-3col { grid-template-columns: 1fr 1fr !important; }
+  .resp-4col { grid-template-columns: 1fr 1fr !important; }
+}
+
+@media (max-width: 640px) {
+  /* Hide desktop chrome, show burger */
+  .store-header-nav,
+  .store-header-tertiary { display: none !important; }
+  .store-header-search { display: none !important; }
+  .store-burger { display: grid !important; }
+
+  /* Any "Npx 40px" or "Npx 56px" horizontal padding → tight mobile */
+  section[style*="px 40px"],
+  section[style*="px 48px"],
+  section[style*="px 56px"],
+  header[style*="px 40px"],
+  main[style*="px 40px"],
+  div[style*="padding: 72px 56px"],
+  div[style*="padding: 56px 48px"],
+  div[style*="padding: 36px 40px"],
+  div[style*="padding: 24px 40px"],
+  div[style*="padding: 28px 40px"],
+  div[style*="padding: 18px 40px"],
+  div[style*="padding: 20px 40px"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Tablet-shipping asides un-stick */
+  aside[style*="position: sticky"] { position: static !important; top: auto !important; }
+
+  /* Large inline font-sizes on error pages (80px+) clamp down */
+  [style*="fontSize: 72"],
+  [style*="fontSize: 88"],
+  [style*="fontSize: 96"],
+  [style*="fontSize: 104"],
+  [style*="fontSize: 120"],
+  [style*="fontSize: 140"],
+  [style*="fontSize: 160"] {
+    font-size: clamp(48px, 14vw, 96px) !important;
+    line-height: 1 !important;
+  }
+
+  .store-util-bar { font-size: 9px; padding: 6px 16px; gap: 12px; }
+  .store-util-bar > *:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .store-header-main {
+    padding: 14px 16px;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .store-header-main > *:nth-child(n+2) { margin-left: 0 !important; }
+
+  /* Cart button: hide label text, keep icon + count */
+  .store-cart-btn .store-cart-label { display: none; }
+  .store-cart-btn { padding: 0 10px !important; gap: 6px !important; }
+
+  /* Section padding defaults */
+  section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Hero / blocks commonly declared at 64+ or 100+ top/bottom */
+  .resp-section-pad { padding-top: 40px !important; padding-bottom: 40px !important; }
+
+  /* Collapse every grid that declares multiple columns inline */
+  .resp-two-col,
+  .resp-3col,
+  .resp-4col,
+  .store-footer-grid { grid-template-columns: 1fr !important; }
+
+  /* Type scale down on phones */
+  .heading-1 { font-size: clamp(44px, 12vw, 68px) !important; line-height: 1 !important; }
+  .heading-2 { font-size: clamp(28px, 7vw, 40px) !important; }
+
+  /* Make body text stay readable */
+  .text-body { font-size: 15px; }
+
+  /* Footers inner max-width already handled; force 1-col */
+  .store-footer-grid > div:first-child { grid-column: 1 / -1; }
+
+  /* Hide the ⌘K badge inside search */
+  .kbd-hint { display: none; }
+
+  /* Tables inside emails / pages: let them scroll */
+  .resp-scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .resp-scroll-x > * { min-width: 640px; }
+}
+
+/* ---------- Hover-aware only on devices that hover ---------- */
+@media (hover: none) {
+  a:hover, button:hover { /* neutralize dash flicker on tap */ }
+}
+
+/* ---------- Scrollbars in light theme ---------- */
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--color-base-300); }
+
+/* ---------- Images: never overflow ---------- */
+img { max-width: 100%; height: auto; }
+
+/* ==========================================================
+   Attribute-selector overrides — catch inline-style grid
+   declarations without editing every JSX file.
+   React writes inline style as: "grid-template-columns: repeat(4, 1fr)"
+   ========================================================== */
+@media (max-width: 1024px) {
+  [style*="grid-template-columns: repeat(4"],
+  [style*="gridTemplateColumns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  [style*="grid-template-columns: repeat(3"],
+  [style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Common 2-col asymmetric layouts: 1.35fr 1fr, 1.2fr 1fr, 1.3fr 1fr, 1fr 1.4fr, 1fr 1fr etc.
+     Detect via presence of "fr " + "fr" twice. We use common substrings. */
+  [style*="1.35fr 1fr"],
+  [style*="1.3fr 1fr"],
+  [style*="1.2fr 1fr"],
+  [style*="1.4fr 1fr"],
+  [style*="1fr 1.4fr"],
+  [style*="1fr 1.2fr"],
+  [style*="1fr 1.35fr"],
+  [style*="1.5fr 1fr"],
+  [style*="1fr 1.5fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  /* Section horizontal padding on tablet — any "Npx 40px" pattern */
+  section[style*="px 40px"],
+  header[style*="px 40px"],
+  main[style*="px 40px"],
+  div[style*="padding: 72px 56px"],
+  div[style*="padding: 56px 48px"] {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  /* Sidebar layouts: 240/260/280/320 px rail + 1fr content → stack */
+  [style*="grid-template-columns: 240px 1fr"],
+  [style*="gridTemplateColumns: 240px 1fr"],
+  [style*="grid-template-columns: 260px 1fr"],
+  [style*="gridTemplateColumns: 260px 1fr"],
+  [style*="grid-template-columns: 280px 1fr"],
+  [style*="gridTemplateColumns: 280px 1fr"],
+  [style*="grid-template-columns: 320px 1fr"],
+  [style*="gridTemplateColumns: 320px 1fr"],
+  [style*="grid-template-columns: 1fr 360px"],
+  [style*="gridTemplateColumns: 1fr 360px"],
+  [style*="grid-template-columns: 1fr 420px"],
+  [style*="gridTemplateColumns: 1fr 420px"],
+  [style*="grid-template-columns: 1fr 1.3fr"],
+  [style*="gridTemplateColumns: 1fr 1.3fr"],
+  [style*="grid-template-columns: 1fr 1.4fr"],
+  [style*="gridTemplateColumns: 1fr 1.4fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  /* Sticky rails lose their sticky on narrow */
+  aside[style*="position: sticky"] { position: static !important; }
+}
+
+@media (max-width: 640px) {
+  /* Everything grid-with-columns collapses to 1 on phone */
+  [style*="grid-template-columns: repeat(4"],
+  [style*="gridTemplateColumns: repeat(4"],
+  [style*="grid-template-columns: repeat(3"],
+  [style*="gridTemplateColumns: repeat(3"],
+  [style*="grid-template-columns: repeat(2"],
+  [style*="gridTemplateColumns: repeat(2"],
+  /* Sidebar/label + content patterns: Npx 1fr, 1fr Npx, Npx 1fr auto, Npx 1fr Npx, 1fr 1fr, 1fr 1.Xfr etc. */
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="gridTemplateColumns: 1fr 1fr"],
+  [style*="grid-template-columns: 1fr 1.3fr"],
+  [style*="gridTemplateColumns: 1fr 1.3fr"],
+  [style*="grid-template-columns: 1fr 1.4fr"],
+  [style*="gridTemplateColumns: 1fr 1.4fr"],
+  [style*="grid-template-columns: 1.3fr 1fr"],
+  [style*="gridTemplateColumns: 1.3fr 1fr"],
+  [style*="grid-template-columns: 1.4fr 1fr"],
+  [style*="gridTemplateColumns: 1.4fr 1fr"],
+  [style*="grid-template-columns: 110px 1fr"],
+  [style*="gridTemplateColumns: 110px 1fr"],
+  [style*="grid-template-columns: 120px 1fr"],
+  [style*="gridTemplateColumns: 120px 1fr"],
+  [style*="grid-template-columns: 220px 1fr"],
+  [style*="gridTemplateColumns: 220px 1fr"],
+  [style*="grid-template-columns: 240px 1fr"],
+  [style*="gridTemplateColumns: 240px 1fr"],
+  [style*="grid-template-columns: 260px 1fr"],
+  [style*="gridTemplateColumns: 260px 1fr"],
+  [style*="grid-template-columns: 280px 1fr"],
+  [style*="gridTemplateColumns: 280px 1fr"],
+  [style*="grid-template-columns: 320px 1fr"],
+  [style*="gridTemplateColumns: 320px 1fr"],
+  [style*="grid-template-columns: 1fr 360px"],
+  [style*="gridTemplateColumns: 1fr 360px"],
+  [style*="grid-template-columns: 1fr 420px"],
+  [style*="gridTemplateColumns: 1fr 420px"],
+  [style*="grid-template-columns: 60px 1fr auto"],
+  [style*="gridTemplateColumns: 60px 1fr auto"],
+  [style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="gridTemplateColumns: 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  /* min-height declarations in hero tiles: relax */
+  [style*="minHeight: 520"],
+  [style*="min-height: 520"] { min-height: 0 !important; }
+  [style*="minHeight: 340"],
+  [style*="min-height: 340"] { min-height: 200px !important; }
+
+  /* Section top/bottom padding cut */
+  section {
+    padding-top: clamp(40px, 8vw, 64px) !important;
+    padding-bottom: clamp(40px, 8vw, 64px) !important;
+  }
+
+  /* Flexbox rows that use gap: 40/48/56/60 — compress on mobile */
+  [style*="gap: 56px"],
+  [style*="gap: 60px"],
+  [style*="gap: 48px"] { gap: 24px !important; }
+
+  /* Right-aligned filters should wrap left */
+  [style*="justify-content: flex-end"][style*="flex-wrap: wrap"],
+  [style*="justifyContent: flex-end"][style*="flexWrap: wrap"] {
+    justify-content: flex-start !important;
+  }
+
+  /* Section header rows often flex justify-between align-end — stack them */
+  section > div > div[style*="justify-content: space-between"][style*="align-items: end"],
+  section > div > div[style*="justifyContent: space-between"][style*="alignItems: end"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  /* Tertiary category bar in header: already hidden via class above */
+}
+
+/* Tablet - scale hero down a bit */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .heading-1 { font-size: 60px !important; line-height: 1 !important; }
+  .heading-2 { font-size: 40px !important; }
+}
+
+
+/* ---------- Form controls honor theme ---------- */
+input, textarea, select {
+  color: var(--color-foreground);
+  background: transparent;
+}
+input::placeholder, textarea::placeholder { color: var(--color-base-500); }
+
+
+/* =========================================================
+   A11Y — focus-visible, skip link, reduced motion
+   ========================================================= */
+
+/* Remove default outline; add our own clearly-visible ring */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--color-accent-100, #2DD4CD);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* Subtler ring for buttons that already have borders */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="link"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent-100, #2DD4CD);
+  outline-offset: 3px;
+}
+/* Inputs: swap to accent ring instead of browser default */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent-100, #2DD4CD);
+  outline-offset: 1px;
+  border-color: var(--color-accent-100, #2DD4CD) !important;
+}
+
+/* Skip-to-content link — visible only on focus */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  background: var(--color-foreground, #000);
+  color: var(--color-background, #fff);
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  letter-spacing: -.01rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  transform: translateY(-120%);
+  z-index: 9999;
+  transition: transform .15s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
