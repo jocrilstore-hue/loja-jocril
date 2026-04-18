@@ -20,6 +20,7 @@ export type AdminActiveKey =
   | "settings"
   | "emails"
   | "components"
+  | "tiers"
   | null;
 
 type Props = {
