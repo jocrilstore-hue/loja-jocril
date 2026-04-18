@@ -13,6 +13,7 @@ export type ProductMock = {
   tiers: string;
   img: string;
   stock: 'in' | 'low' | 'made';
+  slug?: string;
 };
 
 export const STOCK_MAP = {
@@ -26,7 +27,7 @@ export default function ProductCard({ p }: { p: ProductMock }) {
   const stock = STOCK_MAP[p.stock];
   return (
     <Link
-      href={`/produtos/${p.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+      href={`/produtos/${p.slug ?? p.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
       style={{ display: 'block', textDecoration: 'none' }}
     >
       <article

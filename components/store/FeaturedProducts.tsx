@@ -5,21 +5,13 @@ import Badge from './Badge';
 import Button from './Button';
 import ProductCard, { type ProductMock } from './ProductCard';
 
-const PRODS: ProductMock[] = [
-  { sku: 'EXP-A3-06P',   name: 'Expositor A3 · 6 prateleiras',   cat: 'Acrílicos Chão',  material: 'Acrílico 5mm', from: 42.5,  tiers: '1+ · 10+ · 100+', img: '/assets/portfolio/carm-premium.avif', stock: 'in'   },
-  { sku: 'CX-20-T',      name: 'Caixa transparente 20×20×20',     cat: 'Caixas',           material: 'Acrílico 3mm', from: 14.9,  tiers: '5+ · 25+ · 100+', img: '/assets/portfolio/beefeater.avif',    stock: 'in'   },
-  { sku: 'MOL-30×40',    name: 'Moldura suspensa 30×40',          cat: 'Molduras',         material: 'Acrílico 4mm', from: 19.8,  tiers: '2+ · 10+',         img: '/assets/portfolio/rayban.avif',       stock: 'low'  },
-  { sku: 'EXP-MESA-4',   name: 'Expositor de mesa 4 níveis',      cat: 'Acrílicos Mesa',   material: 'Acrílico 5mm', from: 28.0,  tiers: '1+ · 10+',         img: '/assets/portfolio/stoli.avif',        stock: 'in'   },
-  { sku: 'TOMB-CLASSIC', name: 'Tombola clássica ø250',           cat: 'Tombolas',         material: 'Acrílico 5mm', from: 165.0, tiers: '1+',                img: '/assets/portfolio/glade.avif',        stock: 'made' },
-  { sku: 'SIG-PAR-A4',   name: 'Bolsa de parede A4',              cat: 'Sinalética',       material: 'Acrílico 3mm', from: 9.8,   tiers: '10+ · 50+ · 250+', img: '/assets/portfolio/bioderma.avif',     stock: 'in'   },
-  { sku: 'EXP-PAR-FOL',  name: 'Porta-folhetos parede A5',        cat: 'Acrílicos Parede', material: 'Acrílico 3mm', from: 7.5,   tiers: '10+ · 100+',        img: '/assets/portfolio/ricola.avif',       stock: 'in'   },
-  { sku: 'EXP-COS-03',   name: 'Display cosmético 3 níveis',      cat: 'Acrílicos Mesa',   material: 'Acrílico 4mm', from: 24.0,  tiers: '1+ · 20+',          img: '/assets/portfolio/loreal.avif',       stock: 'low'  },
-];
+// Now rendered with products passed from the homepage server component.
+// (Mock data removed — lives in lib/queries/products.ts → listFeaturedProducts)
 
-export default function FeaturedProducts() {
+export default function FeaturedProducts({ products = [] }: { products?: ProductMock[] }) {
   const [filter, setFilter] = useState<string>('all');
-  const cats = ['all', ...Array.from(new Set(PRODS.map((p) => p.cat)))];
-  const items = filter === 'all' ? PRODS : PRODS.filter((p) => p.cat === filter);
+  const cats = ['all', ...Array.from(new Set(products.map((p) => p.cat).filter(Boolean)))];
+  const items = filter === 'all' ? products : products.filter((p) => p.cat === filter);
 
   return (
     <section
