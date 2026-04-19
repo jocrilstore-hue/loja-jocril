@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { ThemeToggle } from "./StoreTheme";
+
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 type CartItem = { qty: number };
 type NavKey = "home" | "produtos" | "categorias" | "sobre" | "contacto";
@@ -463,7 +469,13 @@ function SearchField({ compact }: { compact?: boolean }) {
 function AccountMenu() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-  const isAdmin = true;
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+
+  const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
+  const isAdmin = role === "admin" || role === "super_admin" || (!!email && ADMIN_EMAILS.includes(email));
+  const displayName = user?.fullName || user?.username || email || "";
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
@@ -474,6 +486,35 @@ function AccountMenu() {
     return () => window.removeEventListener("mousedown", close);
   }, []);
 
+  const iconBtnStyle: React.CSSProperties = {
+    width: 36,
+    height: 36,
+    display: "grid",
+    placeItems: "center",
+    background: open ? "var(--color-dark-base-secondary)" : "transparent",
+    border: "1px solid var(--color-base-800)",
+    borderRadius: 2,
+    color: "var(--color-base-300)",
+    cursor: "pointer",
+    transition: "background .15s",
+    textDecoration: "none",
+  };
+
+  const userIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+  );
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <Link href="/entrar" aria-label="Entrar" style={iconBtnStyle}>
+        {userIcon}
+      </Link>
+    );
+  }
+
   return (
     <div ref={ref} style={{ position: "relative" }}>
       <button
@@ -481,31 +522,9 @@ function AccountMenu() {
         aria-label="Conta"
         aria-expanded={open}
         aria-haspopup="true"
-        style={{
-          width: 36,
-          height: 36,
-          display: "grid",
-          placeItems: "center",
-          background: open ? "var(--color-dark-base-secondary)" : "transparent",
-          border: "1px solid var(--color-base-800)",
-          borderRadius: 2,
-          color: "var(--color-base-300)",
-          cursor: "pointer",
-          transition: "background .15s",
-        }}
+        style={iconBtnStyle}
       >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        >
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 21a8 8 0 0 1 16 0" />
-        </svg>
+        {userIcon}
       </button>
 
       {open && (
@@ -538,13 +557,13 @@ function AccountMenu() {
                 letterSpacing: "-.01em",
               }}
             >
-              Maria Silva
+              {displayName}
             </div>
             <div
               className="text-mono-xs"
               style={{ color: "var(--color-base-500)", marginTop: 2 }}
             >
-              maria@agencia.pt
+              {email}
             </div>
           </div>
 
@@ -627,15 +646,21 @@ function AccountMenu() {
               margin: "4px 0",
             }}
           />
-          <Link
-            href="/login"
+          <button
+            type="button"
+            onClick={() => { setOpen(false); signOut({ redirectUrl: "/" }); }}
             style={{
               display: "flex",
               alignItems: "center",
               gap: 10,
               padding: "8px 12px",
               borderRadius: 2,
+              width: "100%",
+              background: "transparent",
+              border: "none",
+              textAlign: "left",
               textDecoration: "none",
+              cursor: "pointer",
               fontFamily: "var(--font-geist-sans)",
               fontSize: 13,
               color: "var(--color-base-500)",
@@ -646,7 +671,7 @@ function AccountMenu() {
               →
             </span>
             Terminar sessão
-          </Link>
+          </button>
         </div>
       )}
     </div>

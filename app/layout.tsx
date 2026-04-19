@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ptPT } from "@clerk/localizations";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,13 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-PT" data-theme="dark">
-      <head>
-        <link rel="stylesheet" href="/styles/colors_and_type.css" />
-        <link rel="stylesheet" href="/styles/store-responsive.css" />
-        <link rel="preload" href="/assets/portfolio/carm-premium.avif" as="image" type="image/avif" />
-      </head>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider localization={ptPT}>
+      <html lang="pt-PT" data-theme="dark">
+        <head>
+          <link rel="stylesheet" href="/styles/colors_and_type.css" />
+          <link rel="stylesheet" href="/styles/store-responsive.css" />
+          <link rel="preload" href="/assets/portfolio/carm-premium.avif" as="image" type="image/avif" />
+        </head>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
