@@ -4,53 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import Badge from "./Badge";
 
-const CATS = [
-  {
-    n: "01",
-    name: "Acrílicos Chão",
-    count: 32,
-    img: "/assets/portfolio/carm-premium.avif",
-    href: "/produtos?cat=acrilicos-chao",
-  },
-  {
-    n: "02",
-    name: "Acrílicos Mesa",
-    count: 48,
-    img: "/assets/portfolio/carm.avif",
-    href: "/produtos?cat=acrilicos-mesa",
-  },
-  {
-    n: "03",
-    name: "Acrílicos Parede",
-    count: 21,
-    img: "/assets/portfolio/ricola.avif",
-    href: "/produtos?cat=acrilicos-parede",
-  },
-  {
-    n: "04",
-    name: "Caixas em Acrílico",
-    count: 19,
-    img: "/assets/portfolio/beefeater.avif",
-    href: "/produtos?cat=caixas",
-  },
-  {
-    n: "05",
-    name: "Molduras",
-    count: 27,
-    img: "/assets/portfolio/heineken-trophy.avif",
-    href: "/produtos?cat=molduras",
-  },
-  {
-    n: "06",
-    name: "Tombolas",
-    count: 12,
-    img: "/assets/portfolio/fanta.avif",
-    href: "/produtos?cat=tombolas",
-  },
-];
+export type CategoryCardItem = {
+  n: string;
+  name: string;
+  count: number;
+  img: string;
+  href: string;
+};
 
-export default function CategoriesBlock() {
+// Prop-driven. Homepage passes categories fetched from DB + CATEGORY_META.
+export default function CategoriesBlock({ cats = [] }: { cats?: CategoryCardItem[] }) {
   const [hover, setHover] = useState<string | null>(null);
+  const CATS = cats;
   return (
     <section
       data-screen-label="02 Categorias"

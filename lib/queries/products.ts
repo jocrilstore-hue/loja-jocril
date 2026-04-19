@@ -90,13 +90,14 @@ export type UICategory = {
   slug: string;
   description?: string | null;
   imageUrl?: string | null;
+  productCount?: number;
 };
 
 export async function listCategories(): Promise<UICategory[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_url")
+    .select("id, name, slug, description")
     .eq("is_active", true)
     .is("parent_id", null)
     .order("name", { ascending: true });
@@ -111,15 +112,35 @@ export async function listCategories(): Promise<UICategory[]> {
     name: c.name,
     slug: c.slug,
     description: c.description,
-    imageUrl: c.image_url,
   }));
+}
+
+// listCategories + per-category active product count in one round-trip.
+export async function listCategoriesWithCounts(): Promise<UICategory[]> {
+  const supabase = await createClient();
+  const cats = await listCategories();
+  if (cats.length === 0) return [];
+
+  const counts = await Promise.all(
+    cats.map(async (c) => {
+      const { count } = await supabase
+        .from("product_templates")
+        .select("id", { count: "exact", head: true })
+        .eq("category_id", Number(c.id))
+        .eq("is_active", true);
+      return { id: c.id, n: count ?? 0 };
+    })
+  );
+
+  const byId = new Map(counts.map((r) => [r.id, r.n]));
+  return cats.map((c) => ({ ...c, productCount: byId.get(c.id) ?? 0 }));
 }
 
 export async function getCategoryBySlug(slug: string): Promise<UICategory | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_url")
+    .select("id, name, slug, description")
     .eq("slug", slug)
     .eq("is_active", true)
     .maybeSingle();
@@ -134,6 +155,5 @@ export async function getCategoryBySlug(slug: string): Promise<UICategory | null
     name: data.name,
     slug: data.slug,
     description: data.description,
-    imageUrl: data.image_url,
   };
 }
