@@ -33,12 +33,12 @@ Portuguese URLs throughout. See plan §4.1 at `C:\Users\maria\.claude\plans\writ
 ## Build & verification
 
 ```bash
-npm run dev       # development (Turbopack, port 3000)
-npm run build     # production build — must pass clean
-npm run start     # production server
+bun run dev       # development (Turbopack, port 3000)
+bun run build     # production build — must pass clean
+bun run start     # production server
 ```
 
-After ANY code change: run `npm run build` before declaring done.
+After ANY code change: run `bun run build` before declaring done.
 
 ## Orchestration plan
 
