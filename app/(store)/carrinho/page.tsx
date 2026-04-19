@@ -1,30 +1,26 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
-
-const CART_ITEMS_INIT = [
-  { sku: 'EXP-A3-06P', name: 'Expositor A3 · 6 prateleiras',      variant: 'Transparente · A3 · 1200h',           material: 'Acrílico 5mm', unit: 38.20, qty: 10, tierDiscount: 10, img: '/assets/portfolio/carm-premium.avif', stock: 'Em stock · envio 48h' },
-  { sku: 'CX-20-T',    name: 'Caixa transparente 20×20×20',         variant: 'Transparente · tampa removível',       material: 'Acrílico 3mm', unit: 12.90, qty: 5,  tierDiscount: 14, img: '/assets/portfolio/beefeater.avif',    stock: 'Em stock · envio 48h' },
-  { sku: 'SIG-PAR-A4', name: 'Bolsa de parede A4',                  variant: 'Transparente · parafusos incluídos',   material: 'Acrílico 3mm', unit: 7.80,  qty: 25, tierDiscount: 20, img: '/assets/portfolio/bioderma.avif',     stock: 'Produção · 5 dias úteis' },
-];
-
-type CartItem = typeof CART_ITEMS_INIT[number];
+import { useCart } from '@/contexts/cart-context';
+import type { CartItem } from '@/lib/types';
 
 export default function CarrinhoPage() {
-  const [items, setItems]     = useState<CartItem[]>(CART_ITEMS_INIT);
+  const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const [step, setStep]       = useState(1);
   const [payment, setPayment] = useState('mbway');
   const [shipping, setShipping] = useState('ctt-expresso');
   const [nif, setNif]         = useState('');
   const [promo, setPromo]     = useState('');
 
-  const subtotal     = items.reduce((s, i) => s + i.unit * i.qty, 0);
-  const savings      = items.reduce((s, i) => s + (i.unit / (1 - i.tierDiscount / 100) - i.unit) * i.qty, 0);
-  const shippingCost = shipping === 'ctt-expresso' ? 4.90 : shipping === 'pickup' ? 0 : 7.90;
+  const items        = cart.items;
+  const subtotal     = cart.totalPrice;
+  const shippingCost = items.length === 0 ? 0 : shipping === 'ctt-expresso' ? 4.90 : shipping === 'pickup' ? 0 : 7.90;
   const total        = subtotal + shippingCost;
-  const iva          = total - total / 1.23;
+  const iva          = total > 0 ? total - total / 1.23 : 0;
+  const isEmpty      = items.length === 0;
 
   return (
     <main id="main" style={{ background: 'var(--color-dark-base-primary)', padding: '40px 40px 80px' }}>
@@ -63,7 +59,16 @@ export default function CarrinhoPage() {
         {step < 3 ? (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: 32 }}>
             <div>
-              {step === 1 && <CartItems items={items} setItems={setItems} />}
+              {step === 1 && (
+                isEmpty
+                  ? <EmptyCart />
+                  : <CartItems
+                      items={items}
+                      update={updateQuantity}
+                      remove={removeFromCart}
+                      clear={clearCart}
+                    />
+              )}
               {step === 2 && (
                 <>
                   <AddressBlock nif={nif} setNif={setNif} />
@@ -74,10 +79,11 @@ export default function CarrinhoPage() {
             </div>
             <aside>
               <OrderSummary
-                items={items} subtotal={subtotal} savings={savings}
+                items={items} subtotal={subtotal}
                 shippingCost={shippingCost} total={total} iva={iva}
                 promo={promo} setPromo={setPromo}
                 step={step} setStep={setStep}
+                isEmpty={isEmpty}
               />
             </aside>
           </div>
@@ -91,44 +97,59 @@ export default function CarrinhoPage() {
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function CartItems({ items, setItems }: { items: CartItem[]; setItems: (v: CartItem[]) => void }) {
-  const update = (sku: string, qty: number) => setItems(items.map((i) => i.sku === sku ? { ...i, qty: Math.max(1, qty) } : i));
-  const remove = (sku: string) => setItems(items.filter((i) => i.sku !== sku));
+function EmptyCart() {
+  return (
+    <div style={{ padding: '80px 40px', border: '1px dashed var(--color-base-700)', borderRadius: 6, background: 'var(--color-dark-base-secondary)', textAlign: 'center' }}>
+      <Badge size="sm">Carrinho vazio</Badge>
+      <h2 className="heading-2" style={{ margin: '18px 0 12px', color: 'var(--color-light-base-primary)' }}>Ainda não adicionou produtos.</h2>
+      <p className="text-body" style={{ margin: '0 auto 28px', maxWidth: '44ch' }}>
+        Explore a loja e adicione os primeiros expositores, caixas ou sinalética ao seu carrinho.
+      </p>
+      <Button href="/produtos" variant="solid">Ver produtos</Button>
+    </div>
+  );
+}
+
+function CartItems({ items, update, remove, clear }: {
+  items: CartItem[];
+  update: (variantId: number, quantity: number) => void;
+  remove: (variantId: number) => void;
+  clear: () => void;
+}) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
         <Badge size="sm">Carrinho · {items.length} produto{items.length !== 1 ? 's' : ''}</Badge>
-        <button className="text-mono-xs" style={{ color: 'var(--color-base-500)', cursor: 'pointer', background: 'none', border: 'none' }}>Esvaziar carrinho</button>
+        <button onClick={clear} className="text-mono-xs" style={{ color: 'var(--color-base-500)', cursor: 'pointer', background: 'none', border: 'none' }}>Esvaziar carrinho</button>
       </div>
       <div style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, overflow: 'hidden', background: 'var(--color-dark-base-secondary)' }}>
         {items.map((i, idx) => (
-          <div key={i.sku} style={{
+          <div key={i.variantId} style={{
             display: 'grid', gridTemplateColumns: '120px 1fr auto', gap: 20,
             padding: 20, borderTop: idx === 0 ? 'none' : '1px dashed var(--color-base-800)',
             alignItems: 'center',
           }}>
-            <div style={{ aspectRatio: '1/1', background: `url(${i.img}) center/cover`, borderRadius: 4, border: '1px dashed var(--color-base-700)' }}/>
+            <div style={{ aspectRatio: '1/1', background: `url(${i.imageUrl ?? '/assets/placeholder.svg'}) center/cover`, borderRadius: 4, border: '1px dashed var(--color-base-700)' }}/>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>{i.sku} · {i.material}</span>
-                {i.tierDiscount > 0 && <span className="text-mono-xs" style={{ color: 'var(--color-accent-100)' }}>Escalão −{i.tierDiscount}%</span>}
+                <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>{i.sku}</span>
               </div>
-              <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, letterSpacing: '-.03em', color: 'var(--color-light-base-primary)', marginTop: 4 }}>{i.name}</div>
-              <div className="text-body" style={{ marginTop: 4, color: 'var(--color-base-300)' }}>{i.variant}</div>
+              <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, letterSpacing: '-.03em', color: 'var(--color-light-base-primary)', marginTop: 4 }}>{i.productName}</div>
+              <div className="text-body" style={{ marginTop: 4, color: 'var(--color-base-300)' }}>{i.sizeName}</div>
               <div className="text-mono-xs" style={{ color: 'var(--color-accent-100)', marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--color-accent-300)' }}/>{i.stock}
+                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--color-accent-300)' }}/>Em stock · envio 48h
               </div>
               <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 14 }}>
-                <QtyStepper qty={i.qty} setQty={(q) => update(i.sku, q)} />
-                <button onClick={() => remove(i.sku)} className="text-mono-xs" style={{ color: 'var(--color-base-500)', cursor: 'pointer', background: 'none', border: 'none' }}>Remover</button>
+                <QtyStepper qty={i.quantity} setQty={(q) => update(i.variantId, q)} />
+                <button onClick={() => remove(i.variantId)} className="text-mono-xs" style={{ color: 'var(--color-base-500)', cursor: 'pointer', background: 'none', border: 'none' }}>Remover</button>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <div className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>Unitário</div>
-              <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 16, letterSpacing: '-.03em', color: 'var(--color-base-300)', marginTop: 2 }}>€ {i.unit.toFixed(2).replace('.', ',')}</div>
+              <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 16, letterSpacing: '-.03em', color: 'var(--color-base-300)', marginTop: 2 }}>€ {i.unitPrice.toFixed(2).replace('.', ',')}</div>
               <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginTop: 14 }}>Total</div>
               <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 26, letterSpacing: '-.04em', color: 'var(--color-light-base-primary)', marginTop: 2 }}>
-                € {(i.unit * i.qty).toFixed(2).replace('.', ',')}
+                € {i.totalPrice.toFixed(2).replace('.', ',')}
               </div>
             </div>
           </div>
@@ -144,14 +165,14 @@ function CartItems({ items, setItems }: { items: CartItem[]; setItems: (v: CartI
             { n: 'Kit de limpeza para acrílico',        p: 8.50, img: '/assets/portfolio/glade.avif'  },
             { n: 'Etiquetas de preço transparentes',    p: 4.10, img: '/assets/portfolio/loreal.avif'  },
           ].map((x) => (
-            <button key={x.n} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, background: 'transparent', border: '1px solid var(--color-base-900)', borderRadius: 4, cursor: 'pointer', textAlign: 'left' }}>
+            <Link key={x.n} href="/produtos" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, background: 'transparent', border: '1px solid var(--color-base-900)', borderRadius: 4, cursor: 'pointer', textAlign: 'left', textDecoration: 'none' }}>
               <div style={{ width: 44, height: 44, background: `url(${x.img}) center/cover`, borderRadius: 2, flexShrink: 0 }}/>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: 'var(--color-light-base-primary)', letterSpacing: '-.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{x.n}</div>
                 <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginTop: 2 }}>€ {x.p.toFixed(2).replace('.', ',')}</div>
               </div>
               <span style={{ color: 'var(--color-accent-100)', fontSize: 18 }}>+</span>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
@@ -310,10 +331,10 @@ const BIG_BTN: React.CSSProperties = {
   fontFamily: 'var(--font-geist-mono)', fontSize: 13, letterSpacing: '-.015rem', textTransform: 'uppercase',
 };
 
-function OrderSummary({ items, subtotal, savings, shippingCost, total, iva, promo, setPromo, step, setStep }: {
-  items: CartItem[]; subtotal: number; savings: number; shippingCost: number;
+function OrderSummary({ items, subtotal, shippingCost, total, iva, promo, setPromo, step, setStep, isEmpty }: {
+  items: CartItem[]; subtotal: number; shippingCost: number;
   total: number; iva: number; promo: string; setPromo: (v: string) => void;
-  step: number; setStep: (n: number) => void;
+  step: number; setStep: (n: number) => void; isEmpty: boolean;
 }) {
   return (
     <div style={{ position: 'sticky', top: 160, border: '1px dashed var(--color-base-600)', borderRadius: 6, background: 'var(--color-dark-base-secondary)', padding: 24 }}>
@@ -321,14 +342,17 @@ function OrderSummary({ items, subtotal, savings, shippingCost, total, iva, prom
 
       <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
         {items.map((i) => (
-          <div key={i.sku} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 10, alignItems: 'center' }}>
-            <span style={{ width: 34, height: 34, display: 'block', background: `url(${i.img}) center/cover`, borderRadius: 2, border: '1px dashed var(--color-base-700)' }}/>
+          <div key={i.variantId} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 10, alignItems: 'center' }}>
+            <span style={{ width: 34, height: 34, display: 'block', background: `url(${i.imageUrl ?? '/assets/placeholder.svg'}) center/cover`, borderRadius: 2, border: '1px dashed var(--color-base-700)' }}/>
             <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: 'var(--color-light-base-primary)', letterSpacing: '-.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {i.name} <span className="text-mono-xs" style={{ color: 'var(--color-base-600)' }}>× {i.qty}</span>
+              {i.productName} <span className="text-mono-xs" style={{ color: 'var(--color-base-600)' }}>× {i.quantity}</span>
             </span>
-            <span className="text-mono-xs" style={{ color: 'var(--color-base-300)' }}>€ {(i.unit * i.qty).toFixed(2).replace('.', ',')}</span>
+            <span className="text-mono-xs" style={{ color: 'var(--color-base-300)' }}>€ {i.totalPrice.toFixed(2).replace('.', ',')}</span>
           </div>
         ))}
+        {isEmpty && (
+          <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>Sem artigos no carrinho.</span>
+        )}
       </div>
 
       <div style={{ marginTop: 20, display: 'flex', gap: 6 }}>
@@ -343,8 +367,7 @@ function OrderSummary({ items, subtotal, savings, shippingCost, total, iva, prom
 
       <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px dashed var(--color-base-800)', display: 'grid', gap: 10 }}>
         <SummaryLine label="Subtotal"              value={`€ ${subtotal.toFixed(2).replace('.', ',')}`} />
-        {savings > 0 && <SummaryLine label="Escalões de preço" value={`− € ${savings.toFixed(2).replace('.', ',')}`} accent />}
-        <SummaryLine label="Envio"                 value={shippingCost === 0 ? 'Grátis' : `€ ${shippingCost.toFixed(2).replace('.', ',')}`} />
+        <SummaryLine label="Envio"                 value={shippingCost === 0 ? (isEmpty ? '—' : 'Grátis') : `€ ${shippingCost.toFixed(2).replace('.', ',')}`} />
         <SummaryLine label="IVA 23% (incluído)"    value={`€ ${iva.toFixed(2).replace('.', ',')}`} muted />
       </div>
 
@@ -354,7 +377,11 @@ function OrderSummary({ items, subtotal, savings, shippingCost, total, iva, prom
       </div>
 
       <div style={{ marginTop: 18, display: 'grid', gap: 8 }}>
-        {step === 1 && <button onClick={() => setStep(2)} style={BIG_BTN}>Continuar para envio →</button>}
+        {step === 1 && (
+          <button onClick={() => !isEmpty && setStep(2)} disabled={isEmpty} style={{ ...BIG_BTN, opacity: isEmpty ? 0.4 : 1, cursor: isEmpty ? 'not-allowed' : 'pointer' }}>
+            Continuar para envio →
+          </button>
+        )}
         {step === 2 && <button onClick={() => setStep(3)} style={BIG_BTN}>Finalizar encomenda →</button>}
         <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', textAlign: 'center', marginTop: 6 }}>
           Pagamento seguro · SSL · Jocril Lda.
@@ -386,8 +413,8 @@ function SuccessPanel({ items, total }: { items: CartItem[]; total: number }) {
         </p>
         <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           <SuccessStat label="Total"          value={`€ ${total.toFixed(2).replace('.', ',')}`} />
+          <SuccessStat label="Artigos"        value={`${items.length}`} />
           <SuccessStat label="Envio previsto" value="20 · 04 · 2026" />
-          <SuccessStat label="Tracking CTT"   value="EA123456789PT" />
         </div>
         <div style={{ marginTop: 32, display: 'flex', gap: 10 }}>
           <Button variant="solid">Ver detalhes da encomenda</Button>

@@ -6,7 +6,7 @@ import StoreFooter from "@/components/store/StoreFooter";
 export default function StoreLayout({ children }: { children: ReactNode }) {
   return (
     <StoreThemeProvider>
-      <StoreHeader cart={[{ qty: 3 }]} />
+      <StoreHeader />
       {children}
       <StoreFooter />
     </StoreThemeProvider>

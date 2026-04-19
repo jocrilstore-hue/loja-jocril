@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ptPT } from "@clerk/localizations";
+import { CartProvider } from "@/contexts/cart-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function RootLayout({
           <link rel="stylesheet" href="/styles/store-responsive.css" />
           <link rel="preload" href="/assets/portfolio/carm-premium.avif" as="image" type="image/avif" />
         </head>
-        <body>{children}</body>
+        <body><CartProvider>{children}</CartProvider></body>
       </html>
     </ClerkProvider>
   );

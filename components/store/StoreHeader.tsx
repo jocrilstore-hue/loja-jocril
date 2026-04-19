@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
+import { useCart } from "@/contexts/cart-context";
 import { ThemeToggle } from "./StoreTheme";
 
 const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
@@ -10,11 +11,9 @@ const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
-type CartItem = { qty: number };
 type NavKey = "home" | "produtos" | "categorias" | "sobre" | "contacto";
 
 type Props = {
-  cart?: CartItem[];
   active?: NavKey;
   onOpenCart?: () => void;
 };
@@ -38,10 +37,11 @@ const CATS: [string, string][] = [
   ["Todos os Produtos →", "/produtos"],
 ];
 
-export default function StoreHeader({ cart, active, onOpenCart }: Props) {
+export default function StoreHeader({ active, onOpenCart }: Props) {
   const [hoverKey, setHoverKey] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const cartCount = cart?.reduce((s, i) => s + i.qty, 0) || 0;
+  const { cart } = useCart();
+  const cartCount = cart.totalItems;
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";

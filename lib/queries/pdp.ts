@@ -147,6 +147,8 @@ export async function getPDPBySlug(
       label: sv.size_formats?.name ?? sv.sku,
       dim,
       price: Number(sv.base_price_including_vat),
+      variantId: sv.id,
+      sku: sv.sku,
     };
   });
 

@@ -84,12 +84,24 @@ export type Customer = {
   desde: string;
 };
 
+// Cart shape — mirrors the old Jocril storefront's client-side cart.
+// `variantId` is the Supabase numeric ID of the chosen product_variants row.
+// `unitPrice` is captured at add time (already tier-discounted if applicable).
+// `totalPrice` = quantity * unitPrice, maintained by the cart context.
 export type CartItem = {
-  productId: string;
-  variantId?: string;
-  nome: string;
+  variantId: number;
   sku: string;
-  qty: number;
-  precoUnit: number;
-  imagem?: string;
+  productName: string;
+  sizeName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  imageUrl?: string;
+  stockQuantity: number;
+};
+
+export type Cart = {
+  items: CartItem[];
+  totalItems: number;
+  totalPrice: number;
 };
