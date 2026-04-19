@@ -50,6 +50,7 @@ export default function CarrinhoPage() {
 
   // MB Way phone (separate from shipping contact phone)
   const [mbwayPhone, setMbwayPhone] = useState('');
+  const [legalConsent, setLegalConsent] = useState(false);
 
   const [promo, setPromo]               = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,6 +101,10 @@ export default function CarrinhoPage() {
         return;
       }
     }
+    if (!legalConsent) {
+      setOrderError('Aceite os Termos e a Política de Privacidade antes de finalizar a encomenda.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -132,6 +137,7 @@ export default function CarrinhoPage() {
           subtotal,
           shippingCost,
           total,
+          legalConsent,
         }),
       });
 
@@ -269,6 +275,8 @@ export default function CarrinhoPage() {
                 onFinalizar={handleFinalizar}
                 isSubmitting={isSubmitting}
                 orderError={orderError}
+                legalConsent={legalConsent}
+                setLegalConsent={setLegalConsent}
               />
             </aside>
           </div>
@@ -529,11 +537,12 @@ const BIG_BTN: React.CSSProperties = {
   fontFamily: 'var(--font-geist-mono)', fontSize: 13, letterSpacing: '-.015rem', textTransform: 'uppercase',
 };
 
-function OrderSummary({ items, subtotal, shippingCost, total, iva, promo, setPromo, step, setStep, isEmpty, onFinalizar, isSubmitting, orderError }: {
+function OrderSummary({ items, subtotal, shippingCost, total, iva, promo, setPromo, step, setStep, isEmpty, onFinalizar, isSubmitting, orderError, legalConsent, setLegalConsent }: {
   items: CartItem[]; subtotal: number; shippingCost: number;
   total: number; iva: number; promo: string; setPromo: (v: string) => void;
   step: number; setStep: (n: number) => void; isEmpty: boolean;
   onFinalizar: () => void; isSubmitting: boolean; orderError: string | null;
+  legalConsent: boolean; setLegalConsent: (value: boolean) => void;
 }) {
   return (
     <div style={{ position: 'sticky', top: 160, border: '1px dashed var(--color-base-600)', borderRadius: 6, background: 'var(--color-dark-base-secondary)', padding: 24 }}>
@@ -555,13 +564,17 @@ function OrderSummary({ items, subtotal, shippingCost, total, iva, promo, setPro
       </div>
 
       <div style={{ marginTop: 20, display: 'flex', gap: 6 }}>
-        <input value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="Código promocional" style={{
+        <input value={promo} onChange={(e) => setPromo(e.target.value)} disabled placeholder="Código promocional" style={{
           flex: 1, height: 36, padding: '0 12px',
           background: 'var(--color-dark-base-primary)', border: '1px dashed var(--color-base-700)', borderRadius: 2,
           outline: 'none', color: 'var(--color-light-base-primary)',
+          opacity: 0.55,
           fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem', textTransform: 'uppercase',
         }}/>
-        <button style={{ height: 36, padding: '0 14px', background: 'transparent', border: '1px solid var(--color-base-700)', borderRadius: 2, cursor: 'pointer', color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem', textTransform: 'uppercase' }}>Aplicar</button>
+        <button disabled title="Modelo de descontos ainda não definido" style={{ height: 36, padding: '0 14px', background: 'transparent', border: '1px solid var(--color-base-700)', borderRadius: 2, cursor: 'not-allowed', color: 'var(--color-light-base-primary)', opacity: 0.55, fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem', textTransform: 'uppercase' }}>Aplicar</button>
+      </div>
+      <div className="text-mono-xs" style={{ marginTop: 8, color: 'var(--color-base-500)' }}>
+        Códigos promocionais aguardam configuração de descontos.
       </div>
 
       <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px dashed var(--color-base-800)', display: 'grid', gap: 10 }}>
@@ -582,6 +595,19 @@ function OrderSummary({ items, subtotal, shippingCost, total, iva, promo, setPro
       )}
 
       <div style={{ marginTop: 18, display: 'grid', gap: 8 }}>
+        {step === 2 && (
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', border: '1px dashed var(--color-base-800)', borderRadius: 4, cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={legalConsent}
+              onChange={(event) => setLegalConsent(event.target.checked)}
+              style={{ marginTop: 2, accentColor: 'var(--color-accent-100)' }}
+            />
+            <span className="text-mono-xs" style={{ color: 'var(--color-base-400)', lineHeight: 1.5 }}>
+              Aceito os <Link href="/legais/termos" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Termos</Link> e a <Link href="/legais/privacidade" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Política de Privacidade</Link>.
+            </span>
+          </label>
+        )}
         {step === 1 && (
           <button onClick={() => !isEmpty && setStep(2)} disabled={isEmpty} style={{ ...BIG_BTN, opacity: isEmpty ? 0.4 : 1, cursor: isEmpty ? 'not-allowed' : 'pointer' }}>
             Continuar para envio →

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     const { data: order, error: findError } = await supabase
       .from("orders")
-      .select("id, payment_status, total_amount_with_vat, customer:customers(name, email)")
+      .select("id, payment_status, total_amount_with_vat, customer:customers(first_name, last_name, company_name, email)")
       .eq("order_number", orderNumber)
       .single();
 
@@ -76,12 +76,23 @@ export async function POST(request: Request) {
     );
 
     // Fire-and-forget payment received email (B7)
-    const customerRaw = order.customer as { name: string; email: string } | { name: string; email: string }[] | null;
+    const customerRaw = order.customer as {
+      first_name: string | null;
+      last_name: string | null;
+      company_name: string | null;
+      email: string | null;
+    } | {
+      first_name: string | null;
+      last_name: string | null;
+      company_name: string | null;
+      email: string | null;
+    }[] | null;
     const customer = Array.isArray(customerRaw) ? customerRaw[0] ?? null : customerRaw;
     if (customer?.email) {
+      const fullName = [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim();
       sendPaymentReceived({
         orderNumber,
-        customerName: customer.name,
+        customerName: fullName || customer.company_name || "Cliente Jocril",
         customerEmail: customer.email,
         total: order.total_amount_with_vat,
       });

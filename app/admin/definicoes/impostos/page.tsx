@@ -2,7 +2,7 @@
 
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 import { PageHeader, SettingsTabs, FormRow, AdminInput, AdminToggle } from "@/components/admin/SettingsHelpers";
 
 const rates = [
@@ -21,10 +21,10 @@ export default function AdminDefinicoesImpostosPage() {
     <AdminShell active="taxes" breadcrumbs={["Admin", "Definições", "IVA e impostos"]}>
       <PageHeader
         title="IVA e impostos"
-        lede="Taxas aplicáveis consoante o tipo de produto e destino. A Jocril está enquadrada no regime normal de IVA com periodicidade mensal."
+        lede="Vista de leitura das taxas aplicáveis por produto e destino. Sincronização, criação e edição ainda não estão ligadas."
         actions={<>
-          <button style={adminGhost}>Sincronizar AT</button>
-          <button style={adminPrimary}>+ Nova taxa</button>
+          <button style={adminDisabled} disabled title="Sincronização AT ainda não ligada">Sincronizar AT</button>
+          <button style={adminDisabled} disabled title="Criação de taxas ainda não ligada">+ Nova taxa</button>
         </>}
       />
       <SettingsTabs active="taxes" />
@@ -41,7 +41,7 @@ export default function AdminDefinicoesImpostosPage() {
               <span style={{ fontFamily: "var(--font-geist-sans)", fontSize: 20, letterSpacing: "-.03em", color: "var(--color-light-base-primary)" }}>{r.value}%</span>
               <span className="text-mono-xs" style={{ color: "var(--color-base-400)" }}>{r.region}</span>
               <span className="text-mono-xs" style={{ color: "var(--color-base-500)" }}>{r.usage}</span>
-              <span style={{ color: "var(--color-base-600)", cursor: "pointer" }}>⋯</span>
+              <span title="Edição ainda não ligada" style={{ color: "var(--color-base-700)", cursor: "not-allowed" }}>⋯</span>
             </div>
           ))}
         </div>
@@ -51,22 +51,22 @@ export default function AdminDefinicoesImpostosPage() {
         <AdminCard title="Regime fiscal">
           <div style={{ padding: "2px 18px" }}>
             <FormRow label="Regime" hint="Enquadramento atual para efeitos de IVA.">
-              <AdminInput value="Regime Normal · Periodicidade Mensal" width={360}/>
+              <AdminInput value="Regime Normal · Periodicidade Mensal" width={360} readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="Número de IVA" hint="Mesmo que NIF para empresas portuguesas.">
-              <AdminInput value="PT500842160" width={220}/>
+              <AdminInput value="PT500842160" width={220} readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="Validação VIES automática" hint="Validar NIF intra-UE no sistema VIES ao criar encomenda B2B.">
-              <AdminToggle on={true}/>
+              <AdminToggle on={true} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Aplicar isenção Art.º 14.º RITI" hint="Isentar automaticamente encomendas intra-UE com NIF válido.">
-              <AdminToggle on={true}/>
+              <AdminToggle on={true} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Preços apresentados" hint="Como os preços são exibidos nas páginas de produto.">
-              <AdminInput value="Com IVA incluído (B2C) · Sem IVA (B2B)" width={380}/>
+              <AdminInput value="Com IVA incluído (B2C) · Sem IVA (B2B)" width={380} readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="Comunicar faturas à AT" hint="SAF-T automático até ao dia 5 do mês seguinte." last>
-              <AdminToggle on={true} label="Via Phc Contabilidade"/>
+              <AdminToggle on={true} label="Via Phc Contabilidade" disabled title="Regra ainda não persistida"/>
             </FormRow>
           </div>
         </AdminCard>

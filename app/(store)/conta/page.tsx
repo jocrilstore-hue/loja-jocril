@@ -1,36 +1,39 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useEffect, useState, type ReactNode } from 'react';
+import { useClerk, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
 
-type Status = 'shipped' | 'delivered' | 'returned';
-
-const ORDERS: { n: string; d: string; items: number; total: string; status: Status }[] = [
-  { n: 'JOC-25-04821', d: '14 Abr 2026', items: 3, total: '€ 186,40', status: 'shipped'   },
-  { n: 'JOC-25-04773', d: '02 Abr 2026', items: 1, total: '€  54,00', status: 'delivered' },
-  { n: 'JOC-25-04702', d: '19 Mar 2026', items: 8, total: '€ 622,80', status: 'delivered' },
-  { n: 'JOC-25-04611', d: '02 Mar 2026', items: 2, total: '€  96,50', status: 'delivered' },
-  { n: 'JOC-25-04502', d: '18 Fev 2026', items: 4, total: '€ 248,00', status: 'returned'  },
-];
+type AccountOrder = {
+  order_number: string;
+  status: string;
+  payment_status: string;
+  total_amount_with_vat: number;
+  created_at: string;
+  items?: unknown[];
+};
 
 const ADDRESSES = [
   { kind: 'Entrega',    name: 'Maria Silva',          street: 'Rua da Vinha 12, 3º', city: '1200-123 Lisboa', phone: '+351 912 345 678', nif: '',              default: true  },
   { kind: 'Faturação', name: 'Ponto & Linha, Lda.',   street: 'Av. da República 88', city: '1050-210 Lisboa', phone: '+351 213 400 211', nif: 'NIF 515 998 441', default: false },
 ];
 
-const STATUS_MAP: Record<Status, { l: string; c: string }> = {
-  shipped:   { l: 'Em trânsito', c: 'var(--color-accent-100)' },
-  delivered: { l: 'Entregue',    c: 'var(--color-secondary)'  },
-  returned:  { l: 'Devolvida',   c: 'var(--color-base-500)'   },
+const STATUS_MAP: Record<string, { l: string; c: string }> = {
+  pending:    { l: 'Pendente',      c: 'var(--color-accent-100)' },
+  confirmed:  { l: 'Confirmada',    c: 'var(--color-accent-100)' },
+  processing: { l: 'Em preparação', c: 'var(--color-accent-100)' },
+  shipped:    { l: 'Em trânsito',   c: 'var(--color-accent-100)' },
+  delivered:  { l: 'Entregue',      c: 'var(--color-secondary)'  },
+  cancelled:  { l: 'Cancelada',     c: 'var(--color-base-500)'   },
+  returned:   { l: 'Devolvida',     c: 'var(--color-base-500)'   },
 };
 
 const TABS = [
   { k: 'overview',  t: 'Resumo'       },
-  { k: 'orders',    t: 'Encomendas', n: 12 },
-  { k: 'addresses', t: 'Moradas',    n: 2  },
+  { k: 'orders',    t: 'Encomendas'  },
+  { k: 'addresses', t: 'Moradas'     },
   { k: 'profile',   t: 'Perfil'       },
   { k: 'notif',     t: 'Notificações' },
 ] as const;
@@ -52,7 +55,42 @@ const INPUT_STYLE: React.CSSProperties = {
 
 export default function ContaPage() {
   const [tab, setTab] = useState<string>('overview');
-  const { user } = useUser();
+  const [orders, setOrders] = useState<AccountOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      setOrders([]);
+      setOrdersLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    async function loadOrders() {
+      setOrdersLoading(true);
+      setOrdersError(null);
+      try {
+        const response = await fetch('/api/orders', { signal: controller.signal });
+        const payload = await response.json() as { success: boolean; data?: AccountOrder[]; error?: string };
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error ?? 'Erro ao carregar encomendas');
+        }
+        setOrders(payload.data ?? []);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        setOrdersError(error instanceof Error ? error.message : 'Erro ao carregar encomendas');
+      } finally {
+        setOrdersLoading(false);
+      }
+    }
+
+    loadOrders();
+    return () => controller.abort();
+  }, [isLoaded, isSignedIn]);
 
   const displayName  = user?.fullName ?? user?.firstName ?? 'Cliente';
   const displayEmail = user?.primaryEmailAddress?.emailAddress ?? '';
@@ -72,12 +110,13 @@ export default function ContaPage() {
                 {displayEmail && <><span style={{ color: 'var(--color-light-base-primary)' }}>{displayEmail}</span> · </>}Cliente desde <span style={{ color: 'var(--color-light-base-primary)' }}>{since}</span>{/* TODO: B5b — order count + tier progress */}
               </p>
             </div>
-            <Button variant="outline">Terminar sessão</Button>
+            <Button variant="outline" onClick={() => signOut({ redirectUrl: '/' })}>Terminar sessão</Button>
           </div>
 
           <div style={{ display: 'flex', gap: 2 }}>
             {TABS.map((t) => {
               const on = t.k === tab;
+              const count = t.k === 'orders' ? orders.length : t.k === 'addresses' ? ADDRESSES.length : undefined;
               return (
                 <button key={t.k} onClick={() => setTab(t.k)} style={{
                   padding: '14px 18px', background: 'transparent', border: 'none', cursor: 'pointer',
@@ -86,7 +125,7 @@ export default function ContaPage() {
                   fontFamily: 'var(--font-geist-mono)', fontSize: 12, letterSpacing: '-.015rem',
                   textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8,
                 }}>
-                  {t.t} {'n' in t && <span style={{ color: 'var(--color-base-700)' }}>· {t.n}</span>}
+                  {t.t} {count !== undefined && <span style={{ color: 'var(--color-base-700)' }}>· {count}</span>}
                 </button>
               );
             })}
@@ -100,20 +139,24 @@ export default function ContaPage() {
           {tab === 'overview' && (
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
               <div>
-                <Card title="Últimas encomendas" right={<button className="text-mono-xs" style={{ color: 'var(--color-accent-100)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'var(--font-geist-mono)', fontSize: 12 }}>Ver todas →</button>}>
+                <Card title="Últimas encomendas" right={<button onClick={() => setTab('orders')} className="text-mono-xs" style={{ color: 'var(--color-accent-100)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'var(--font-geist-mono)', fontSize: 12 }}>Ver todas →</button>}>
                   <div style={{ display: 'grid' }}>
-                    {ORDERS.slice(0, 4).map((o, i) => {
-                      const s = STATUS_MAP[o.status];
+                    {ordersLoading && <EmptyLine>A carregar encomendas…</EmptyLine>}
+                    {ordersError && <EmptyLine>{ordersError}</EmptyLine>}
+                    {!ordersLoading && !ordersError && orders.length === 0 && <EmptyLine>Ainda não tem encomendas.</EmptyLine>}
+                    {orders.slice(0, 4).map((o, i) => {
+                      const s = STATUS_MAP[o.status] ?? { l: o.status, c: 'var(--color-base-400)' };
+                      const itemCount = o.items?.length ?? 0;
                       return (
-                        <div key={o.n} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr auto', gap: 20, alignItems: 'center', padding: '14px 0', borderTop: i === 0 ? 'none' : '1px dashed var(--color-base-800)' }}>
+                        <div key={o.order_number} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr auto', gap: 20, alignItems: 'center', padding: '14px 0', borderTop: i === 0 ? 'none' : '1px dashed var(--color-base-800)' }}>
                           <div>
-                            <div style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 13, color: 'var(--color-light-base-primary)' }}>{o.n}</div>
-                            <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginTop: 3 }}>{o.d}</div>
+                            <div style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 13, color: 'var(--color-light-base-primary)' }}>{o.order_number}</div>
+                            <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginTop: 3 }}>{formatOrderDate(o.created_at)}</div>
                           </div>
-                          <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{o.items} {o.items === 1 ? 'artigo' : 'artigos'}</span>
-                          <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-light-base-primary)' }}>{o.total}</span>
+                          <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{itemCount} {itemCount === 1 ? 'artigo' : 'artigos'}</span>
+                          <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-light-base-primary)' }}>{formatMoney(o.total_amount_with_vat)}</span>
                           <span className="text-mono-xs" style={{ color: s.c }}>● {s.l}</span>
-                          <Link href={`/conta/encomenda/${o.n}`} style={{ color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-mono)', fontSize: 12, textDecoration: 'none' }}>Ver →</Link>
+                          <Link href={`/encomenda/${o.order_number}`} style={{ color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-mono)', fontSize: 12, textDecoration: 'none' }}>Ver →</Link>
                         </div>
                       );
                     })}
@@ -172,22 +215,26 @@ export default function ContaPage() {
           )}
 
           {tab === 'orders' && (
-            <Card title={`Todas as encomendas (${ORDERS.length})`} right={<input placeholder="Procurar por nº ou produto…" style={{ padding: '8px 12px', background: 'var(--color-dark-base-primary)', border: '1px solid var(--color-base-800)', borderRadius: 2, color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-sans)', fontSize: 13, width: 260 }}/>}>
+            <Card title={`Todas as encomendas (${orders.length})`} right={<input placeholder="Procurar por nº ou produto…" style={{ padding: '8px 12px', background: 'var(--color-dark-base-primary)', border: '1px solid var(--color-base-800)', borderRadius: 2, color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-sans)', fontSize: 13, width: 260 }}/>}>
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr 1fr auto', gap: 20, padding: '10px 0 12px', borderBottom: '1px dashed var(--color-base-800)' }}>
                 {['Nº encomenda', 'Data', 'Artigos', 'Total', 'Estado', ''].map((h) => (
                   <span key={h} className="text-mono-xs" style={{ color: 'var(--color-base-500)', textTransform: 'uppercase' }}>{h}</span>
                 ))}
               </div>
-              {ORDERS.map((o) => {
-                const s = STATUS_MAP[o.status];
+              {ordersLoading && <EmptyLine>A carregar encomendas…</EmptyLine>}
+              {ordersError && <EmptyLine>{ordersError}</EmptyLine>}
+              {!ordersLoading && !ordersError && orders.length === 0 && <EmptyLine>Ainda não tem encomendas.</EmptyLine>}
+              {orders.map((o) => {
+                const s = STATUS_MAP[o.status] ?? { l: o.status, c: 'var(--color-base-400)' };
+                const itemCount = o.items?.length ?? 0;
                 return (
-                  <div key={o.n} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr 1fr auto', gap: 20, padding: '14px 0', alignItems: 'center', borderBottom: '1px dashed var(--color-base-900)' }}>
-                    <span style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 13, color: 'var(--color-light-base-primary)' }}>{o.n}</span>
-                    <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{o.d}</span>
-                    <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{o.items}</span>
-                    <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-light-base-primary)' }}>{o.total}</span>
+                  <div key={o.order_number} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr 1fr auto', gap: 20, padding: '14px 0', alignItems: 'center', borderBottom: '1px dashed var(--color-base-900)' }}>
+                    <span style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 13, color: 'var(--color-light-base-primary)' }}>{o.order_number}</span>
+                    <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{formatOrderDate(o.created_at)}</span>
+                    <span className="text-mono-xs" style={{ color: 'var(--color-base-400)' }}>{itemCount}</span>
+                    <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-light-base-primary)' }}>{formatMoney(o.total_amount_with_vat)}</span>
                     <span className="text-mono-xs" style={{ color: s.c }}>● {s.l}</span>
-                    <Link href={`/conta/encomenda/${o.n}`} style={{ color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-mono)', fontSize: 12, textDecoration: 'none' }}>Ver →</Link>
+                    <Link href={`/encomenda/${o.order_number}`} style={{ color: 'var(--color-light-base-primary)', fontFamily: 'var(--font-geist-mono)', fontSize: 12, textDecoration: 'none' }}>Ver →</Link>
                   </div>
                 );
               })}
@@ -218,24 +265,26 @@ export default function ContaPage() {
 
           {tab === 'profile' && (
             <Card title="Dados pessoais">
-              {/* TODO: B5b — profile edit form wired to Clerk */}
+              <p style={{ margin: '0 0 18px', fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: 'var(--color-base-400)' }}>
+                Edição de perfil aguarda decisão de propriedade dos dados entre Clerk e cliente/faturação.
+              </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                 {[
                   ['Nome',    user?.fullName ?? user?.firstName ?? '—'],
                   ['Email',   user?.primaryEmailAddress?.emailAddress ?? '—'],
-                  ['Telefone','+351 912 345 678'],
-                  ['NIF',     '218 432 761'],
-                  ['Empresa', 'Ponto & Linha, Lda.'],
+                  ['Telefone','—'],
+                  ['NIF',     '—'],
+                  ['Empresa', '—'],
                   ['Idioma',  'Português (PT)'],
                 ].map(([l, v]) => (
                   <div key={l}>
                     <label className="text-mono-xs" style={{ display: 'block', marginBottom: 6, color: 'var(--color-base-500)' }}>{l}</label>
-                    <input defaultValue={v} style={INPUT_STYLE}/>
+                    <input defaultValue={v} disabled style={{ ...INPUT_STYLE, opacity: 0.65 }}/>
                   </div>
                 ))}
               </div>
               <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px dashed var(--color-base-800)', display: 'flex', gap: 10 }}>
-                <Button variant="solid">Guardar alterações</Button>
+                <Button variant="solid" disabled>Guardar alterações</Button>
                 <button style={{ alignSelf: 'center', fontFamily: 'var(--font-geist-mono)', fontSize: 12, color: 'var(--color-destructive)', cursor: 'pointer', background: 'none', border: 'none' }}>Eliminar conta</button>
               </div>
             </Card>
@@ -259,6 +308,24 @@ export default function ContaPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function formatMoney(value: number) {
+  return `€ ${value.toFixed(2).replace('.', ',')}`;
+}
+
+function formatOrderDate(value: string) {
+  return new Date(value).toLocaleDateString('pt-PT', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  });
+}
+
+function EmptyLine({ children }: { children: ReactNode }) {
+  return (
+    <div style={{ padding: '18px 0', fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-base-400)' }}>
+      {children}
+    </div>
   );
 }
 

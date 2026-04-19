@@ -61,17 +61,21 @@ export function FormRow({ label, hint, children, last }: { label: string; hint?:
 }
 
 export function AdminInput({
-  value, placeholder, type = "text", suffix, width,
+  value, placeholder, type = "text", suffix, width, readOnly, disabled, title,
 }: {
-  value?: string; placeholder?: string; type?: string; suffix?: string; width?: number | string;
+  value?: string; placeholder?: string; type?: string; suffix?: string; width?: number | string; readOnly?: boolean; disabled?: boolean; title?: string;
 }) {
+  const inactive = readOnly || disabled;
   return (
-    <div style={{ display: "inline-flex", alignItems: "stretch", border: "1px solid var(--color-base-800)", borderRadius: 2, background: "var(--color-dark-base-primary)", width }}>
+    <div title={title} style={{ display: "inline-flex", alignItems: "stretch", border: "1px solid var(--color-base-800)", borderRadius: 2, background: "var(--color-dark-base-primary)", width, opacity: inactive ? 0.72 : 1 }}>
       <input
         defaultValue={value}
         placeholder={placeholder}
         type={type}
-        style={{ flex: 1, padding: "9px 12px", background: "transparent", border: "none", outline: "none", color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14, letterSpacing: "-.015em", width: "100%" }}
+        readOnly={readOnly}
+        disabled={disabled}
+        aria-readonly={readOnly || undefined}
+        style={{ flex: 1, padding: "9px 12px", background: "transparent", border: "none", outline: "none", color: inactive ? "var(--color-base-400)" : "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14, letterSpacing: "-.015em", width: "100%", cursor: inactive ? "default" : "text" }}
       />
       {suffix && (
         <span className="text-mono-xs" style={{ padding: "0 12px", display: "grid", placeItems: "center", color: "var(--color-base-500)", borderLeft: "1px solid var(--color-base-800)" }}>{suffix}</span>
@@ -80,10 +84,17 @@ export function AdminInput({
   );
 }
 
-export function AdminToggle({ on, label }: { on?: boolean; label?: string }) {
+export function AdminToggle({ on, label, disabled, title }: { on?: boolean; label?: string; disabled?: boolean; title?: string }) {
   const [checked, setChecked] = useState(on ?? false);
   return (
-    <div onClick={() => setChecked(!checked)} style={{ display: "inline-flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+    <div
+      onClick={() => {
+        if (!disabled) setChecked(!checked);
+      }}
+      aria-disabled={disabled || undefined}
+      title={title}
+      style={{ display: "inline-flex", alignItems: "center", gap: 10, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.65 : 1 }}
+    >
       <div style={{ width: 34, height: 18, borderRadius: 999, padding: 2, background: checked ? "var(--color-accent-100)" : "var(--color-base-800)", transition: "background .15s" }}>
         <div style={{ width: 14, height: 14, borderRadius: 999, background: "#fff", transform: `translateX(${checked ? 16 : 0}px)`, transition: "transform .15s" }}/>
       </div>

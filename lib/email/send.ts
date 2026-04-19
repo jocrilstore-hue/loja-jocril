@@ -48,6 +48,15 @@ function orderNumberBox(orderNumber: string): string {
   </div>`;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 // ---------------------------------------------------------------------------
 
 export async function sendOrderConfirmation(data: {
@@ -156,4 +165,47 @@ export async function sendPaymentReceived(data: {
       html,
     })
     .catch((e) => console.error("sendPaymentReceived failed:", e));
+}
+
+// ---------------------------------------------------------------------------
+
+export async function sendContactMessage(data: {
+  name: string;
+  company?: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}): Promise<void> {
+  const html = baseTemplate(
+    `Novo contacto — ${data.subject}`,
+    `<h2 style="font-size:20px;font-weight:600;margin:0 0 16px 0;">Nova mensagem da loja online</h2>
+    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+      ${[
+        ["Assunto", data.subject],
+        ["Nome", data.name],
+        ["Empresa", data.company || "—"],
+        ["Email", data.email],
+        ["Telefone", data.phone || "—"],
+      ].map(([label, value]) => `
+        <tr style="border-bottom:1px solid ${borderLight};">
+          <td style="padding:10px 0;font-size:13px;color:${textMuted};font-family:${mono};text-transform:uppercase;letter-spacing:0.5px;width:34%;">${escapeHtml(label)}</td>
+          <td style="padding:10px 0;font-size:15px;">${escapeHtml(value)}</td>
+        </tr>
+      `).join("")}
+    </table>
+    <div style="margin-top:20px;padding:16px;border:1px dashed ${borderLight};background-color:${bgMuted};white-space:pre-wrap;font-size:15px;">${escapeHtml(data.message)}</div>`
+  );
+
+  const result = await resend.emails.send({
+    from: `Jocril Acrílicos <${EMAIL_FROM}>`,
+    to: [ADMIN_EMAIL],
+    replyTo: data.email,
+    subject: `Contacto loja — ${data.subject} — ${data.name}`,
+    html,
+  });
+
+  if (result.error) {
+    throw new Error(result.error.message);
+  }
 }

@@ -2,7 +2,7 @@
 
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 import { PageHeader, SettingsTabs, FormRow, AdminInput, AdminToggle } from "@/components/admin/SettingsHelpers";
 
 const users = [
@@ -29,10 +29,10 @@ export default function AdminDefinicoesEquipaPage() {
     <AdminShell active="team" breadcrumbs={["Admin", "Definições", "Equipa"]}>
       <PageHeader
         title="Equipa e utilizadores"
-        lede="Utilizadores com acesso ao backoffice. A autenticação é feita via email + 2FA obrigatório para Administradores e Gestores."
+        lede="Vista de leitura dos utilizadores com acesso ao backoffice. Convites, exportação e regras de segurança ainda não estão ligados."
         actions={<>
-          <button style={adminGhost}>Exportar</button>
-          <button style={adminPrimary}>+ Convidar utilizador</button>
+          <button style={adminDisabled} disabled title="Exportação ainda não ligada">Exportar</button>
+          <button style={adminDisabled} disabled title="Convites ainda não ligados">+ Convidar utilizador</button>
         </>}
       />
       <SettingsTabs active="team" />
@@ -49,14 +49,14 @@ export default function AdminDefinicoesEquipaPage() {
               <span className="text-mono-xs" style={{ color: "var(--color-base-400)" }}>{u.email}</span>
               <span className="text-mono-xs" style={{ color: "var(--color-accent-300)", padding: "2px 8px", border: "1px solid var(--color-base-800)", borderRadius: 2, width: "fit-content" }}>{u.role}</span>
               <span className="text-mono-xs" style={{ color: u.pending ? "var(--color-accent-300)" : "var(--color-base-500)" }}>{u.pending ? "● " : ""}{u.last}</span>
-              <span style={{ color: "var(--color-base-600)", cursor: "pointer" }}>⋯</span>
+              <span title="Edição ainda não ligada" style={{ color: "var(--color-base-700)", cursor: "not-allowed" }}>⋯</span>
             </div>
           ))}
         </div>
       </AdminCard>
 
       <div style={{ marginTop: 32 }}>
-        <AdminCard title="Perfis e permissões" right={<button style={adminGhost}>+ Novo perfil</button>}>
+        <AdminCard title="Perfis e permissões" right={<button style={adminDisabled} disabled title="Criação de perfis ainda não ligada">+ Novo perfil</button>}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, padding: 18 }}>
             {roles.map(r => (
               <div key={r.name} style={{ border: "1px dashed var(--color-base-800)", borderRadius: 4, padding: 18, background: "var(--color-dark-base-primary)" }}>
@@ -77,13 +77,13 @@ export default function AdminDefinicoesEquipaPage() {
         <AdminCard title="Segurança">
           <div style={{ padding: "2px 18px" }}>
             <FormRow label="2FA obrigatório" hint="Exigir autenticação de dois fatores para Administradores e Gestores.">
-              <AdminToggle on={true}/>
+              <AdminToggle on={true} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Sessão expira após" hint="Tempo de inatividade antes de pedir novo login.">
-              <AdminInput value="30" width={100} suffix="min"/>
+              <AdminInput value="30" width={100} suffix="min" readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="IPs permitidos" hint="Opcional. Restringe acesso ao backoffice a redes específicas." last>
-              <AdminInput value="Todos os IPs · sem restrição" width={360}/>
+              <AdminInput value="Todos os IPs · sem restrição" width={360} readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
           </div>
         </AdminCard>

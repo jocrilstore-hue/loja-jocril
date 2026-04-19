@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useCart } from "@/contexts/cart-context";
@@ -263,7 +264,7 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
             borderBottom: "1px dashed var(--color-base-900)",
           }}
         >
-          <SearchField compact />
+          <SearchField compact onSearch={() => setDrawerOpen(false)} />
         </div>
 
         <nav
@@ -403,10 +404,23 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
   );
 }
 
-function SearchField({ compact }: { compact?: boolean }) {
+function SearchField({ compact, onSearch }: { compact?: boolean; onSearch?: () => void }) {
+  const router = useRouter();
   const [focus, setFocus] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const cleanQuery = query.trim();
+    if (!cleanQuery) return;
+    onSearch?.();
+    router.push(`/pesquisa?q=${encodeURIComponent(cleanQuery)}`);
+  };
+
   return (
-    <label
+    <form
+      onSubmit={handleSubmit}
+      role="search"
       style={{
         display: "flex",
         alignItems: "center",
@@ -434,6 +448,8 @@ function SearchField({ compact }: { compact?: boolean }) {
         <path d="m20 20-3.5-3.5" />
       </svg>
       <input
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         placeholder="Procurar produtos, referências…"
@@ -462,7 +478,7 @@ function SearchField({ compact }: { compact?: boolean }) {
           ⌘ K
         </span>
       )}
-    </label>
+    </form>
   );
 }
 

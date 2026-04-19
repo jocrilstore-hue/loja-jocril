@@ -42,6 +42,8 @@ export default async function ProdutosPage({
       categoryName={category?.name ?? null}
       categoryDescription={category?.description ?? null}
       totalInCategory={products.length}
+      initialSort={sp.sort ?? "relevance"}
+      initialMaxPrice={sp.maxPrice ? Number(sp.maxPrice) : undefined}
     />
   );
 }

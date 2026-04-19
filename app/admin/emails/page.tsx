@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 
 const templates = [
   { k: "received",  num: "01", kind: "Transacional", title: "Encomenda recebida",           sub: "Confirmação imediata após submissão no catálogo B2B." },
@@ -109,9 +109,9 @@ export default function AdminEmailsPage() {
               ))}
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              <button style={adminGhost}>Duplicar</button>
-              <button style={adminGhost}>Ver texto puro</button>
-              <button style={adminPrimary}>Editar template</button>
+              <button style={adminDisabled} disabled title="Duplicação ainda não ligada">Duplicar</button>
+              <button style={adminDisabled} disabled title="Vista em texto puro ainda não ligada">Ver texto puro</button>
+              <button style={adminDisabled} disabled title="Edição de templates ainda não ligada">Editar template</button>
             </div>
           </div>
           <EmailPreview templateKey={active} />

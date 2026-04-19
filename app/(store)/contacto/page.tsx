@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
 
@@ -19,11 +20,11 @@ const INFO_ROWS: { k: string; v: string[] }[] = [
   { k: 'Horário',  v: ['Seg–Sex · 09h00 – 18h00', 'Sáb · 09h00 – 13h00'] },
 ];
 
-const FIELDS: [string, string][] = [
-  ['Nome',                 'Maria Silva'],
-  ['Empresa (opcional)',   'Agência Ponto & Linha'],
-  ['Email',               'maria@agencia.pt'],
-  ['Telefone (opcional)', '+351 912 345 678'],
+const FIELDS = [
+  { label: 'Nome',                 name: 'name',    placeholder: 'Maria Silva',            required: true  },
+  { label: 'Empresa (opcional)',   name: 'company', placeholder: 'Agência Ponto & Linha',  required: false },
+  { label: 'Email',                name: 'email',   placeholder: 'maria@agencia.pt',       required: true  },
+  { label: 'Telefone (opcional)',  name: 'phone',   placeholder: '+351 912 345 678',       required: false },
 ];
 
 const INPUT_STYLE: React.CSSProperties = {
@@ -36,6 +37,41 @@ const INPUT_STYLE: React.CSSProperties = {
 
 export default function ContactoPage() {
   const [subject, setSubject] = useState('orcamento');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+    setSubmitStatus(null);
+    try {
+      const subjectLabel = SUBJECTS.find((item) => item.k === subject)?.l ?? subject;
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: String(form.get('name') ?? ''),
+          company: String(form.get('company') ?? ''),
+          email: String(form.get('email') ?? ''),
+          phone: String(form.get('phone') ?? ''),
+          subject: subjectLabel,
+          message: String(form.get('message') ?? ''),
+          consent: form.get('consent') === 'on',
+        }),
+      });
+      const payload = await response.json() as { success: boolean; message?: string; error?: string };
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error ?? 'Erro ao enviar mensagem');
+      }
+      setSubmitStatus({ ok: true, text: payload.message ?? 'Mensagem enviada com sucesso' });
+      event.currentTarget.reset();
+    } catch (error) {
+      setSubmitStatus({ ok: false, text: error instanceof Error ? error.message : 'Erro ao enviar mensagem' });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main id="main">
@@ -51,7 +87,7 @@ export default function ContactoPage() {
 
       <section style={{ padding: '0 40px 80px', background: 'var(--color-dark-base-primary)' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'start' }}>
-          <div style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, background: 'var(--color-dark-base-secondary)', padding: 32 }}>
+          <form onSubmit={handleSubmit} style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, background: 'var(--color-dark-base-secondary)', padding: 32 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24 }}>
               <span className="text-mono-sm" style={{ color: 'var(--color-accent-100)' }}>01</span>
               <h2 className="heading-2" style={{ margin: 0, color: 'var(--color-light-base-primary)' }}>Envie-nos uma mensagem</h2>
@@ -63,7 +99,7 @@ export default function ContactoPage() {
                 {SUBJECTS.map((s) => {
                   const on = subject === s.k;
                   return (
-                    <button key={s.k} onClick={() => setSubject(s.k)} style={{
+                    <button key={s.k} type="button" onClick={() => setSubject(s.k)} style={{
                       padding: '8px 12px', borderRadius: 2, cursor: 'pointer',
                       border: `1px dashed ${on ? 'var(--color-accent-100)' : 'var(--color-base-700)'}`,
                       background: on ? 'rgba(45,212,205,.10)' : '#424242',
@@ -75,17 +111,19 @@ export default function ContactoPage() {
               </div>
             </div>
 
-            {FIELDS.map(([l, v]) => (
-              <div key={l} style={{ marginBottom: 16 }}>
-                <label className="text-mono-xs" style={{ display: 'block', marginBottom: 8, color: 'var(--color-base-500)' }}>{l}</label>
-                <input defaultValue={v} style={INPUT_STYLE}/>
+            {FIELDS.map((field) => (
+              <div key={field.name} style={{ marginBottom: 16 }}>
+                <label className="text-mono-xs" style={{ display: 'block', marginBottom: 8, color: 'var(--color-base-500)' }}>{field.label}</label>
+                <input name={field.name} placeholder={field.placeholder} required={field.required} style={INPUT_STYLE}/>
               </div>
             ))}
 
             <div style={{ marginBottom: 20 }}>
               <label className="text-mono-xs" style={{ display: 'block', marginBottom: 8, color: 'var(--color-base-500)' }}>Mensagem</label>
               <textarea
-                defaultValue={"Olá,\n\nGostaria de um orçamento para 250 unidades de um expositor A3 com 6 prateleiras, em acrílico fumado com logo por corte laser. Entrega até final de Maio.\n\nObrigada,\nMaria"}
+                name="message"
+                placeholder={"Olá,\n\nGostaria de um orçamento para 250 unidades de um expositor A3 com 6 prateleiras, em acrílico fumado com logo por corte laser. Entrega até final de Maio.\n\nObrigada,\nMaria"}
+                required
                 rows={7}
                 style={{ ...INPUT_STYLE, resize: 'vertical' }}
               />
@@ -101,14 +139,19 @@ export default function ContactoPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, paddingTop: 20, borderTop: '1px dashed var(--color-base-800)' }}>
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontFamily: 'var(--font-geist-sans)', fontSize: 12, color: 'var(--color-base-400)', maxWidth: '44ch' }}>
-                <input type="checkbox" defaultChecked style={{ marginTop: 3, accentColor: 'var(--color-accent-100)' }}/>
+                <input name="consent" type="checkbox" required defaultChecked style={{ marginTop: 3, accentColor: 'var(--color-accent-100)' }}/>
                 Li e aceito a{' '}
                 <button style={{ color: 'var(--color-accent-100)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Política de Privacidade</button>.
                 {' '}Os meus dados serão usados apenas para responder ao pedido.
               </label>
-              <Button variant="solid">Enviar mensagem →</Button>
+              <Button type="submit" disabled={submitting} variant="solid">{submitting ? 'A enviar…' : 'Enviar mensagem →'}</Button>
             </div>
-          </div>
+            {submitStatus && (
+              <div style={{ marginTop: 16, padding: '10px 14px', border: `1px dashed ${submitStatus.ok ? 'var(--color-accent-100)' : 'var(--color-destructive)'}`, borderRadius: 2, color: submitStatus.ok ? 'var(--color-accent-100)' : 'var(--color-destructive)', fontFamily: 'var(--font-geist-sans)', fontSize: 13 }}>
+                {submitStatus.text}
+              </div>
+            )}
+          </form>
 
           <div>
             <div style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, overflow: 'hidden' }}>

@@ -1,0 +1,2734 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "startedAt": "2026-04-19T14:43:18.854Z",
+  "routeStatuses": [
+    {
+      "path": "/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/produtos",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/produtos?cat=acrilicos-chao",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/categorias",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/pesquisa",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/pesquisa?q=expositor",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/produtos/bolsa-resistente-a-agua-autoadesivo-a3",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/carrinho",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/contacto",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fcontacto"
+    },
+    {
+      "path": "/conta",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fconta"
+    },
+    {
+      "path": "/encomendas",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fencomendas"
+    },
+    {
+      "path": "/encomenda/AUDIT-NOT-FOUND",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/entrar",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/recuperar-password",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/confirmar-email",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/faq",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/sobre",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/processos",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/portfolio",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/sitemap",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/legais/cookies",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/legais/devolucoes",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/legais/envios",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/legais/privacidade",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/legais/termos",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/manutencao",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/admin",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin"
+    },
+    {
+      "path": "/admin/login",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Flogin"
+    },
+    {
+      "path": "/admin/produtos",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fprodutos"
+    },
+    {
+      "path": "/admin/produtos/novo",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fprodutos%2Fnovo"
+    },
+    {
+      "path": "/admin/encomendas",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fencomendas"
+    },
+    {
+      "path": "/admin/clientes",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fclientes"
+    },
+    {
+      "path": "/admin/definicoes",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fdefinicoes"
+    },
+    {
+      "path": "/termos",
+      "status": 404,
+      "location": null
+    },
+    {
+      "path": "/privacidade",
+      "status": 404,
+      "location": null
+    },
+    {
+      "path": "/politica-privacidade",
+      "status": 404,
+      "location": null
+    },
+    {
+      "path": "/admin/entrar",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fentrar"
+    },
+    {
+      "path": "/admin/escaloes",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fescaloes"
+    },
+    {
+      "path": "/admin/produtos/variante",
+      "status": 307,
+      "location": "/entrar?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fprodutos%2Fvariante"
+    }
+  ],
+  "runtimePages": {
+    "/": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Ver catálogo →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Orçamento custom",
+          "href": "/contacto"
+        },
+        {
+          "text": "Ver todas as categorias →",
+          "href": "/categorias"
+        },
+        {
+          "text": "01Acrílicos Chão3 ref.",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "02Acrílicos Mesa104 ref.",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "03Acrílicos Parede26 ref.",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "04Caixas Acrílico50 ref.",
+          "href": "/produtos?cat=caixas-acrilico"
+        },
+        {
+          "text": "05Molduras Acrílico0 ref.",
+          "href": "/produtos?cat=molduras-acrilico"
+        },
+        {
+          "text": "06Tombolas Acrílico0 ref.",
+          "href": "/produtos?cat=tombolas-acrilico"
+        },
+        {
+          "text": "Em stockVer produto →J-EXP-FOL-V-A4AcrílicoPorta Folhetos VerticalDesde€ 4,43Esc",
+          "href": "/produtos/expositor-folheto-acrilico-vertical-a4"
+        },
+        {
+          "text": "Em stockVer produto →EXP-FOL-V-A6AcrílicoPorta Folhetos VerticalDesde€ 1,85Escal",
+          "href": "/produtos/expositor-folheto-acrilico-vertical-a6"
+        },
+        {
+          "text": "Em stockVer produto →J-EXP-FOL-V-A5AcrílicoPorta Folhetos VerticalDesde€ 2,34Esc",
+          "href": "/produtos/expositor-folheto-acrilico-vertical-a5"
+        },
+        {
+          "text": "Ver todos os 183 produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Pedir orçamento →",
+          "href": "/contacto"
+        },
+        {
+          "text": "Ver jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Todos os produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Novidades",
+          "href": "/produtos?sort=novidades"
+        },
+        {
+          "text": "Promoções",
+          "href": "/produtos?sort=promocoes"
+        },
+        {
+          "text": "Escalões de preço",
+          "href": "/produtos?tier=escaloes"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Envios e prazos",
+          "href": "/legais/envios"
+        },
+        {
+          "text": "Devoluções",
+          "href": "/legais/devolucoes"
+        },
+        {
+          "text": "FAQ",
+          "href": "/faq"
+        },
+        {
+          "text": "Orçamentos custom",
+          "href": "/contacto"
+        },
+        {
+          "text": "Sobre a Jocril",
+          "href": "/sobre"
+        },
+        {
+          "text": "Processos",
+          "href": "/processos"
+        },
+        {
+          "text": "Portfolio",
+          "href": "/portfolio"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "Termos",
+          "href": "/legais/termos"
+        },
+        {
+          "text": "Privacidade",
+          "href": "/legais/privacidade"
+        },
+        {
+          "text": "Cookies",
+          "href": "/legais/cookies"
+        }
+      ]
+    },
+    "/produtos": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Loja",
+          "href": "/"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Em stockVer produto →J-T4P3FKAcrílicoBase De Exposição VerticalDesde€ 252,00Esca",
+          "href": "/produtos/base-de-exposicao-vertical"
+        },
+        {
+          "text": "Em stockVer produto →J-BMMQLEAcrílicoBloco De Acrílico Personalizado - A4Desde€ ",
+          "href": "/produtos/bloco-de-acrilico-personalizado-a4"
+        },
+        {
+          "text": "Em stockVer produto →J-6599TQAcrílicoBloco Em AcrilicoDesde€ 0,00Escalões1+",
+          "href": "/produtos/bloco-em-acrilico"
+        },
+        {
+          "text": "Em stockVer produto →J-EC2NPUAcrílicoBolsa c/ bi-adesivo verticalDesde€ 3,50Esca",
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a7-74x105cm"
+        },
+        {
+          "text": "Em stockVer produto →BOLSACBI-ADESIVOVERTICAL-A4AcrílicoBolsa c/ bi-adesivo vert",
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a4"
+        },
+        {
+          "text": "Em stockVer produto →J-33CN45AcrílicoBolsa c/ bi-adesivo verticalDesde€ 6,50Esca",
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-PZHIWSAcrílicoBolsa c/ bi-adesivo verticalDesde€ 5,00Esca",
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-Q7MKBIAcrílicoBolsa c/ bi-adesivo verticalDesde€ 16,50Esc",
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-6YN923AcrílicoBolsa C/ Furação HorizontalDesde€ 91,50Esca",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a1-594x84cm"
+        },
+        {
+          "text": "Em stockVer produto →J-AKGO91AcrílicoBolsa C/ Furação HorizontalDesde€ 5,50Escal",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-XNXZOSAcrílicoBolsa C/ Furação HorizontalDesde€ 140,00Esc",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a0-84x119cm"
+        },
+        {
+          "text": "Em stockVer produto →J-QM6H8MAcrílicoBolsa C/ Furação HorizontalDesde€ 36,00Esca",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a2-42x594cm"
+        },
+        {
+          "text": "Em stockVer produto →J-R0GODRAcrílicoBolsa C/ Furação HorizontalDesde€ 4,00Escal",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-QO2OXDAcrílicoBolsa C/ Furação HorizontalDesde€ 2,50Escal",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a7-74x105cm"
+        },
+        {
+          "text": "Em stockVer produto →J-LJER0XAcrílicoBolsa C/ Furação HorizontalDesde€ 13,50Esca",
+          "href": "/produtos/bolsa-c-furacao-horizontal-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-ES0F46AcrílicoBolsa Estático Durable , Auto-Adesivo, Cinz",
+          "href": "/produtos/bolsa-estatico-durable-auto-adesivo-cinzento-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-X13GOBAcrílicoBolsa L Horizontal C/ Porta-CartõesDesde€ 7",
+          "href": "/produtos/bolsa-l-horizontal-c-porta-cartoes"
+        },
+        {
+          "text": "Em stockVer produto →J-T0JFPTAcrílicoBolsa L Vertical C/ Porta-CartõesDesde€ 6,5",
+          "href": "/produtos/bolsa-l-vertical-c-porta-cartoes"
+        },
+        {
+          "text": "Em stockVer produto →J-ZGHM78AcrílicoBolsa Magnético A4Desde€ 5,00Escalões1+",
+          "href": "/produtos/bolsa-magnetico-a4"
+        },
+        {
+          "text": "Em stockVer produto →J-EAL54JAcrílicoBolsa Modelo L A4 C/ Porta-Folhetos DL 220x",
+          "href": "/produtos/bolsa-modelo-l-a4-c-porta-folhetos-dl-220x110mm"
+        },
+        {
+          "text": "Em stockVer produto →J-KVRBUUAcrílicoBolsa Modelo L HorizontalDesde€ 3,00Escalõe",
+          "href": "/produtos/bolsa-modelo-l-horizontal-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-ZBGXLTAcrílicoBolsa Modelo L HorizontalDesde€ 2,50Escalõe",
+          "href": "/produtos/bolsa-modelo-l-horizontal-dl-21x10cm"
+        },
+        {
+          "text": "Em stockVer produto →J-64W9LDAcrílicoBolsa Modelo L HorizontalDesde€ 2,50Escalõe",
+          "href": "/produtos/bolsa-modelo-l-horizontal-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-9BPTP3AcrílicoBolsa Modelo L HorizontalDesde€ 15,00Escalõ",
+          "href": "/produtos/bolsa-modelo-l-horizontal-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-83DS1ZAcrílicoBolsa Modelo L HorizontalDesde€ 4,00Escalõe",
+          "href": "/produtos/bolsa-modelo-l-horizontal-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-X5HO6IAcrílicoBolsa P/ Cabo De AçoDesde€ 184,50Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a0-84x119cm"
+        },
+        {
+          "text": "Em stockVer produto →J-SCPD34AcrílicoBolsa P/ Cabo De AçoDesde€ 3,50Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-YTA39ZAcrílicoBolsa P/ Cabo De AçoDesde€ 11,00Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-E06OB0AcrílicoBolsa P/ Cabo De AçoDesde€ 4,50Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-5SXL9LAcrílicoBolsa P/ Cabo De AçoDesde€ 95,00Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a1-594x84cm"
+        },
+        {
+          "text": "Em stockVer produto →J-KADT9IAcrílicoBolsa P/ Cabo De AçoDesde€ 49,50Escalões1+",
+          "href": "/produtos/bolsa-p-cabo-de-aco-a2-42x594cm"
+        },
+        {
+          "text": "Em stockVer produto →J-BIGAF3AcrílicoBolsa Porta-Folha Modelo T VerticalDesde€ 4",
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-14H4ZDAcrílicoBolsa Porta-Folha Modelo T VerticalDesde€ 1",
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-Q9L1QWAcrílicoBolsa Porta-Folha Modelo T VerticalDesde€ 6",
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-30GMHJAcrílicoBolsa Porta-Folha Modelo T VerticalDesde€ 4",
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-dl-21x10cm"
+        },
+        {
+          "text": "Em stockVer produto →J-D3KEW9AcrílicoBolsa Porta-Folha Modelo T VerticalDesde€ 2",
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-SXOGWOAcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-dl-21x10cm"
+        },
+        {
+          "text": "Em stockVer produto →J-A1HT9AAcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-MANF3NAcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a7-74x105cm"
+        },
+        {
+          "text": "Em stockVer produto →J-M58K05AcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-LPBJ9YAcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-47ATZQAcrílicoBolsa Porta-Menu Horizontal C/ Base De Made",
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-P4LWT1AcrílicoBolsa Porta-Menu TrípticoDesde€ 10,00Escalõ",
+          "href": "/produtos/bolsa-porta-menu-triptico-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-SEBUUJAcrílicoBolsa Porta-Menu TrípticoDesde€ 7,50Escalõe",
+          "href": "/produtos/bolsa-porta-menu-triptico-dl-21x10cm"
+        },
+        {
+          "text": "Em stockVer produto →J-7CXUVTAcrílicoBolsa Porta-Menu Vertical C/ Base De Madeir",
+          "href": "/produtos/bolsa-porta-menu-vertical-c-base-de-madeira-a4-21x30cm"
+        }
+      ]
+    },
+    "/pesquisa?q=expositor": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Em stockVer produto →J-UAIEFMAcrílicoBolsa Resistente À Água Autoadesivo A3Desde",
+          "href": "/produtos/bolsa-resistente-a-agua-autoadesivo-a3"
+        },
+        {
+          "text": "Em stockVer produto →J-Y6GY33AcrílicoBolsa Vertical P/ Cabo De Aço B0 100 X 141.",
+          "href": "/produtos/bolsa-vertical-p-cabo-de-aco-b0-100-x-1414-cm-horizontal"
+        },
+        {
+          "text": "Em stockVer produto →J-37NALAAcrílicoBolsa Vertical P/ Cabo De Aço B0 100 X 141.",
+          "href": "/produtos/bolsa-vertical-p-cabo-de-aco-b0-100-x-1414-cm-vertical-j-37nala"
+        },
+        {
+          "text": "Em stockVer produto →J-U01VLOAcrílicoExpositor BrincosDesde€ 2,50Escalões1+",
+          "href": "/produtos/expositor-brincos"
+        },
+        {
+          "text": "Em stockVer produto →J-TCSWSOAcrílicoExpositor De Brinços Em Forma De CoraçãoDes",
+          "href": "/produtos/expositor-de-brincos-em-forma-de-coracao"
+        },
+        {
+          "text": "Em stockVer produto →J-KQJWH3AcrílicoExpositor De Brinços RotativoDesde€ 42,50Es",
+          "href": "/produtos/expositor-de-brincos-rotativo"
+        },
+        {
+          "text": "Em stockVer produto →J-WZ4Y0KAcrílicoExpositor Em EscadaDesde€ 0,00Escalões1+",
+          "href": "/produtos/expositor-em-escada"
+        },
+        {
+          "text": "Em stockVer produto →J-KZA9LLAcrílicoExpositor Em Escada 2Desde€ 0,00Escalões1+",
+          "href": "/produtos/expositor-em-escada-2"
+        },
+        {
+          "text": "Em stockVer produto →J-DNOZ7TAcrílicoExpositor Giratória De JóiasDesde€ 41,50Esc",
+          "href": "/produtos/expositor-giratoria-de-joias"
+        },
+        {
+          "text": "Em stockVer produto →J-SWDLHPAcrílicoExpositor ÓculosDesde€ 50,00Escalões1+",
+          "href": "/produtos/expositor-oculos"
+        },
+        {
+          "text": "Em stockVer produto →J-OCIYZZAcrílicoExpositor Rotativo C/ GanchosDesde€ 74,00Es",
+          "href": "/produtos/expositor-rotativo-c-ganchos-15x15x60cm-preto-j-ociyzz"
+        },
+        {
+          "text": "Em stockVer produto →J-4IKHMCAcrílicoExpositor Rotativo C/ GanchosDesde€ 98,50Es",
+          "href": "/produtos/expositor-rotativo-c-ganchos-25x25x40cm-preto"
+        },
+        {
+          "text": "Em stockVer produto →J-EVC2HVAcrílicoExpositor Rotativo C/ GanchosDesde€ 74,00Es",
+          "href": "/produtos/expositor-rotativo-c-ganchos-15x15x60cm-branco-j-evc2hv"
+        },
+        {
+          "text": "Em stockVer produto →J-NMCN7WAcrílicoExpositor Rotativo C/ GanchosDesde€ 98,50Es",
+          "href": "/produtos/expositor-rotativo-c-ganchos-25x25x40cm-branco-j-nmcn7w"
+        },
+        {
+          "text": "Em stockVer produto →J-6A2RPSAcrílicoExpositor Vernizes Em EscadaDesde€ 63,00Esc",
+          "href": "/produtos/expositor-vernizes-em-escada"
+        },
+        {
+          "text": "Em stockVer produto →J-H2IT92AcrílicoExpositor Vernizes Modelo 2Desde€ 0,00Escal",
+          "href": "/produtos/expositor-vernizes-modelo-2"
+        },
+        {
+          "text": "Em stockVer produto →J-N1YBNLAcrílicoLivro Acrílico Com 8 PaginasDesde€ 165,50Es",
+          "href": "/produtos/livro-acrilico-com-8-paginas"
+        },
+        {
+          "text": "Em stockVer produto →J-OQUB88AcrílicoMoldura MagnéticaDesde€ 32,50Escalões1+",
+          "href": "/produtos/moldura-magnetica-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-9HEFKYAcrílicoMoldura MagnéticaDesde€ 17,00Escalões1+",
+          "href": "/produtos/moldura-magnetica-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-7WM5DNAcrílicoMoldura MagnéticaDesde€ 21,50Escalões1+",
+          "href": "/produtos/moldura-magnetica-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-93YFD1AcrílicoPack Completo 3 X A3Desde€ 105,00Escalões1+",
+          "href": "/produtos/pack-completo-3-x-a3"
+        },
+        {
+          "text": "Em stockVer produto →J-MYQ2ZHAcrílicoPack Completo 3 X Duplo A4Desde€ 166,50Esca",
+          "href": "/produtos/pack-completo-3-x-duplo-a4-vertical-j-myq2zh"
+        },
+        {
+          "text": "Em stockVer produto →J-XMEDU3AcrílicoPack Completo 3 X Duplo A4Desde€ 166,50Esca",
+          "href": "/produtos/pack-completo-3-x-duplo-a4-horizontal"
+        },
+        {
+          "text": "Em stockVer produto →J-ZF3U81AcrílicoPack Completo 3 X Duplo A4 - Cabo Multifunç",
+          "href": "/produtos/pack-completo-3-x-duplo-a4-cabo-multifuncoes-horizontal"
+        },
+        {
+          "text": "Em stockVer produto →J-74HQ1AAcrílicoPack Completo 3 X Duplo A4 - Cabo Multifunç",
+          "href": "/produtos/pack-completo-3-x-duplo-a4-cabo-multifuncoes-vertical-j-74hq1a"
+        },
+        {
+          "text": "Em stockVer produto →J-1YPFZLAcrílicoPack Completo 5 X A3 - Cabo MultifunçõesDes",
+          "href": "/produtos/pack-completo-5-x-a3-cabo-multifuncoes-vertical-j-1ypfzl"
+        },
+        {
+          "text": "Em stockVer produto →J-ZRVZY5AcrílicoPack Completo 5 X A3 - Cabo MultifunçõesDes",
+          "href": "/produtos/pack-completo-5-x-a3-cabo-multifuncoes-horizontal"
+        },
+        {
+          "text": "Em stockVer produto →J-H1HTTGAcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a1-594x84cm"
+        },
+        {
+          "text": "Em stockVer produto →J-T9SN0TAcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-I1DR79AcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-8NVFK3AcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a2-42x594cm"
+        },
+        {
+          "text": "Em stockVer produto →J-KUCN61AcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a0-84x119cm"
+        },
+        {
+          "text": "Em stockVer produto →J-0WFCEOAcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-ZB1GL0AcrílicoPack De Comunicação - Cantos Arredondados C",
+          "href": "/produtos/pack-de-comunicacao-cantos-arredondados-cristal-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-UHO6P8AcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a1-594x84cm"
+        },
+        {
+          "text": "Em stockVer produto →J-JWA9P6AcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a2-42x594cm"
+        },
+        {
+          "text": "Em stockVer produto →J-H4384PAcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a6-10x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-Y1YBXMAcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a5-21x15cm"
+        },
+        {
+          "text": "Em stockVer produto →J-K6MVZVAcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a0-84x119cm"
+        },
+        {
+          "text": "Em stockVer produto →J-PIYW4DAcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-6DI46YAcrílicoPack De Comunicação - Cantos Retos PretoDes",
+          "href": "/produtos/pack-de-comunicacao-cantos-retos-preto-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-G7360QAcrílicoPack De Suspensão VerticalDesde€ 160,00Esca",
+          "href": "/produtos/pack-de-suspensao-vertical-a0-84x119cm"
+        },
+        {
+          "text": "Em stockVer produto →J-BS8XTMAcrílicoPack De Suspensão VerticalDesde€ 62,00Escal",
+          "href": "/produtos/pack-de-suspensao-vertical-a2-42x594cm"
+        },
+        {
+          "text": "Em stockVer produto →J-B08O7MAcrílicoPack De Suspensão VerticalDesde€ 44,50Escal",
+          "href": "/produtos/pack-de-suspensao-vertical-a3-42x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-JOV55KAcrílicoPack De Suspensão VerticalDesde€ 97,00Escal",
+          "href": "/produtos/pack-de-suspensao-vertical-a1-594x84cm"
+        },
+        {
+          "text": "Em stockVer produto →J-0S3Y8HAcrílicoPack De Suspensão VerticalDesde€ 35,50Escal",
+          "href": "/produtos/pack-de-suspensao-vertical-a4-21x30cm"
+        },
+        {
+          "text": "Em stockVer produto →J-XZY9NGAcrílicoPorta Folhetos BalcãoDesde€ 6,00Escalões1+",
+          "href": "/produtos/porta-folhetos-balcao-a4-21x30cm"
+        }
+      ]
+    },
+    "/carrinho": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Ver produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Todos os produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Novidades",
+          "href": "/produtos?sort=novidades"
+        },
+        {
+          "text": "Promoções",
+          "href": "/produtos?sort=promocoes"
+        },
+        {
+          "text": "Escalões de preço",
+          "href": "/produtos?tier=escaloes"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Envios e prazos",
+          "href": "/legais/envios"
+        },
+        {
+          "text": "Devoluções",
+          "href": "/legais/devolucoes"
+        },
+        {
+          "text": "FAQ",
+          "href": "/faq"
+        },
+        {
+          "text": "Orçamentos custom",
+          "href": "/contacto"
+        },
+        {
+          "text": "Sobre a Jocril",
+          "href": "/sobre"
+        },
+        {
+          "text": "Processos",
+          "href": "/processos"
+        },
+        {
+          "text": "Portfolio",
+          "href": "/portfolio"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "Termos",
+          "href": "/legais/termos"
+        },
+        {
+          "text": "Privacidade",
+          "href": "/legais/privacidade"
+        },
+        {
+          "text": "Cookies",
+          "href": "/legais/cookies"
+        }
+      ]
+    },
+    "/contacto": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Esqueceu-se?",
+          "href": "/recuperar-password"
+        },
+        {
+          "text": "Todos os produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Novidades",
+          "href": "/produtos?sort=novidades"
+        },
+        {
+          "text": "Promoções",
+          "href": "/produtos?sort=promocoes"
+        },
+        {
+          "text": "Escalões de preço",
+          "href": "/produtos?tier=escaloes"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Envios e prazos",
+          "href": "/legais/envios"
+        },
+        {
+          "text": "Devoluções",
+          "href": "/legais/devolucoes"
+        },
+        {
+          "text": "FAQ",
+          "href": "/faq"
+        },
+        {
+          "text": "Orçamentos custom",
+          "href": "/contacto"
+        },
+        {
+          "text": "Sobre a Jocril",
+          "href": "/sobre"
+        },
+        {
+          "text": "Processos",
+          "href": "/processos"
+        },
+        {
+          "text": "Portfolio",
+          "href": "/portfolio"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "Termos",
+          "href": "/legais/termos"
+        },
+        {
+          "text": "Privacidade",
+          "href": "/legais/privacidade"
+        },
+        {
+          "text": "Cookies",
+          "href": "/legais/cookies"
+        }
+      ]
+    },
+    "/sitemap": {
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "text": "Saltar para o conteúdo",
+          "href": "#main"
+        },
+        {
+          "text": "jocril.pt ↗",
+          "href": "https://jocril.pt"
+        },
+        {
+          "text": "Loja Online",
+          "href": "/"
+        },
+        {
+          "text": "Produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto",
+          "href": "/contacto"
+        },
+        {
+          "text": "",
+          "href": "/entrar"
+        },
+        {
+          "text": "Carrinho0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "Acrílicos Chão",
+          "href": "/produtos?cat=acrilicos-chao"
+        },
+        {
+          "text": "Acrílicos Mesa",
+          "href": "/produtos?cat=acrilicos-mesa"
+        },
+        {
+          "text": "Acrílicos Parede",
+          "href": "/produtos?cat=acrilicos-parede"
+        },
+        {
+          "text": "Caixas",
+          "href": "/produtos?cat=caixas"
+        },
+        {
+          "text": "Molduras",
+          "href": "/produtos?cat=molduras"
+        },
+        {
+          "text": "Tombolas",
+          "href": "/produtos?cat=tombolas"
+        },
+        {
+          "text": "Expositores",
+          "href": "/produtos?cat=expositores"
+        },
+        {
+          "text": "Sinalética",
+          "href": "/produtos?cat=sinaletica"
+        },
+        {
+          "text": "Todos os Produtos →",
+          "href": "/produtos"
+        },
+        {
+          "text": "Conta",
+          "href": "/conta"
+        },
+        {
+          "text": "Carrinho · 0",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Home/→",
+          "href": "/"
+        },
+        {
+          "text": "Catálogo (PLP)/produtos→",
+          "href": "/produtos"
+        },
+        {
+          "text": "Ficha de produto (PDP)/produtos/expositor-a3→",
+          "href": "/produtos/expositor-a3"
+        },
+        {
+          "text": "Categorias/categorias→",
+          "href": "/categorias"
+        },
+        {
+          "text": "Pesquisa/pesquisa→",
+          "href": "/pesquisa"
+        },
+        {
+          "text": "Carrinho · Checkout/carrinho→",
+          "href": "/carrinho"
+        },
+        {
+          "text": "Sobre/sobre→",
+          "href": "/sobre"
+        },
+        {
+          "text": "Processos/processos→",
+          "href": "/processos"
+        },
+        {
+          "text": "Portfolio/portfolio→",
+          "href": "/portfolio"
+        },
+        {
+          "text": "Contacto/contacto→",
+          "href": "/contacto"
+        },
+        {
+          "text": "FAQ/faq→",
+          "href": "/faq"
+        },
+        {
+          "text": "Login · Registo/entrar→",
+          "href": "/entrar"
+        },
+        {
+          "text": "Minha conta/conta→",
+          "href": "/conta"
+        },
+        {
+          "text": "Detalhe de encomenda/conta/encomenda/JOC-25-04821→",
+          "href": "/conta/encomenda/JOC-25-04821"
+        },
+        {
+          "text": "Recuperar palavra-passe/recuperar-password→",
+          "href": "/recuperar-password"
+        },
+        {
+          "text": "Confirmar email/confirmar-email→",
+          "href": "/confirmar-email"
+        },
+        {
+          "text": "Newsletter confirmada/newsletter-confirmado→",
+          "href": "/newsletter-confirmado"
+        },
+        {
+          "text": "Política de Privacidade/politica-privacidade→",
+          "href": "/politica-privacidade"
+        },
+        {
+          "text": "Termos e Condições/termos-condicoes→",
+          "href": "/termos-condicoes"
+        },
+        {
+          "text": "Política de Envios/politica-envios→",
+          "href": "/politica-envios"
+        },
+        {
+          "text": "Política de Devoluções/politica-devolucoes→",
+          "href": "/politica-devolucoes"
+        },
+        {
+          "text": "Política de Cookies/politica-cookies→",
+          "href": "/politica-cookies"
+        },
+        {
+          "text": "404 · Não encontrado/nao-encontrado→",
+          "href": "/nao-encontrado"
+        },
+        {
+          "text": "500 · Falha no servidor/erro→",
+          "href": "/erro"
+        },
+        {
+          "text": "Manutenção programada/manutencao→",
+          "href": "/manutencao"
+        },
+        {
+          "text": "Admin login/admin/entrar→",
+          "href": "/admin/entrar"
+        },
+        {
+          "text": "Dashboard/admin→",
+          "href": "/admin"
+        },
+        {
+          "text": "Encomendas/admin/encomendas→",
+          "href": "/admin/encomendas"
+        },
+        {
+          "text": "Detalhe de encomenda/admin/encomendas/JOC-25-04821→",
+          "href": "/admin/encomendas/JOC-25-04821"
+        },
+        {
+          "text": "Produtos (lista)/admin/produtos→",
+          "href": "/admin/produtos"
+        },
+        {
+          "text": "Editor de produto (template)/admin/produtos/novo→",
+          "href": "/admin/produtos/novo"
+        },
+        {
+          "text": "Editor de variante/admin/produtos/variante→",
+          "href": "/admin/produtos/variante"
+        },
+        {
+          "text": "Escalões de preço/admin/escaloes→",
+          "href": "/admin/escaloes"
+        },
+        {
+          "text": "Clientes/admin/clientes→",
+          "href": "/admin/clientes"
+        },
+        {
+          "text": "Detalhe de cliente/admin/clientes/1→",
+          "href": "/admin/clientes/1"
+        },
+        {
+          "text": "Definições (hub)/admin/definicoes→",
+          "href": "/admin/definicoes"
+        },
+        {
+          "text": "Envios e zonas/admin/definicoes/envios→",
+          "href": "/admin/definicoes/envios"
+        },
+        {
+          "text": "Escalões de preço/admin/definicoes/escaloes→",
+          "href": "/admin/definicoes/escaloes"
+        },
+        {
+          "text": "Códigos de desconto/admin/definicoes/descontos→",
+          "href": "/admin/definicoes/descontos"
+        },
+        {
+          "text": "IVA e impostos/admin/definicoes/impostos→",
+          "href": "/admin/definicoes/impostos"
+        },
+        {
+          "text": "Equipa · Utilizadores/admin/definicoes/equipa→",
+          "href": "/admin/definicoes/equipa"
+        },
+        {
+          "text": "Componentes (showcase)/admin/componentes→",
+          "href": "/admin/componentes"
+        },
+        {
+          "text": "Templates de email/admin/emails→",
+          "href": "/admin/emails"
+        },
+        {
+          "text": "Todos os produtos",
+          "href": "/produtos"
+        },
+        {
+          "text": "Novidades",
+          "href": "/produtos?sort=novidades"
+        },
+        {
+          "text": "Promoções",
+          "href": "/produtos?sort=promocoes"
+        },
+        {
+          "text": "Escalões de preço",
+          "href": "/produtos?tier=escaloes"
+        }
+      ]
+    }
+  },
+  "plp": {
+    "initial": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 100,
+      "firstCards": [
+        {
+          "href": "/produtos/base-de-exposicao-vertical",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-T4P3FK",
+            "ACRÍLICO",
+            "Base De Exposição Vertical",
+            "DESDE",
+            "€ 252,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 252,00"
+        },
+        {
+          "href": "/produtos/bloco-de-acrilico-personalizado-a4",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-BMMQLE",
+            "ACRÍLICO",
+            "Bloco De Acrílico Personalizado - A4",
+            "DESDE",
+            "€ 1,03",
+            "ESCALÕES"
+          ],
+          "price": "€ 1,03"
+        },
+        {
+          "href": "/produtos/bloco-em-acrilico",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-6599TQ",
+            "ACRÍLICO",
+            "Bloco Em Acrilico",
+            "DESDE",
+            "€ 0,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 0,00"
+        },
+        {
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a7-74x105cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-EC2NPU",
+            "ACRÍLICO",
+            "Bolsa c/ bi-adesivo vertical",
+            "DESDE",
+            "€ 3,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 3,50"
+        },
+        {
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a5-21x15cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-33CN45",
+            "ACRÍLICO",
+            "Bolsa c/ bi-adesivo vertical",
+            "DESDE",
+            "€ 6,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 6,50"
+        }
+      ],
+      "noResults": false
+    },
+    "sortPriceDesc": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 100,
+      "firstCards": [
+        {
+          "href": "/produtos/base-de-exposicao-vertical",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-T4P3FK",
+            "ACRÍLICO",
+            "Base De Exposição Vertical",
+            "DESDE",
+            "€ 252,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 252,00"
+        },
+        {
+          "href": "/produtos/bolsa-vertical-p-cabo-de-aco-b0-100-x-1414-cm-vertical-j-37nala",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-37NALA",
+            "ACRÍLICO",
+            "Bolsa Vertical P/ Cabo De Aço B0 100 X 141.4 Cm",
+            "DESDE",
+            "€ 236,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 236,50"
+        },
+        {
+          "href": "/produtos/bolsa-vertical-p-cabo-de-aco-b0-100-x-1414-cm-horizontal",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-Y6GY33",
+            "ACRÍLICO",
+            "Bolsa Vertical P/ Cabo De Aço B0 100 X 141.4 Cm",
+            "DESDE",
+            "€ 236,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 236,50"
+        },
+        {
+          "href": "/produtos/bolsa-p-cabo-de-aco-a0-84x119cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-X5HO6I",
+            "ACRÍLICO",
+            "Bolsa P/ Cabo De Aço",
+            "DESDE",
+            "€ 184,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 184,50"
+        },
+        {
+          "href": "/produtos/bolsa-c-furacao-horizontal-a0-84x119cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-XNXZOS",
+            "ACRÍLICO",
+            "Bolsa C/ Furação Horizontal",
+            "DESDE",
+            "€ 140,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 140,00"
+        }
+      ],
+      "noResults": false
+    },
+    "quickUnder50": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 74,
+      "firstCards": [
+        {
+          "href": "/produtos/expositor-oculos",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-SWDLHP",
+            "ACRÍLICO",
+            "Expositor Óculos",
+            "DESDE",
+            "€ 50,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 50,00"
+        },
+        {
+          "href": "/produtos/bolsa-p-cabo-de-aco-a2-42x594cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-KADT9I",
+            "ACRÍLICO",
+            "Bolsa P/ Cabo De Aço",
+            "DESDE",
+            "€ 49,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 49,50"
+        },
+        {
+          "href": "/produtos/dispensador-de-alimentos-por-gravidade",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-KC4HZ3",
+            "ACRÍLICO",
+            "Dispensador De Alimentos Por Gravidade",
+            "DESDE",
+            "€ 49,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 49,00"
+        },
+        {
+          "href": "/produtos/caixa-de-sugestoes-para-parede-sem-personalizacao-j-2q2kpl",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-2Q2KPL",
+            "ACRÍLICO",
+            "Caixa De Sugestões Para Parede",
+            "DESDE",
+            "€ 47,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 47,50"
+        },
+        {
+          "href": "/produtos/caixa-para-alimentos-3-compartimentos-c-tampa-j-njgsxc",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-NJGSXC",
+            "ACRÍLICO",
+            "Caixa Para Alimentos - 3 Compartimentos",
+            "DESDE",
+            "€ 47,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 47,50"
+        }
+      ],
+      "noResults": false
+    },
+    "materialAcrylic3mm": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 0,
+      "firstCards": [],
+      "noResults": true
+    },
+    "dimensionA4": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 14,
+      "firstCards": [
+        {
+          "href": "/produtos/bolsa-modelo-l-a4-c-porta-folhetos-dl-220x110mm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-EAL54J",
+            "ACRÍLICO",
+            "Bolsa Modelo L A4 C/ Porta-Folhetos DL 220x110mm",
+            "DESDE",
+            "€ 8,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 8,00"
+        },
+        {
+          "href": "/produtos/bolsa-porta-menu-horizontal-c-base-de-madeira-a4-21x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-LPBJ9Y",
+            "ACRÍLICO",
+            "Bolsa Porta-Menu Horizontal C/ Base De Madeira",
+            "DESDE",
+            "€ 8,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 8,00"
+        },
+        {
+          "href": "/produtos/bolsa-estatico-durable-auto-adesivo-cinzento-a4-21x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-ES0F46",
+            "ACRÍLICO",
+            "Bolsa Estático Durable , Auto-Adesivo, Cinzento",
+            "DESDE",
+            "€ 7,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 7,50"
+        },
+        {
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a4",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "BOLSACBI-ADESIVOVERTICAL-A4",
+            "ACRÍLICO",
+            "Bolsa c/ bi-adesivo vertical",
+            "DESDE",
+            "€ 7,24",
+            "ESCALÕES"
+          ],
+          "price": "€ 7,24"
+        },
+        {
+          "href": "/produtos/bolsa-porta-menu-vertical-c-base-de-madeira-a4-21x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-7CXUVT",
+            "ACRÍLICO",
+            "Bolsa Porta-Menu Vertical C/ Base De Madeira",
+            "DESDE",
+            "€ 7,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 7,00"
+        }
+      ],
+      "noResults": false
+    },
+    "maxPrice20": {
+      "url": "/produtos",
+      "countText": null,
+      "cardCount": 51,
+      "firstCards": [
+        {
+          "href": "/produtos/expositor-de-brincos-em-forma-de-coracao",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-TCSWSO",
+            "ACRÍLICO",
+            "Expositor De Brinços Em Forma De Coração",
+            "DESDE",
+            "€ 18,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 18,50"
+        },
+        {
+          "href": "/produtos/bolsa-porta-folha-modelo-t-vertical-a3-42x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-14H4ZD",
+            "ACRÍLICO",
+            "Bolsa Porta-Folha Modelo T Vertical",
+            "DESDE",
+            "€ 17,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 17,00"
+        },
+        {
+          "href": "/produtos/bolsa-c-bi-adesivo-vertical-a3-42x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-Q7MKBI",
+            "ACRÍLICO",
+            "Bolsa c/ bi-adesivo vertical",
+            "DESDE",
+            "€ 16,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 16,50"
+        },
+        {
+          "href": "/produtos/bolsa-modelo-l-horizontal-a3-42x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-9BPTP3",
+            "ACRÍLICO",
+            "Bolsa Modelo L Horizontal",
+            "DESDE",
+            "€ 15,00",
+            "ESCALÕES"
+          ],
+          "price": "€ 15,00"
+        },
+        {
+          "href": "/produtos/bolsa-c-furacao-horizontal-a3-42x30cm",
+          "lines": [
+            "EM STOCK",
+            "VER PRODUTO →",
+            "J-LJER0X",
+            "ACRÍLICO",
+            "Bolsa C/ Furação Horizontal",
+            "DESDE",
+            "€ 13,50",
+            "ESCALÕES"
+          ],
+          "price": "€ 13,50"
+        }
+      ],
+      "noResults": false
+    }
+  },
+  "search": {
+    "initial": {
+      "url": "/pesquisa?q=expositor",
+      "headerCount": null,
+      "productsBadge": null,
+      "cardCount": 60,
+      "noResultsHelper": false,
+      "firstCards": [
+        [
+          "EM STOCK",
+          "VER PRODUTO →",
+          "J-UAIEFM",
+          "ACRÍLICO",
+          "Bolsa Resistente À Água Autoadesivo A3",
+          "DESDE"
+        ],
+        [
+          "EM STOCK",
+          "VER PRODUTO →",
+          "J-Y6GY33",
+          "ACRÍLICO",
+          "Bolsa Vertical P/ Cabo De Aço B0 100 X 141.4 Cm",
+          "DESDE"
+        ],
+        [
+          "EM STOCK",
+          "VER PRODUTO →",
+          "J-37NALA",
+          "ACRÍLICO",
+          "Bolsa Vertical P/ Cabo De Aço B0 100 X 141.4 Cm",
+          "DESDE"
+        ],
+        [
+          "EM STOCK",
+          "VER PRODUTO →",
+          "J-U01VLO",
+          "ACRÍLICO",
+          "Expositor Brincos",
+          "DESDE"
+        ],
+        [
+          "EM STOCK",
+          "VER PRODUTO →",
+          "J-TCSWSO",
+          "ACRÍLICO",
+          "Expositor De Brinços Em Forma De Coração",
+          "DESDE"
+        ]
+      ]
+    },
+    "noResultsQuery": {
+      "url": "/pesquisa?q=zzznadaaudit",
+      "headerCount": null,
+      "productsBadge": null,
+      "cardCount": 0,
+      "noResultsHelper": false,
+      "firstCards": []
+    },
+    "categoryScope": {
+      "url": "/pesquisa?q=zzznadaaudit",
+      "headerCount": null,
+      "productsBadge": null,
+      "cardCount": 0,
+      "noResultsHelper": false,
+      "firstCards": []
+    }
+  },
+  "pdpAndCart": {
+    "productPath": "/produtos/bolsa-resistente-a-agua-autoadesivo-a3",
+    "pdpInitial": {
+      "title": "Bolsa Resistente À Água Autoadesivo A3",
+      "qty": "10",
+      "addButton": "Adicionar ao carrinho →",
+      "colorButtons": [
+        "Modo escuro",
+        "Modo claro",
+        "Modo escuro",
+        "Modo claro",
+        "Guardar"
+      ],
+      "hasSampleButtons": false
+    },
+    "afterAdd": {
+      "localStorage": {
+        "items": [
+          {
+            "variantId": 503,
+            "sku": "J-UAIEFM",
+            "productName": "Bolsa Resistente À Água Autoadesivo A3",
+            "sizeName": "Único",
+            "quantity": 2,
+            "unitPrice": 8.5,
+            "imageUrl": "/imagens_produto/processed_bolsa-resistente-a-agua-autoadesivo-a3.jpg",
+            "stockQuantity": 9999,
+            "totalPrice": 17
+          }
+        ],
+        "totalItems": 2,
+        "totalPrice": 17
+      },
+      "cartLabel": "Carrinho2"
+    },
+    "cartInitial": {
+      "textHasItem": false,
+      "cart": {
+        "items": [
+          {
+            "variantId": 503,
+            "sku": "J-UAIEFM",
+            "productName": "Bolsa Resistente À Água Autoadesivo A3",
+            "sizeName": "Único",
+            "quantity": 2,
+            "unitPrice": 8.5,
+            "imageUrl": "/imagens_produto/processed_bolsa-resistente-a-agua-autoadesivo-a3.jpg",
+            "stockQuantity": 9999,
+            "totalPrice": 17
+          }
+        ],
+        "totalItems": 2,
+        "totalPrice": 17
+      },
+      "step": "stepper missing",
+      "promoDisabled": true
+    },
+    "cartAfterIncrement": {
+      "items": [
+        {
+          "variantId": 503,
+          "sku": "J-UAIEFM",
+          "productName": "Bolsa Resistente À Água Autoadesivo A3",
+          "sizeName": "Único",
+          "quantity": 3,
+          "unitPrice": 8.5,
+          "imageUrl": "/imagens_produto/processed_bolsa-resistente-a-agua-autoadesivo-a3.jpg",
+          "stockQuantity": 9999,
+          "totalPrice": 25.5
+        }
+      ],
+      "totalItems": 3,
+      "totalPrice": 25.5
+    },
+    "checkoutStep2Visible": false,
+    "checkoutValidation": {
+      "hasRequiredError": false,
+      "hasConsentGate": true,
+      "currentTextSample": "SALTAR PARA O CONTEÚDO\nENVIO PARA PORTUGAL CONTINENTAL · MBWAY · MULTIBANCO\nPT\n/\nEN\n·\nJOCRIL.PT ↗\nLOJA ONLINE\nPRODUTOS\nCATEGORIAS\nSOBRE\nCONTACTO\n⌘ K\nCARRINHO\n3\nACRÍLICOS CHÃO\nACRÍLICOS MESA\nACRÍLICOS PAREDE\nCAIXAS\nMOLDURAS\nTOMBOLAS\nEXPOSITORES\nSINALÉTICA\nTODOS OS PRODUTOS →\nMENU\nProdutos\n→\nCategorias\n→\nSobre\n→\nContacto\n→\nCATEGORIAS\nACRÍLICOS CHÃO\nACRÍLICOS MESA\nACRÍLICOS PAREDE\nCAIXAS\nMOLDURAS\nTOMBOLAS\nEXPOSITORES\nSINALÉTICA\nTODOS OS PRODUTOS →\nCONTA\nCARRINHO · 3\nTEMA\n✓\nCARRINHO\n02\nENVIO & PAGAMENTO\n03\nCONFIRMAÇÃO\n01 · DADOS E MORADA DE ENVIO\nNOME *\nEMAIL *\nTELEFONE *\nNIF\nINTRODUZA PARA RECEBER FACTURA COM IVA\nMORADA *\nCÓDIGO POSTAL *\nLOCALIDADE *\nPAÍS *\nMORADA DE FACTURAÇÃO É DIFERENTE DA DE ENVIO\n02 · MÉTODO DE ENVIO\nCTT Expresso\n1–2 DIAS ÚTEIS\nEntrega ao domicílio · Portugal continental\n€ 4,90\nCTT Distribuição\n2–3 DIAS ÚTEIS\nMadeira e Açores · tarifa especial\n€ 7,90\nLevantamento na fábrica\nPRONTO EM 24H\nVialonga, Loures · por marcação\nGrátis\n03 · PAGAMENTO\nMBWay\nAPROVAÇÃO IMEDIATA NO TELEMÓVEL\n📱\nMultibanco (Referência)\nPAGUE NUMA CAIXA ATM OU HOMEBANKING\n🏦\nCartão de crédito/débito\nVISA · MASTERCARD · AMERICAN EXPRESS\n💳\nTransferência bancária\nPARA EMPRESAS · IBAN POR EMAIL\n✉\nTELEMÓVEL MBWAY *\nRESUMO DA ENCOMENDA\nBolsa Resistente À Água Autoadesivo A3 × 3\n€ 25,50\nAPLICAR\nCÓDIGOS PROMOCIONAIS AGUARDAM CONFIGURAÇÃO DE DESCONTOS.\nSUBTOTAL\n€ 25,50\nENVIO\n€ 4,90\nIVA 23% (INCLUÍDO"
+    }
+  },
+  "contact": {
+    "form": {
+      "fileInputs": 0,
+      "procurarButtonType": "default-submit",
+      "consentRequired": false
+    }
+  },
+  "headerSearch": {
+    "before": {
+      "url": "/"
+    },
+    "afterEnter": {
+      "url": "/",
+      "headerInputValue": "expositor"
+    }
+  },
+  "mobile": {
+    "produtos": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "title": "Todos os produtos",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "bodySample": "SALTAR PARA O CONTEÚDO\nENVIO PARA PORTUGAL CONTINENTAL · MBWAY · MULTIBANCO\nPT\n/\nEN\n·\nJOCRIL.PT ↗\nLOJA ONLINE\n3\nMENU\nProdutos\n→\nCategorias\n→\nSobre\n→\nContacto\n→\nCATEGORIAS\nACRÍLICOS CHÃO\nACRÍLICOS MESA\nACRÍLICOS PAREDE\nCAIXAS\nMOLDURAS\nTOMBOLAS\nEXPOSITORES\nSINALÉTICA\nTODOS OS PRODUTOS →\nCONTA\nCARRINHO · 3\nTEMA\nLOJA\n/\nCATEGORIAS\n/\nTODOS OS PRODUTOS\nCATEGORIA 01 / 06\nTodos os produtos\n\nCatálogo completo de produtos em acrílico produzidos na nossa fábrica em Leiria.\n\nREFERÊNCIAS\n32\nEM STOCK\n24\nPRAZO MÉDIO\n48h\nDESDE\n€ 42,50\nTUDO\nEM STOCK\nPERSONALIZÁVEL\nCOM ILUMINAÇÃO\nATÉ €50\n100 DE 100 PRODUTOS\n3×\n4×\nORDENAR\nRelevância\nPreço ↑\nPreço ↓\nMais recentes\nFILTROS\nLIMPAR TUDO\nMATERIAL\n−\nAcrílico 3mm\n7\nAcrílico 4mm\n4\nAcrílico 5mm\n12\nAcrílico 6mm\n5\nAcrílico + LED\n2\nDIMENSÕES\n−\nA6\nA5\nA4\nA3\nA2\nDL\nØ200\nØ300\n",
+      "events": {
+        "consoleMessages": [
+          {
+            "type": "info",
+            "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+          },
+          {
+            "type": "log",
+            "text": "[HMR] connected"
+          },
+          {
+            "type": "warning",
+            "text": "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview"
+          }
+        ],
+        "logEntries": [
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "level": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ],
+        "failedNetwork": [
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-sans.woff2"
+          },
+          {
+            "status": 404,
+            "url": "http://localhost:3000/styles/fonts/geist-mono.woff2"
+          }
+        ]
+      }
+    }
+  },
+  "finishedAt": "2026-04-19T14:44:08.522Z"
+}

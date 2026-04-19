@@ -190,7 +190,7 @@ function EntrarForm() {
             {mode === 'register' && (
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontFamily: 'var(--font-geist-sans)', fontSize: 12, color: 'var(--color-base-400)', marginTop: 4 }}>
                 <input type="checkbox" defaultChecked required style={{ marginTop: 3, accentColor: 'var(--color-accent-100)' }}/>
-                Aceito os <Link href="/termos" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Termos</Link> e a <Link href="/privacidade" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Política de Privacidade</Link>.
+                Aceito os <Link href="/legais/termos" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Termos</Link> e a <Link href="/legais/privacidade" style={{ color: 'var(--color-accent-100)', padding: '0 2px' }}>Política de Privacidade</Link>.
               </label>
             )}
             {error && (

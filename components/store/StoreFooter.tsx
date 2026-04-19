@@ -6,9 +6,8 @@ const COLS: { h: string; items: [string, string][] }[] = [
     h: "Loja",
     items: [
       ["Todos os produtos", "/produtos"],
-      ["Novidades", "/produtos?sort=novidades"],
-      ["Promoções", "/produtos?sort=promocoes"],
-      ["Escalões de preço", "/produtos?tier=escaloes"],
+      ["Novidades", "/produtos?sort=newest"],
+      ["Até €50", "/produtos?maxPrice=50"],
     ],
   },
   {

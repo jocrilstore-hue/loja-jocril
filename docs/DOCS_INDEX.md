@@ -2,6 +2,19 @@
 
 Single map of all documentation. Update this file whenever a doc is created, updated, or archived.
 
+## AI Operating System (WARM — update when AI workflow changes)
+
+| File | Description |
+|------|-------------|
+| [AI loader](../AI.md) | Universal AI entry point for Codex, Claude, ChatGPT, Gemini, and other agents |
+| [AI operating system](../AI_OS/AI_OPERATING_SYSTEM.md) | Cross-tool operating rules adapted from the desktop AI_OS master |
+| [Context rules](../AI_OS/CONTEXT_RULES.md) | Context priority, tool boundaries, handoff and decision discipline |
+| [Model selection guide](../AI_OS/MODEL_SELECTION_GUIDE.md) | Model and effort routing across providers |
+| [Decision log](../AI_OS/AI_DECISION_LOG.md) | Durable project decisions future AI sessions must respect |
+| [AI session start](../AI_OS/SESSION-PROMPTS/AI_SESSION_START.md) | Standard boot sequence for AI sessions |
+| [Session handoff template](../AI_OS/SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md) | Template for substantial session handoffs |
+| [Current AI_OS standard](../AI_OS/references/AI_OS_CURRENT_STANDARD.md) | Local copy of the current master standard used for future audits |
+
 ## Handoffs (Temporary — archive when milestone consumed)
 
 | File | Description |
@@ -18,6 +31,7 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [B4b handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4b_handoff.md) | B4b checkout UI — /carrinho step 2+3 wired, MB Way polling, error banners, CSS status vars |
 | [Session end handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_SESSION-END_handoff.md) | B5+B6+B7+B8 complete — deploy live, full audit with 10 known gaps |
 | [B5–B8 master plan](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B5-B8_MASTER-PLAN.md) | Wave 1 parallel (B5+B6), Wave 2 B7 emails, Wave 3 B8 deploy — human gates documented |
+| [AI_OS sync handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_14-38_jocril_ai-os-sync_handoff.md) | Project AI_OS adapted from desktop master, loader and decision log added |
 
 ## Session Prompts (Ready-to-paste) — B5–B8
 

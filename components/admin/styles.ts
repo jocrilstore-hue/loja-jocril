@@ -26,6 +26,13 @@ export const adminGhost: CSSProperties = {
   cursor: "pointer",
 };
 
+export const adminDisabled: CSSProperties = {
+  ...adminGhost,
+  color: "var(--color-base-600)",
+  opacity: 0.65,
+  cursor: "not-allowed",
+};
+
 export const adminDanger: CSSProperties = {
   padding: "8px 14px",
   background: "transparent",

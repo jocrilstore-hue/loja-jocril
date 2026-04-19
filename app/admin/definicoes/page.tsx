@@ -1,8 +1,9 @@
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 import { PageHeader, SettingsTabs } from "@/components/admin/SettingsHelpers";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 const store = {
   name: "Jocril — Sociedade Transformadora de Acrílicos, Lda.",
@@ -19,9 +20,9 @@ const groups = [
   ]},
   { kicker: "02", title: "Operações", cards: [
     { k: "team",     label: "Equipa · Utilizadores",  hint: "7 utilizadores · 3 perfis",              href: "/admin/definicoes/equipa", status: "Ativo" },
-    { k: "email",    label: "Notificações por email", hint: "9 templates · Resend",                   href: "#",                        status: "Ativo" },
-    { k: "webhooks", label: "Webhooks e integrações", hint: "Stripe · CTT · Phc Contabilidade",       href: "#",                        status: "3 ligações" },
-    { k: "api",      label: "API keys",               hint: "2 tokens ativos · expira em 90d",        href: "#",                        status: "2 tokens" },
+    { k: "email",    label: "Notificações por email", hint: "Pré-visualização dos templates disponíveis", href: "/admin/emails", status: "Leitura" },
+    { k: "webhooks", label: "Webhooks e integrações", hint: "Configuração ainda sem ecrã de edição",       href: "",              status: "Não editável" },
+    { k: "api",      label: "API keys",               hint: "Gestão de tokens ainda sem ecrã de edição",  href: "",              status: "Não editável" },
   ]},
 ];
 
@@ -33,7 +34,7 @@ function Row({ label, hint, value, last }: { label: string; hint: string; value:
         <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4, lineHeight: 1.5 }}>{hint}</div>
       </div>
       <div style={{ display: "inline-flex", alignItems: "stretch", border: "1px solid var(--color-base-800)", borderRadius: 2, background: "var(--color-dark-base-primary)" }}>
-        <input defaultValue={value} style={{ flex: 1, padding: "9px 12px", background: "transparent", border: "none", outline: "none", color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14, letterSpacing: "-.015em" }}/>
+        <input defaultValue={value} readOnly aria-readonly="true" title="Leitura apenas nesta versão" style={{ flex: 1, padding: "9px 12px", background: "transparent", border: "none", outline: "none", color: "var(--color-base-400)", fontFamily: "var(--font-geist-sans)", fontSize: 14, letterSpacing: "-.015em", cursor: "default" }}/>
       </div>
     </div>
   );
@@ -44,10 +45,10 @@ export default function AdminDefinicoesPage() {
     <AdminShell active="settings" breadcrumbs={["Admin", "Definições"]}>
       <PageHeader
         title="Definições"
-        lede="Configurações gerais da loja Jocril. Estas alterações aplicam-se a todas as encomendas novas a partir do momento da gravação."
+        lede="Vista de leitura das configurações gerais da loja Jocril. A gravação destas definições ainda não está ligada."
         actions={<>
-          <button style={adminGhost}>Log de alterações</button>
-          <button style={adminPrimary}>Guardar</button>
+          <button style={adminDisabled} disabled title="Log de alterações ainda não disponível">Log de alterações</button>
+          <button style={adminDisabled} disabled title="Gravação ainda não ligada">Guardar</button>
         </>}
       />
       <SettingsTabs active="overview" />
@@ -70,8 +71,8 @@ export default function AdminDefinicoesPage() {
             <h2 style={{ margin: 0, fontFamily: "var(--font-geist-sans)", fontSize: 18, letterSpacing: "-.025em", color: "var(--color-light-base-primary)" }}>{g.title}</h2>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
-            {g.cards.map(c => (
-              <Link key={c.k} href={c.href} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "center", padding: "20px 22px", border: "1px dashed var(--color-base-800)", borderRadius: 4, background: "var(--color-dark-base-secondary)", textDecoration: "none" }}>
+            {g.cards.map(c => {
+              const content = (
                 <div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
                     <span style={{ fontFamily: "var(--font-geist-sans)", fontSize: 16, letterSpacing: "-.02em", color: "var(--color-light-base-primary)" }}>{c.label}</span>
@@ -79,9 +80,20 @@ export default function AdminDefinicoesPage() {
                   </div>
                   <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 6 }}>{c.hint}</div>
                 </div>
-                <span style={{ color: "var(--color-base-600)", fontSize: 18 }}>→</span>
-              </Link>
-            ))}
+              );
+              const cardStyle: CSSProperties = { display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "center", padding: "20px 22px", border: "1px dashed var(--color-base-800)", borderRadius: 4, background: "var(--color-dark-base-secondary)", textDecoration: "none", opacity: c.href ? 1 : 0.7, cursor: c.href ? "pointer" : "not-allowed" };
+              return c.href ? (
+                <Link key={c.k} href={c.href} style={cardStyle}>
+                  {content}
+                  <span style={{ color: "var(--color-base-600)", fontSize: 18 }}>→</span>
+                </Link>
+              ) : (
+                <div key={c.k} title="Ainda sem ecrã de configuração" style={cardStyle}>
+                  {content}
+                  <span style={{ color: "var(--color-base-700)", fontSize: 18 }}>•</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       ))}

@@ -8,7 +8,7 @@ import { adminDanger, adminGhost, adminPrimary } from "@/components/admin/styles
 type Status = "pending" | "paid" | "prep" | "shipped" | "delivered" | "returned";
 type Order = {
   n: string; c: string; e: string; it: number; v: number;
-  s: Status; d: string; dayIdx: number; pay: string;
+  s: Status; d: string; dayIdx: number; pay: string; nif: string;
 };
 type SortKey = "n" | "c" | "it" | "v" | "pay" | "s" | "d";
 
@@ -22,16 +22,19 @@ const DB_STATUS_MAP: Record<string, Status> = {
 interface ApiOrder {
   order_number: string; status: string; payment_method: string | null;
   total_amount_with_vat: number; created_at: string;
-  customer: { name: string; email: string } | null;
+  customer: { first_name: string | null; last_name: string | null; email: string; tax_id: string | null } | null;
   item_count: Array<{ count: number }>;
 }
 
 function mapOrder(o: ApiOrder): Order {
   const d = new Date(o.created_at);
   const dayIdx = Math.floor((Date.now() - d.getTime()) / 86400000);
+  const customerName = o.customer
+    ? [o.customer.first_name, o.customer.last_name].filter(Boolean).join(" ") || o.customer.email
+    : "—";
   return {
     n: o.order_number,
-    c: o.customer?.name ?? "—",
+    c: customerName,
     e: o.customer?.email ?? "—",
     it: o.item_count?.[0]?.count ?? 0,
     v: o.total_amount_with_vat ?? 0,
@@ -40,6 +43,7 @@ function mapOrder(o: ApiOrder): Order {
        d.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
     dayIdx,
     pay: o.payment_method ?? "—",
+    nif: o.customer?.tax_id ?? "",
   };
 }
 
@@ -88,7 +92,7 @@ export default function AdminEncomendasPage() {
       if (dateRange === "today" && o.dayIdx !== 0) return false;
       if (dateRange === "7d" && o.dayIdx > 6) return false;
       if (dateRange === "30d" && o.dayIdx > 29) return false;
-      if (q && !(o.n + " " + o.c + " " + o.e).toLowerCase().includes(q)) return false;
+      if (q && !(o.n + " " + o.c + " " + o.e + " " + o.nif).toLowerCase().includes(q)) return false;
       return true;
     });
   }, [orders, query, payment, dateRange]);
@@ -101,7 +105,7 @@ export default function AdminEncomendasPage() {
       if (dateRange === "today" && o.dayIdx !== 0) return false;
       if (dateRange === "7d" && o.dayIdx > 6) return false;
       if (dateRange === "30d" && o.dayIdx > 29) return false;
-      if (q && !(o.n + " " + o.c + " " + o.e).toLowerCase().includes(q)) return false;
+      if (q && !(o.n + " " + o.c + " " + o.e + " " + o.nif).toLowerCase().includes(q)) return false;
       return true;
     });
     if (sortKey) {

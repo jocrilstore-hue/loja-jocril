@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Badge from '@/components/store/Badge';
 import ProductCard, { type ProductMock } from '@/components/store/ProductCard';
@@ -12,29 +12,112 @@ export type PLPClientProps = {
   categoryName?: string | null;
   categoryDescription?: string | null;
   totalInCategory?: number;
+  initialSort?: SortKey;
+  initialMaxPrice?: number;
 };
 
-const FILTER_MATERIALS = ['Acrílico 3mm', 'Acrílico 4mm', 'Acrílico 5mm', 'Acrílico 6mm', 'Acrílico + LED'];
 const FILTER_DIMS      = ['A6', 'A5', 'A4', 'A3', 'A2', 'DL', 'Ø200', 'Ø300', 'Personalizado'];
 const FILTER_CORS      = ['Transparente', 'Branco', 'Preto', 'Fumé', 'Cores'];
 const FILTER_STOCK     = ['Em stock', 'Últimas unidades', 'Produção por encomenda'];
-const MAT_COUNTS       = [7, 4, 12, 5, 2];
 const COR_COUNTS       = [9, 4, 3, 2, 5];
 const STOCK_COUNTS     = [14, 3, 8];
+type SortKey = 'relevance' | 'price-asc' | 'price-desc' | 'newest';
+type MaterialOption = { label: string; count: number };
+
+const STOCK_FILTERS: Record<string, ProductMock['stock']> = {
+  'Em stock': 'in',
+  'Últimas unidades': 'low',
+  'Produção por encomenda': 'made',
+};
+
+const QUICK_FILTERS = ['Tudo', 'Em stock', 'Personalizável', 'Com iluminação', 'Até €50'] as const;
+
+function normalize(value: string | undefined) {
+  return (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function hasTerm(product: ProductMock, term: string) {
+  const haystack = normalize(`${product.name} ${product.cat} ${product.material} ${product.dim ?? ''}`);
+  return haystack.includes(normalize(term));
+}
 
 export default function PLPClient({
   products,
   categoryName,
   categoryDescription,
   totalInCategory,
+  initialSort = 'relevance',
+  initialMaxPrice,
 }: PLPClientProps) {
-  const [sort, setSort] = useState('relevance');
+  const [sort, setSort] = useState<SortKey>(initialSort);
   const [density, setDensity] = useState<'comfortable' | 'dense'>('comfortable');
+  const [quickFilter, setQuickFilter] = useState<(typeof QUICK_FILTERS)[number]>('Tudo');
+  const [activeMaterials, setActiveMaterials] = useState<string[]>([]);
+  const [activeDims, setActiveDims] = useState<string[]>([]);
+  const [activeCors, setActiveCors] = useState<string[]>([]);
+  const [activeStock, setActiveStock] = useState<ProductMock['stock'][]>([]);
+  const [maxPrice, setMaxPrice] = useState(initialMaxPrice ?? 500);
   const cols = density === 'dense' ? 4 : 3;
   const headerTitle = categoryName ?? 'Todos os produtos';
   const headerDesc = categoryDescription
     ?? 'Catálogo completo de produtos em acrílico produzidos na nossa fábrica em Leiria.';
   const countLabel = totalInCategory ?? products.length;
+  const materialOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const product of products) {
+      const material = product.material?.trim();
+      if (!material) continue;
+      counts.set(material, (counts.get(material) ?? 0) + 1);
+    }
+    return Array.from(counts, ([label, count]) => ({ label, count }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'pt-PT'));
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    const next = products.filter((product) => {
+      if (activeMaterials.length > 0 && !activeMaterials.includes(product.material)) return false;
+      if (activeDims.length > 0 && !activeDims.some((dim) => product.dim === dim || hasTerm(product, dim))) return false;
+      if (activeCors.length > 0 && !activeCors.some((cor) => hasTerm(product, cor))) return false;
+      if (activeStock.length > 0 && !activeStock.includes(product.stock)) return false;
+      if (product.from > maxPrice) return false;
+
+      if (quickFilter === 'Em stock' && product.stock !== 'in') return false;
+      if (quickFilter === 'Personalizável' && product.stock !== 'made' && !hasTerm(product, 'personal')) return false;
+      if (quickFilter === 'Com iluminação' && !hasTerm(product, 'iluminacao') && !hasTerm(product, 'LED')) return false;
+      if (quickFilter === 'Até €50' && product.from > 50) return false;
+
+      return true;
+    });
+
+    if (sort === 'price-asc') return next.toSorted((a, b) => a.from - b.from);
+    if (sort === 'price-desc') return next.toSorted((a, b) => b.from - a.from);
+    if (sort === 'newest') {
+      return next.toSorted((a, b) => {
+        const aId = Number((a as ProductMock & { id?: string }).id ?? 0);
+        const bId = Number((b as ProductMock & { id?: string }).id ?? 0);
+        return bId - aId;
+      });
+    }
+    return next;
+  }, [activeCors, activeDims, activeMaterials, activeStock, maxPrice, products, quickFilter, sort]);
+
+  const toggleFilter = (value: string, current: string[], setter: (next: string[]) => void) => {
+    setter(current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
+  };
+  const toggleStock = (value: ProductMock['stock']) => {
+    setActiveStock((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
+  };
+  const clearFilters = () => {
+    setQuickFilter('Tudo');
+    setActiveMaterials([]);
+    setActiveDims([]);
+    setActiveCors([]);
+    setActiveStock([]);
+    setMaxPrice(500);
+  };
 
   return (
     <main id="main">
@@ -87,14 +170,15 @@ export default function PLPClient({
       >
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {['Tudo', 'Em stock', 'Personalizável', 'Com iluminação', 'Até €50'].map((c, i) => (
+            {QUICK_FILTERS.map((c) => (
               <button
                 key={c}
+                onClick={() => setQuickFilter(c)}
                 style={{
                   height: 28, padding: '0 12px', borderRadius: 999,
-                  background: i === 0 ? 'var(--color-light-base-secondary)' : 'transparent',
-                  color: i === 0 ? 'var(--color-dark-base-primary)' : 'var(--color-base-400)',
-                  border: `1px solid ${i === 0 ? 'transparent' : 'var(--color-base-700)'}`,
+                  background: quickFilter === c ? 'var(--color-light-base-secondary)' : 'transparent',
+                  color: quickFilter === c ? 'var(--color-dark-base-primary)' : 'var(--color-base-400)',
+                  border: `1px solid ${quickFilter === c ? 'transparent' : 'var(--color-base-700)'}`,
                   fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem',
                   textTransform: 'uppercase', cursor: 'pointer',
                 }}
@@ -104,7 +188,7 @@ export default function PLPClient({
             ))}
           </div>
           <span className="text-mono-xs" style={{ color: 'var(--color-base-600)', marginLeft: 'auto' }}>
-            {products.length} de {countLabel} produtos
+            {filteredProducts.length} de {countLabel} produtos
           </span>
           <DensityToggle density={density} setDensity={setDensity} />
           <SortSelect sort={sort} setSort={setSort} />
@@ -118,13 +202,30 @@ export default function PLPClient({
       >
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '260px 1fr', gap: 32 }}>
           <aside>
-            <FilterPanel />
+            <FilterPanel
+              activeMaterials={activeMaterials}
+              activeDims={activeDims}
+              activeCors={activeCors}
+              activeStock={activeStock}
+              maxPrice={maxPrice}
+              materialOptions={materialOptions}
+              onToggleMaterial={(value) => toggleFilter(value, activeMaterials, setActiveMaterials)}
+              onToggleDim={(value) => toggleFilter(value, activeDims, setActiveDims)}
+              onToggleCor={(value) => toggleFilter(value, activeCors, setActiveCors)}
+              onToggleStock={toggleStock}
+              onMaxPriceChange={setMaxPrice}
+              onClear={clearFilters}
+            />
           </aside>
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16 }}>
-              {products.map((p) => <ProductCard key={p.sku} p={p} />)}
+              {filteredProducts.map((p) => <ProductCard key={p.sku} p={p} />)}
             </div>
-            <Pagination />
+            {filteredProducts.length === 0 && (
+              <div style={{ marginTop: 20, padding: 20, border: '1px dashed var(--color-base-800)', borderRadius: 4, color: 'var(--color-base-400)', fontFamily: 'var(--font-geist-sans)', fontSize: 14 }}>
+                Nenhum produto corresponde aos filtros selecionados.
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -165,7 +266,7 @@ function DensityToggle({ density, setDensity }: { density: 'comfortable' | 'dens
   );
 }
 
-function SortSelect({ sort, setSort }: { sort: string; setSort: (s: string) => void }) {
+function SortSelect({ sort, setSort }: { sort: SortKey; setSort: (s: SortKey) => void }) {
   return (
     <label
       style={{
@@ -176,7 +277,7 @@ function SortSelect({ sort, setSort }: { sort: string; setSort: (s: string) => v
       <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>Ordenar</span>
       <select
         value={sort}
-        onChange={(e) => setSort(e.target.value)}
+        onChange={(e) => setSort(e.target.value as SortKey)}
         style={{
           background: 'transparent', border: 'none', outline: 'none',
           color: 'var(--color-light-base-primary)',
@@ -193,21 +294,49 @@ function SortSelect({ sort, setSort }: { sort: string; setSort: (s: string) => v
   );
 }
 
-function FilterPanel() {
+function FilterPanel({
+  activeMaterials,
+  activeDims,
+  activeCors,
+  activeStock,
+  maxPrice,
+  materialOptions,
+  onToggleMaterial,
+  onToggleDim,
+  onToggleCor,
+  onToggleStock,
+  onMaxPriceChange,
+  onClear,
+}: {
+  activeMaterials: string[];
+  activeDims: string[];
+  activeCors: string[];
+  activeStock: ProductMock['stock'][];
+  maxPrice: number;
+  materialOptions: MaterialOption[];
+  onToggleMaterial: (value: string) => void;
+  onToggleDim: (value: string) => void;
+  onToggleCor: (value: string) => void;
+  onToggleStock: (value: ProductMock['stock']) => void;
+  onMaxPriceChange: (value: number) => void;
+  onClear: () => void;
+}) {
   const [open, setOpen] = useState({ material: true, dimensoes: true, preco: true, cor: false, stock: false });
-  const [material, setMaterial] = useState(['Acrílico 5mm']);
-  const [dim, setDim] = useState<string[]>([]);
-  const [price, setPrice] = useState(100);
 
   const toggle = (k: keyof typeof open) => setOpen({ ...open, [k]: !open[k] });
-  const toggleArr = (arr: string[], set: (a: string[]) => void, v: string) =>
-    set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  const chips = [
+    ...activeMaterials,
+    ...activeDims,
+    ...activeCors,
+    ...activeStock.map((stock) => Object.entries(STOCK_FILTERS).find(([, value]) => value === stock)?.[0] ?? stock),
+  ];
 
   return (
     <div style={{ position: 'sticky', top: 200 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
         <Badge size="xs">Filtros</Badge>
         <button
+          onClick={onClear}
           style={{
             background: 'none', border: 'none', padding: 0, cursor: 'pointer',
             fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem',
@@ -219,7 +348,7 @@ function FilterPanel() {
       </div>
 
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 18 }}>
-        {material.map((m) => (
+        {chips.map((m) => (
           <span
             key={m}
             style={{
@@ -235,13 +364,18 @@ function FilterPanel() {
       </div>
 
       <FilterGroup label="Material" open={open.material} toggle={() => toggle('material')}>
-        {FILTER_MATERIALS.map((m, i) => (
+        {materialOptions.length === 0 && (
+          <span className="text-mono-xs" style={{ color: 'var(--color-base-600)' }}>
+            Sem materiais disponíveis.
+          </span>
+        )}
+        {materialOptions.map((m) => (
           <CheckRow
-            key={m}
-            label={m}
-            checked={material.includes(m)}
-            onToggle={() => toggleArr(material, setMaterial, m)}
-            count={MAT_COUNTS[i]}
+            key={m.label}
+            label={m.label}
+            checked={activeMaterials.includes(m.label)}
+            onToggle={() => onToggleMaterial(m.label)}
+            count={m.count}
           />
         ))}
       </FilterGroup>
@@ -250,12 +384,12 @@ function FilterPanel() {
           {FILTER_DIMS.map((d) => (
             <button
               key={d}
-              onClick={() => toggleArr(dim, setDim, d)}
+              onClick={() => onToggleDim(d)}
               style={{
                 padding: '6px 4px',
-                border: `1px dashed ${dim.includes(d) ? 'var(--color-accent-100)' : 'var(--color-base-700)'}`,
-                background: dim.includes(d) ? 'rgba(45,212,205,.08)' : 'transparent',
-                color: dim.includes(d) ? 'var(--color-accent-100)' : 'var(--color-base-300)',
+                border: `1px dashed ${activeDims.includes(d) ? 'var(--color-accent-100)' : 'var(--color-base-700)'}`,
+                background: activeDims.includes(d) ? 'rgba(45,212,205,.08)' : 'transparent',
+                color: activeDims.includes(d) ? 'var(--color-accent-100)' : 'var(--color-base-300)',
                 borderRadius: 2, cursor: 'pointer',
                 fontFamily: 'var(--font-geist-mono)', fontSize: 11, letterSpacing: '-.015rem', textTransform: 'uppercase',
               }}
@@ -269,21 +403,37 @@ function FilterPanel() {
         <div style={{ padding: '8px 2px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>€ 0</span>
-            <span className="text-mono-xs" style={{ color: 'var(--color-light-base-primary)' }}>€ {price}</span>
+            <span className="text-mono-xs" style={{ color: 'var(--color-light-base-primary)' }}>€ {maxPrice}</span>
             <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>€ 500</span>
           </div>
           <input
-            type="range" min={0} max={500} step={5} value={price}
-            onChange={(e) => setPrice(+e.target.value)}
+            type="range" min={0} max={500} step={5} value={maxPrice}
+            onChange={(e) => onMaxPriceChange(+e.target.value)}
             style={{ width: '100%', accentColor: 'var(--color-accent-100)' }}
           />
         </div>
       </FilterGroup>
       <FilterGroup label="Cor" open={open.cor} toggle={() => toggle('cor')}>
-        {FILTER_CORS.map((c, i) => <CheckRow key={c} label={c} count={COR_COUNTS[i]} />)}
+        {FILTER_CORS.map((c, i) => (
+          <CheckRow
+            key={c}
+            label={c}
+            checked={activeCors.includes(c)}
+            onToggle={() => onToggleCor(c)}
+            count={COR_COUNTS[i]}
+          />
+        ))}
       </FilterGroup>
       <FilterGroup label="Disponibilidade" open={open.stock} toggle={() => toggle('stock')} isLast>
-        {FILTER_STOCK.map((s, i) => <CheckRow key={s} label={s} count={STOCK_COUNTS[i]} />)}
+        {FILTER_STOCK.map((s, i) => (
+          <CheckRow
+            key={s}
+            label={s}
+            checked={activeStock.includes(STOCK_FILTERS[s])}
+            onToggle={() => onToggleStock(STOCK_FILTERS[s])}
+            count={STOCK_COUNTS[i]}
+          />
+        ))}
       </FilterGroup>
     </div>
   );
@@ -346,26 +496,3 @@ function CheckRow({
   );
 }
 
-function Pagination() {
-  return (
-    <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-      <button style={pagBtn(false)}>←</button>
-      {[1, 2, 3, 4].map((n, i) => (
-        <button key={n} style={pagBtn(i === 0)}>{n}</button>
-      ))}
-      <span style={{ color: 'var(--color-base-600)', padding: '0 6px' }}>…</span>
-      <button style={pagBtn(false)}>→</button>
-    </div>
-  );
-}
-
-function pagBtn(active: boolean): CSSProperties {
-  return {
-    width: 32, height: 32,
-    background: active ? 'var(--color-light-base-secondary)' : 'transparent',
-    color: active ? 'var(--color-dark-base-primary)' : 'var(--color-base-300)',
-    border: `1px solid ${active ? 'transparent' : 'var(--color-base-700)'}`,
-    borderRadius: 2, cursor: 'pointer',
-    fontFamily: 'var(--font-geist-mono)', fontSize: 12, letterSpacing: '-.015rem',
-  };
-}

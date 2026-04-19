@@ -2,7 +2,7 @@
 
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 import { PageHeader, SettingsTabs, FormRow, AdminInput, AdminToggle } from "@/components/admin/SettingsHelpers";
 
 const tiers = [
@@ -29,10 +29,10 @@ export default function AdminDefinicoesEscaloesPage() {
     <AdminShell active="tiers" breadcrumbs={["Admin", "Definições", "Escalões de preço"]}>
       <PageHeader
         title="Escalões de preço"
-        lede="Desconto automático aplicado a clientes consoante o seu escalão. Atribuído manualmente na ficha de cliente ou por volume anual de compras."
+        lede="Vista de leitura dos escalões comerciais. Criação, exportação e promoção automática ainda não estão ligadas."
         actions={<>
-          <button style={adminGhost}>Exportar</button>
-          <button style={adminPrimary}>+ Novo escalão</button>
+          <button style={adminDisabled} disabled title="Exportação ainda não ligada">Exportar</button>
+          <button style={adminDisabled} disabled title="Criação de escalões ainda não ligada">+ Novo escalão</button>
         </>}
       />
       <SettingsTabs active="tiers" />
@@ -58,8 +58,8 @@ export default function AdminDefinicoesEscaloesPage() {
               <span style={{ fontFamily: "var(--font-geist-sans)", fontSize: 20, letterSpacing: "-.03em", color: t.discount === 0 ? "var(--color-base-500)" : "var(--color-accent-100)" }}>{t.discount}%</span>
               <span className="text-mono-xs" style={{ color: "var(--color-base-400)" }}>{t.minOrder}</span>
               <span style={{ fontFamily: "var(--font-geist-mono)", fontSize: 13, color: "var(--color-base-300)" }}>{t.customers}</span>
-              <AdminToggle on={true}/>
-              <span style={{ color: "var(--color-base-600)", cursor: "pointer" }}>⋯</span>
+              <AdminToggle on={true} disabled title="Alteração de estado ainda não ligada"/>
+              <span title="Edição ainda não ligada" style={{ color: "var(--color-base-700)", cursor: "not-allowed" }}>⋯</span>
             </div>
           ))}
         </div>
@@ -69,16 +69,16 @@ export default function AdminDefinicoesEscaloesPage() {
         <AdminCard title="Promoção automática de escalão">
           <div style={{ padding: "2px 18px" }}>
             <FormRow label="Ativar promoção automática" hint="Clientes sobem de escalão automaticamente ao atingir o volume anual definido.">
-              <AdminToggle on={true}/>
+              <AdminToggle on={true} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Período de avaliação" hint="Volume de compras acumulado durante este período.">
-              <AdminInput value="12" width={80} suffix="meses"/>
+              <AdminInput value="12" width={80} suffix="meses" readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="Notificar cliente" hint="Email automático quando o escalão é promovido.">
-              <AdminToggle on={true} label="Com template T1→T2, T2→T3, etc."/>
+              <AdminToggle on={true} label="Com template T1→T2, T2→T3, etc." disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Requer aprovação humana" hint="T3 e T4 exigem confirmação de um gestor comercial." last>
-              <AdminToggle on={true}/>
+              <AdminToggle on={true} disabled title="Regra ainda não persistida"/>
             </FormRow>
           </div>
         </AdminCard>

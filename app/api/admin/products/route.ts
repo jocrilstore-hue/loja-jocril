@@ -91,7 +91,7 @@ export async function GET() {
         *,
         variant_count:product_variants(count),
         categories ( id, name, slug ),
-        variants:product_variants ( stock_quantity, base_price_including_vat )
+        variants:product_variants ( stock_quantity, base_price_including_vat, main_image_url )
         `
       )
       .order("created_at", { ascending: false });

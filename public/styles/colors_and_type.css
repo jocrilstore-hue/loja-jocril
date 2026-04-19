@@ -10,7 +10,7 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("fonts/geist-sans.woff2") format("woff2");
+  src: url("/fonts/geist-sans.woff2") format("woff2");
 }
 @font-face {
   font-family: "Geist Fallback";
@@ -25,7 +25,7 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("fonts/geist-mono.woff2") format("woff2");
+  src: url("/fonts/geist-mono.woff2") format("woff2");
 }
 @font-face {
   font-family: "Geist Mono Fallback";

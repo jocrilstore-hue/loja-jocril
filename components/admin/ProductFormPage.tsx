@@ -16,11 +16,6 @@ type SlugState = "ok" | "checking" | "error";
 
 const TABS = [
   { k: "basic",        l: "Informações básicas" },
-  { k: "images",       l: "Imagens" },
-  { k: "content",      l: "Conteúdo" },
-  { k: "seo",          l: "SEO" },
-  { k: "applications", l: "Aplicações" },
-  { k: "settings",     l: "Definições" },
 ];
 
 const IMGS = [
@@ -33,6 +28,16 @@ const IMGS = [
 
 const ALL_APPS = ["Retalho","Ponto de venda","Cosmética","Hotelaria","Farmácia","Eventos","Joalharia","Vinho e Bebidas","Alimentar","Exposição"];
 
+function slugify(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function ProductFormPage({ mode }: { mode: Mode }) {
   const isEdit = mode === "edit";
   const router = useRouter();
@@ -41,8 +46,8 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
 
   const [tab, setTab] = useState("basic");
   const [slugState, setSlugState] = useState<SlugState>("ok");
-  const [skuSlug, setSkuSlug] = useState(isEdit ? "expositor-a3-6-prateleiras" : "");
-  const [productName, setProductName] = useState(isEdit ? "Expositor A3 · 6 prateleiras" : "");
+  const [skuSlug, setSkuSlug] = useState("");
+  const [productName, setProductName] = useState("");
   const [saved, setSaved] = useState(false);
   const [draft, setDraft] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -125,7 +130,7 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
             )}
           </div>
           <h1 style={{ margin: 0, fontFamily: "var(--font-geist-sans)", fontSize: 32, letterSpacing: "-.04em", color: "var(--color-light-base-primary)" }}>
-            {isEdit ? "Expositor A3 · 6 prateleiras" : "Novo produto"}
+            {isEdit ? "Editar produto" : "Novo produto"}
           </h1>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
@@ -195,9 +200,15 @@ function BasicInfoTab({ isEdit, slugState, skuSlug, setSkuSlug, checkSlug, produ
   productName: string;
   setProductName: (v: string) => void;
 }) {
+  const generateSlug = () => {
+    const nextSlug = slugify(productName);
+    setSkuSlug(nextSlug);
+    checkSlug(nextSlug);
+  };
+
   return (
     <div style={{ display: "grid", gap: 20 }}>
-      <FormCard title="Informações gerais" desc="Defina os dados principais do produto.">
+      <FormCard title="Informações gerais" desc="Nesta versão, o editor guarda apenas nome, slug e estado de publicação. As restantes secções ficam ocultas até terem persistência.">
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <Field label="Nome" value={productName} onChange={(v: string) => setProductName(v)} required />
           <div>
@@ -205,13 +216,13 @@ function BasicInfoTab({ isEdit, slugState, skuSlug, setSkuSlug, checkSlug, produ
               <label className="text-mono-xs" style={{ color: "var(--color-base-500)", textTransform: "uppercase" }}>
                 Slug <span style={{ color: "var(--color-destructive)" }}>*</span>
               </label>
-              <button className="text-mono-xs" style={{ background: "none", border: "none", color: "var(--color-accent-100)", cursor: "pointer", padding: 0 }}>
+              <button type="button" onClick={generateSlug} className="text-mono-xs" style={{ background: "none", border: "none", color: "var(--color-accent-100)", cursor: "pointer", padding: 0 }}>
                 Gerar automaticamente
               </button>
             </div>
             <div style={{ position: "relative" }}>
               <input
-                defaultValue={skuSlug}
+                value={skuSlug}
                 onChange={(e) => { setSkuSlug(e.target.value); checkSlug(e.target.value); }}
                 style={{
                   width: "100%",
@@ -234,33 +245,12 @@ function BasicInfoTab({ isEdit, slugState, skuSlug, setSkuSlug, checkSlug, produ
               </div>
             </div>
           </div>
-          <Field label="Código de referência" defaultValue={isEdit ? "EXP-A3-06P" : ""} />
-          <Field label="Prefixo SKU" defaultValue={isEdit ? "EXP-A3" : ""} />
-          <FieldSelect label="Categoria" defaultValue={isEdit ? "Acrílicos Chão" : undefined} options={["Acrílicos Chão","Acrílicos Mesa","Acrílicos Parede","Caixas","Molduras","Tombolas"]} />
-          <FieldSelect label="Material" defaultValue={isEdit ? "Acrílico 5mm" : undefined} options={["Sem material","Acrílico 3mm","Acrílico 5mm","Acrílico 6mm","Madeira MDF"]} />
-          <FieldSelect label="Orientação" defaultValue={isEdit ? "Vertical" : undefined} options={["Vertical","Horizontal","Ambas"]} />
-          <Field label="Quantidade mínima" defaultValue={isEdit ? "1" : ""} type="number" />
         </div>
-
-        <div style={{ marginTop: 20, padding: 16, border: "1px dashed var(--color-base-800)", borderRadius: 4, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-          {([
-            ["Ativo", "Disponível no site público", true],
-            ["Destaque", "Mostrado nas listagens principais", false],
-            ["Personalizável", "Aceita medidas especiais", true],
-            ["Dupla face", "Permite impressão dos dois lados", false],
-            ["Adesivo", "Inclui fita/painel adesivo", false],
-            ["Tem fecho", "Inclui fechadura ou mecanismo", false],
-            ["Descontos por quantidade", "Exibe tabela de preços progressivos", true],
-          ] as [string, string, boolean][]).map(([l, d, on]) => (
-            <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", border: "1px solid var(--color-base-900)", borderRadius: 2 }}>
-              <div>
-                <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 13, color: "var(--color-light-base-primary)" }}>{l}</div>
-                <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 2 }}>{d}</div>
-              </div>
-              <ToggleSwitch on={on} />
-            </div>
-          ))}
-        </div>
+        {isEdit && (
+          <div className="text-mono-xs" style={{ marginTop: 14, color: "var(--color-base-500)" }}>
+            Ao guardar sem preencher nome ou slug, apenas o estado escolhido no botão será atualizado.
+          </div>
+        )}
       </FormCard>
     </div>
   );

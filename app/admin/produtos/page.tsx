@@ -22,7 +22,7 @@ type Prod = {
 
 type SortKey = "n" | "cat" | "priceN" | "stock" | "vars" | "published" | "updIdx";
 
-interface ApiVariant { stock_quantity: number; base_price_including_vat: number }
+interface ApiVariant { stock_quantity: number; base_price_including_vat: number; main_image_url: string | null }
 interface ApiProduct {
   id: number; name: string; is_active: boolean; created_at: string; updated_at?: string;
   variant_count: Array<{ count: number }>;
@@ -47,9 +47,11 @@ function mapProduct(p: ApiProduct, idx: number): Prod {
     published: p.is_active,
     updated: updDate.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" }),
     updIdx: idx,
-    img: "/assets/portfolio/carm-premium.avif",
+    img: vs.find((v) => v.main_image_url)?.main_image_url ?? "/assets/placeholder.svg",
   };
 }
+
+const PAGE_SIZE = 10;
 
 const selectStyle: CSSProperties = {
   padding: "9px 12px",
@@ -82,6 +84,9 @@ export default function AdminProductsPage() {
   const [stockFilter, setStockFilter] = useState("any");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState(1);
+  const [bulkWorking, setBulkWorking] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/products")
@@ -123,10 +128,24 @@ export default function AdminProductsPage() {
     return rows;
   }, [products, query, cat, state, stockFilter, sortKey, sortDir]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [query, cat, state, stockFilter, sortKey, sortDir]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const toggle = (k: string) =>
     setSelected((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
-  const allOnPage = filtered.length > 0 && filtered.every((p) => selected.includes(p.sku));
-  const toggleAll = () => setSelected(allOnPage ? [] : filtered.map((p) => p.sku));
+  const allOnPage = paged.length > 0 && paged.every((p) => selected.includes(p.sku));
+  const toggleAll = () => {
+    const pageIds = paged.map((p) => p.sku);
+    setSelected((current) => {
+      if (allOnPage) return current.filter((id) => !pageIds.includes(id));
+      return Array.from(new Set([...current, ...pageIds]));
+    });
+  };
   const cycleSort = (k: SortKey) => {
     if (sortKey !== k) { setSortKey(k); setSortDir("asc"); return; }
     if (sortDir === "asc") setSortDir("desc");
@@ -134,6 +153,34 @@ export default function AdminProductsPage() {
   };
   const clearFilters = () => { setQuery(""); setCat("any"); setState("any"); setStockFilter("any"); setSortKey(null); };
   const hasFilters = query.trim() || cat !== "any" || state !== "any" || stockFilter !== "any";
+
+  async function runBulk(action: "publish" | "unpublish" | "archive") {
+    setBulkWorking(true);
+    setBulkError(null);
+    try {
+      for (const id of selected) {
+        const response = await fetch(`/api/admin/products/${id}`, {
+          method: action === "archive" ? "DELETE" : "PATCH",
+          headers: action === "archive" ? undefined : { "Content-Type": "application/json" },
+          body: action === "archive" ? undefined : JSON.stringify({ is_active: action === "publish" }),
+        });
+        const payload = await response.json();
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error ?? "Erro ao atualizar produtos");
+        }
+      }
+
+      setProducts((rows) => rows.map((product) => {
+        if (!selected.includes(product.sku)) return product;
+        return { ...product, published: action === "publish" };
+      }));
+      setSelected([]);
+    } catch (error) {
+      setBulkError(error instanceof Error ? error.message : "Erro ao atualizar produtos");
+    } finally {
+      setBulkWorking(false);
+    }
+  }
 
   return (
     <AdminShell active="products" breadcrumbs={["Produtos"]}>
@@ -189,12 +236,17 @@ export default function AdminProductsPage() {
         <div style={{ padding: "10px 14px", background: "var(--color-dark-base-secondary)", border: "1px dashed var(--color-accent-100)", borderRadius: 2, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <span className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>● {selected.length} selecionado(s)</span>
           <div style={{ display: "flex", gap: 8 }}>
-            <button style={adminGhost}>Publicar</button>
-            <button style={adminGhost}>Despublicar</button>
-            <button style={adminGhost}>Duplicar</button>
+            <button disabled={bulkWorking} onClick={() => runBulk("publish")} style={adminGhost}>Publicar</button>
+            <button disabled={bulkWorking} onClick={() => runBulk("unpublish")} style={adminGhost}>Despublicar</button>
+            <button disabled title="Duplicar exige regras de clonagem de variantes e imagens." style={{ ...adminGhost, opacity: 0.45, cursor: "not-allowed" }}>Duplicar</button>
             <button onClick={() => setSelected([])} style={adminGhost}>Limpar</button>
-            <button style={adminDanger}>Arquivar</button>
+            <button disabled={bulkWorking} onClick={() => runBulk("archive")} style={adminDanger}>Arquivar</button>
           </div>
+        </div>
+      )}
+      {bulkError && (
+        <div style={{ marginBottom: 8, padding: "10px 14px", border: "1px dashed var(--color-destructive)", borderRadius: 2, color: "var(--color-destructive)", fontFamily: "var(--font-geist-sans)", fontSize: 13 }}>
+          {bulkError}
         </div>
       )}
 
@@ -234,7 +286,7 @@ export default function AdminProductsPage() {
             )}
           </div>
         ) : (
-          filtered.map((p) => {
+          paged.map((p) => {
             const low = p.stock < 10;
             const on = selected.includes(p.sku);
             return (
@@ -264,13 +316,29 @@ export default function AdminProductsPage() {
           A mostrar {filtered.length} {filtered.length === 1 ? "produto" : "produtos"}{hasFilters ? " (filtrado)" : ""}
         </span>
         <div style={{ display: "flex", gap: 4 }}>
-          {["‹", "1", "2", "3", "…", "16", "›"].map((p, i) => (
-            <button key={i} style={{ padding: "6px 11px", cursor: "pointer", background: p === "1" ? "var(--color-accent-100)" : "transparent", border: `1px solid ${p === "1" ? "var(--color-accent-100)" : "var(--color-base-800)"}`, color: p === "1" ? "#fff" : "var(--color-base-400)", fontFamily: "var(--font-geist-mono)", fontSize: 12, borderRadius: 2 }}>
+          <button disabled={currentPage === 1} onClick={() => setPage((p) => Math.max(1, p - 1))} style={pageButton(false, currentPage === 1)}>‹</button>
+          {Array.from({ length: pageCount }, (_, idx) => idx + 1).map((p) => (
+            <button key={p} onClick={() => setPage(p)} style={pageButton(p === currentPage)}>
               {p}
             </button>
           ))}
+          <button disabled={currentPage === pageCount} onClick={() => setPage((p) => Math.min(pageCount, p + 1))} style={pageButton(false, currentPage === pageCount)}>›</button>
         </div>
       </div>
     </AdminShell>
   );
+}
+
+function pageButton(active: boolean, disabled = false): CSSProperties {
+  return {
+    padding: "6px 11px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    background: active ? "var(--color-accent-100)" : "transparent",
+    border: `1px solid ${active ? "var(--color-accent-100)" : "var(--color-base-800)"}`,
+    color: active ? "#fff" : "var(--color-base-400)",
+    fontFamily: "var(--font-geist-mono)",
+    fontSize: 12,
+    borderRadius: 2,
+    opacity: disabled ? 0.45 : 1,
+  };
 }

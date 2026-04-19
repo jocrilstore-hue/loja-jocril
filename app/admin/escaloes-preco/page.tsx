@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled, adminGhost } from "@/components/admin/styles";
 
 type Tier = { id: number; min: number; pct: number };
-type Toast = { msg: string; type: "success" | "error" };
-type Result = { variants: number; tiers: number };
 
 export default function AdminEscaloesPrecosPage() {
   const [tiers, setTiers] = useState<Tier[]>([
@@ -15,9 +13,6 @@ export default function AdminEscaloesPrecosPage() {
     { id: 3, min: 800,  pct: 1.5 },
     { id: 4, min: 1000, pct: 3.0 },
   ]);
-  const [applying, setApplying] = useState(false);
-  const [result, setResult] = useState<Result | null>(null);
-  const [toast, setToast] = useState<Toast | null>(null);
 
   const sorted = [...tiers].sort((a, b) => a.min - b.min);
 
@@ -28,29 +23,12 @@ export default function AdminEscaloesPrecosPage() {
   };
 
   const remove = (id: number) => {
-    if (tiers.length <= 1) { showToast("Deve existir pelo menos um escalão.", "error"); return; }
+    if (tiers.length <= 1) return;
     setTiers(tiers.filter((t) => t.id !== id));
   };
 
   const update = (id: number, field: keyof Tier, val: number) =>
     setTiers(tiers.map((t) => (t.id === id ? { ...t, [field]: val } : t)));
-
-  const showToast = (msg: string, type: "success" | "error" = "success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const apply = async () => {
-    for (const t of tiers) {
-      if (t.min <= 0) { showToast("O valor mínimo deve ser > 0.", "error"); return; }
-      if (t.pct <= 0 || t.pct > 100) { showToast("Desconto deve estar entre 0 e 100%.", "error"); return; }
-    }
-    setApplying(true);
-    await new Promise<void>((r) => setTimeout(r, 1800));
-    setResult({ variants: 183, tiers: tiers.length * 183 });
-    showToast(`${tiers.length * 183} escalões criados para 183 variantes.`);
-    setApplying(false);
-  };
 
   const exPrice = 2.50;
 
@@ -62,7 +40,7 @@ export default function AdminEscaloesPrecosPage() {
           Escalões de desconto por quantidade
         </h1>
         <p style={{ margin: 0, fontFamily: "var(--font-geist-sans)", fontSize: 14, color: "var(--color-base-400)", maxWidth: 600 }}>
-          Configure descontos progressivos baseados no valor total do pedido. O sistema calcula automaticamente a quantidade necessária por produto.
+          Pré-visualize descontos progressivos baseados no valor total do pedido. A aplicação global ao catálogo ainda não está ligada.
         </p>
       </div>
 
@@ -70,8 +48,8 @@ export default function AdminEscaloesPrecosPage() {
         {/* Config card */}
         <div style={{ border: "1px dashed var(--color-base-800)", borderRadius: 4, overflow: "hidden", background: "var(--color-dark-base-secondary)" }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px dashed var(--color-base-800)" }}>
-            <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 16, color: "var(--color-light-base-primary)" }}>Configurar escalões</div>
-            <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 3 }}>Defina o valor mínimo e a percentagem de desconto para cada escalão.</div>
+            <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 16, color: "var(--color-light-base-primary)" }}>Pré-visualizar escalões</div>
+            <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 3 }}>Estes valores só alteram a simulação desta página.</div>
           </div>
           <div style={{ padding: 20 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 40px", gap: 12, padding: "8px 0", borderBottom: "1px dashed var(--color-base-800)", marginBottom: 8 }}>
@@ -107,13 +85,13 @@ export default function AdminEscaloesPrecosPage() {
                   />
                   <span className="text-mono-xs" style={{ padding: "0 8px", display: "grid", placeItems: "center", color: "var(--color-base-500)", borderLeft: "1px solid var(--color-base-800)" }}>%</span>
                 </div>
-                <button onClick={() => remove(t.id)} style={{ background: "transparent", border: "none", color: "var(--color-base-600)", cursor: "pointer", fontSize: 16, display: "grid", placeItems: "center" }}>×</button>
+                <button onClick={() => remove(t.id)} title="Remove apenas esta pré-visualização" style={{ background: "transparent", border: "none", color: "var(--color-base-600)", cursor: "pointer", fontSize: 16, display: "grid", placeItems: "center" }}>×</button>
               </div>
             ))}
             <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-              <button style={adminGhost} onClick={add}>+ Adicionar escalão</button>
-              <button style={applying ? { ...adminPrimary, opacity: 0.7 } : adminPrimary} onClick={apply} disabled={applying}>
-                {applying ? "A aplicar…" : "Aplicar a todos os produtos"}
+              <button style={adminGhost} onClick={add} title="Adiciona apenas nesta pré-visualização">+ Adicionar escalão</button>
+              <button style={adminDisabled} disabled title="Aplicação global ainda não ligada">
+                Aplicação global indisponível
               </button>
             </div>
           </div>
@@ -148,37 +126,14 @@ export default function AdminEscaloesPrecosPage() {
               </div>
             ))}
           </div>
-
-          {result && (
-            <div style={{ border: "1px dashed var(--color-accent-100)", borderRadius: 4, padding: 20, background: "rgba(45,212,205,.05)" }}>
-              <div className="text-mono-xs" style={{ color: "var(--color-accent-100)", marginBottom: 12 }}>● Última aplicação</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div style={{ textAlign: "center", padding: 12, background: "var(--color-dark-base-primary)", borderRadius: 2 }}>
-                  <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 28, color: "var(--color-light-base-primary)", letterSpacing: "-.03em" }}>{result.variants}</div>
-                  <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4, textTransform: "uppercase" }}>Variantes</div>
-                </div>
-                <div style={{ textAlign: "center", padding: 12, background: "var(--color-dark-base-primary)", borderRadius: 2 }}>
-                  <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 28, color: "var(--color-light-base-primary)", letterSpacing: "-.03em" }}>{result.tiers}</div>
-                  <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4, textTransform: "uppercase" }}>Escalões criados</div>
-                </div>
-              </div>
+          <div style={{ border: "1px dashed var(--color-base-800)", borderRadius: 4, padding: 20, background: "var(--color-dark-base-secondary)" }}>
+            <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginBottom: 8 }}>● aplicação não ligada</div>
+            <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 13, color: "var(--color-base-300)", lineHeight: 1.55 }}>
+              Esta ferramenta já não simula uma gravação. Quando a rota de persistência estiver pronta, a aplicação global deve chamar o RPC de escalões e reportar o resultado real.
             </div>
-          )}
+          </div>
         </div>
       </div>
-
-      {toast && (
-        <div style={{
-          position: "fixed", bottom: 24, right: 24, padding: "12px 18px",
-          background: "var(--color-dark-base-secondary)",
-          border: `1px solid ${toast.type === "error" ? "var(--color-destructive)" : "var(--color-accent-100)"}`,
-          borderLeft: `3px solid ${toast.type === "error" ? "var(--color-destructive)" : "var(--color-accent-100)"}`,
-          borderRadius: 4, fontFamily: "var(--font-geist-sans)", fontSize: 14, color: "var(--color-light-base-primary)",
-          boxShadow: "0 8px 24px rgba(0,0,0,.3)", zIndex: 200, maxWidth: 360,
-        }}>
-          {toast.msg}
-        </div>
-      )}
     </AdminShell>
   );
 }

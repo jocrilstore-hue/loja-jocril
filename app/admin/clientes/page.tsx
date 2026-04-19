@@ -1,37 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminGhost, adminPrimary } from "@/components/admin/styles";
 import Link from "next/link";
 
 type Customer = {
+  id: number;
   e: string; n: string; type: "B2B" | "B2C";
-  orders: number; spent: number; last: string; loc: string; tier: string;
+  orders: number; spent: number; last: string; loc: string; tier: string; tax_id: string | null; created_at: string;
 };
 type SortKey = keyof Customer;
-
-const customers: Customer[] = [
-  { e: "contas@pontolinha.pt",     n: "Agência Ponto & Linha, Lda.", type: "B2B", orders: 7,  spent: 8420.50, last: "17 Abr", loc: "Lisboa",  tier: "10+" },
-  { e: "procurement@beefeater.pt", n: "Beefeater Portugal",           type: "B2B", orders: 4,  spent: 6212.00, last: "15 Abr", loc: "Porto",    tier: "10+" },
-  { e: "shop@carm.pt",             n: "CARM Vinhos",                  type: "B2B", orders: 12, spent: 5830.00, last: "12 Abr", loc: "Foz Côa",  tier: "10+" },
-  { e: "maria@agencia.pt",         n: "Maria Silva",                  type: "B2C", orders: 12, spent: 852.40,  last: "17 Abr", loc: "Lisboa",   tier: "5+" },
-  { e: "orders@ricola.es",         n: "Ricola Ibérica",               type: "B2B", orders: 3,  spent: 3480.00, last: "10 Abr", loc: "Madrid",   tier: "10+" },
-  { e: "bruno.a@mail.pt",          n: "Bruno Almeida",                type: "B2C", orders: 5,  spent: 412.00,  last: "16 Abr", loc: "Coimbra",  tier: "1+" },
-  { e: "ricardo.m@gmail.com",      n: "Ricardo Mota",                 type: "B2C", orders: 2,  spent: 148.00,  last: "17 Abr", loc: "Braga",    tier: "1+" },
-  { e: "compras@heineken.pt",      n: "Heineken Portugal",            type: "B2B", orders: 2,  spent: 2400.00, last: "16 Abr", loc: "Vialonga", tier: "10+" },
-  { e: "m.teixeira@mail.com",      n: "Miguel Teixeira",              type: "B2C", orders: 1,  spent: 68.00,   last: "16 Abr", loc: "Leiria",   tier: "new" },
-  { e: "j.pinto@outlook.pt",       n: "Joana Pinto",                  type: "B2C", orders: 1,  spent: 48.00,   last: "16 Abr", loc: "Setúbal",  tier: "new" },
-];
 
 const selectStyle: CSSProperties = {
   padding: "9px 12px", background: "var(--color-dark-base-secondary)",
   border: "1px solid var(--color-base-800)", borderRadius: 2,
   color: "var(--color-base-300)", fontFamily: "var(--font-geist-mono)", fontSize: 12,
 };
-
-const kpis: [string, string][] = [["Total clientes", "642"], ["Novos (30d)", "48"], ["Ativos (90d)", "214"], ["B2B", "86"]];
 
 const headers: { k: SortKey; l: string; sortable: boolean }[] = [
   { k: "n",      l: "Cliente",     sortable: true },
@@ -44,19 +30,57 @@ const headers: { k: SortKey; l: string; sortable: boolean }[] = [
 ];
 
 export default function AdminClientesPage() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery]   = useState("");
   const [type, setType]     = useState("any");
   const [tier, setTier]     = useState("any");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+	  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadCustomers() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/admin/customers", { signal: controller.signal });
+        const payload = await response.json() as { success: boolean; data?: Customer[]; error?: string };
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error ?? "Erro ao carregar clientes");
+        }
+        setCustomers(payload.data ?? []);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setError(err instanceof Error ? err.message : "Erro ao carregar clientes");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCustomers();
+    return () => controller.abort();
+  }, []);
+
+  const kpis: [string, string][] = useMemo(() => {
+    const newCutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const active = customers.filter((c) => c.orders > 0).length;
+    const b2b = customers.filter((c) => c.type === "B2B").length;
+    return [
+      ["Total clientes", String(customers.length)],
+      ["Novos (30d)", String(customers.filter((c) => new Date(c.created_at).getTime() >= newCutoff).length)],
+      ["Ativos", String(active)],
+      ["B2B", String(b2b)],
+    ];
+  }, [customers]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let rows = customers.filter(c => {
       if (type !== "any" && c.type !== type) return false;
       if (tier !== "any" && c.tier !== tier) return false;
-      if (q && !(c.n + " " + c.e + " " + c.loc).toLowerCase().includes(q)) return false;
+      if (q && !(c.n + " " + c.e + " " + c.loc + " " + (c.tax_id ?? "")).toLowerCase().includes(q)) return false;
       return true;
     });
     if (sortKey) {
@@ -81,8 +105,10 @@ export default function AdminClientesPage() {
   const hasFilters = !!query.trim() || type !== "any" || tier !== "any";
   const clearFilters = () => { setQuery(""); setType("any"); setTier("any"); setSortKey(null); };
 
-  return (
-    <AdminShell active="customers" breadcrumbs={["Clientes"]}>
+	  return (
+	    <AdminShell active="customers" breadcrumbs={["Clientes"]}>
+      {loading && <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginBottom: 16 }}>A carregar clientes live…</div>}
+      {error && <div style={{ color: "var(--color-destructive)", fontFamily: "var(--font-geist-sans)", fontSize: 13, marginBottom: 16 }}>{error}</div>}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
         <div>
           <div className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>● Clientes</div>
@@ -146,15 +172,15 @@ export default function AdminClientesPage() {
             {hasFilters && <button onClick={clearFilters} style={{ padding: "7px 12px", background: "transparent", border: "1px dashed var(--color-base-700)", borderRadius: 2, color: "var(--color-base-300)", fontFamily: "var(--font-geist-mono)", fontSize: 11, textTransform: "uppercase", cursor: "pointer" }}>Limpar filtros</button>}
           </div>
         ) : filtered.map(c => {
-          const on = selected.includes(c.e);
-          const initials = c.n.split(" ").slice(0, 2).map(w => w[0]).join("").slice(0, 2);
+	          const on = selected.includes(c.e);
+	          const initials = c.n.split(" ").slice(0, 2).map(w => w[0]).join("").slice(0, 2);
           return (
             <div key={c.e} style={{ display: "grid", gridTemplateColumns: "36px 1.8fr 80px 80px auto auto auto 80px", gap: 14, padding: "12px 16px", alignItems: "center", borderBottom: "1px dashed var(--color-base-900)", background: on ? "rgba(240,71,66,.03)" : "transparent" }}>
               <input type="checkbox" checked={on} onChange={() => toggle(c.e)} aria-label={`Selecionar ${c.n}`} style={{ accentColor: "var(--color-accent-100)" }}/>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 <div style={{ width: 34, height: 34, borderRadius: 999, background: c.type === "B2B" ? "var(--color-accent-100)" : "var(--color-base-700)", color: c.type === "B2B" ? "#fff" : "var(--color-base-300)", display: "grid", placeItems: "center", fontFamily: "var(--font-geist-mono)", fontSize: 11 }}>{initials}</div>
                 <div>
-                  <Link href="/admin/clientes/1" style={{ fontFamily: "var(--font-geist-sans)", fontSize: 14, color: "var(--color-light-base-primary)", letterSpacing: "-.02em", textDecoration: "none", display: "block" }}>{c.n}</Link>
+	                  <Link href={`/admin/clientes/${c.id}`} style={{ fontFamily: "var(--font-geist-sans)", fontSize: 14, color: "var(--color-light-base-primary)", letterSpacing: "-.02em", textDecoration: "none", display: "block" }}>{c.n}</Link>
                   <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 2 }}>{c.e}</div>
                 </div>
               </div>

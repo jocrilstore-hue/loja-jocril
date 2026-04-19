@@ -37,6 +37,9 @@ const createOrderSchema = z.object({
   subtotal: z.number(),
   shippingCost: z.number(),
   total: z.number(),
+  legalConsent: z.boolean().refine((value) => value === true, {
+    message: "Aceite os Termos e a Política de Privacidade",
+  }),
   notes: z.string().optional(),
 });
 
@@ -49,59 +52,42 @@ export async function GET(request: Request) {
     const { userId } = await auth();
 
     if (orderNumber) {
-      if (userId) {
-        const { data: order, error } = await supabase
-          .from("orders")
-          .select(
-            `
-            *,
-            customer:customers(*),
-            shipping_address:shipping_addresses(*),
-            items:order_items(*)
-          `
-          )
-          .eq("order_number", orderNumber)
-          .single();
-
-        if (error || !order) {
-          return NextResponse.json(
-            { success: false, error: "Encomenda não encontrada" },
-            { status: 404 }
-          );
-        }
-
-        const customer = order.customer as { auth_user_id?: string };
-        if (customer?.auth_user_id && customer.auth_user_id !== userId) {
-          return NextResponse.json(
-            { success: false, error: "Não autorizado" },
-            { status: 403 }
-          );
-        }
-
-        return NextResponse.json({ success: true, data: order });
-      } else {
-        const { data: order, error } = await supabase
-          .from("orders")
-          .select(
-            `
-            order_number, status, payment_status,
-            subtotal, shipping_cost, total_amount_with_vat,
-            created_at,
-            items:order_items(*)
-          `
-          )
-          .eq("order_number", orderNumber)
-          .single();
-
-        if (error || !order) {
-          return NextResponse.json(
-            { success: false, error: "Encomenda não encontrada" },
-            { status: 404 }
-          );
-        }
-
-        return NextResponse.json({ success: true, data: order });
+      if (!userId) {
+        return NextResponse.json(
+          { success: false, error: "Autenticação necessária" },
+          { status: 401 }
+        );
       }
+
+      const { data: order, error } = await supabase
+        .from("orders")
+        .select(
+          `
+          *,
+          customer:customers(*),
+          shipping_address:shipping_addresses(*),
+          items:order_items(*)
+        `
+        )
+        .eq("order_number", orderNumber)
+        .single();
+
+      if (error || !order) {
+        return NextResponse.json(
+          { success: false, error: "Encomenda não encontrada" },
+          { status: 404 }
+        );
+      }
+
+      const customer = order.customer as { auth_user_id?: string } | null;
+      if (!customer?.auth_user_id || customer.auth_user_id !== userId) {
+        return NextResponse.json(
+          { success: false, error: "Não autorizado" },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json({ success: true, data: order });
     }
 
     if (!userId) {

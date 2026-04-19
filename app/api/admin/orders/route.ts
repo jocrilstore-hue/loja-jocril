@@ -16,7 +16,7 @@ export async function GET() {
         `
         id, order_number, status, payment_status, payment_method,
         total_amount_with_vat, created_at,
-        customer:customers ( name, email ),
+        customer:customers ( first_name, last_name, email, tax_id ),
         item_count:order_items ( count )
         `
       )

@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import Badge from '@/components/store/Badge';
 
@@ -14,11 +15,21 @@ type OrderItem = {
 };
 
 type ShippingAddress = {
-  address: string | null;
-  address2: string | null;
+  address_line_1: string | null;
+  address_line_2: string | null;
   city: string | null;
   postal_code: string | null;
   country: string | null;
+};
+
+type Customer = {
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  company_name: string | null;
+  tax_id: string | null;
+  auth_user_id: string | null;
 };
 
 type Order = {
@@ -36,6 +47,7 @@ type Order = {
   payment_deadline: string | null;
   items: OrderItem[];
   shipping_address: ShippingAddress | ShippingAddress[] | null;
+  customer: Customer | Customer[] | null;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -89,6 +101,11 @@ export default async function EncomendaDetailPage({
 }) {
   const { id } = await params;
   const { userId } = await auth();
+
+  if (!userId) {
+    redirect(`/entrar?redirect_url=${encodeURIComponent(`/encomenda/${id}`)}`);
+  }
+
   const supabase = await createClient();
 
   const { data: order } = await supabase
@@ -98,7 +115,8 @@ export default async function EncomendaDetailPage({
       subtotal, shipping_cost, total_amount_with_vat, created_at, notes,
       eupago_entity, eupago_reference, payment_deadline,
       items:order_items(product_name, product_sku, size_format, quantity, unit_price, total_price),
-      shipping_address:shipping_addresses(address, address2, city, postal_code, country)
+      shipping_address:shipping_addresses(address_line_1, address_line_2, city, postal_code, country),
+      customer:customers(first_name, last_name, email, phone, company_name, tax_id, auth_user_id)
     `)
     .eq('order_number', id)
     .single() as { data: Order | null };
@@ -118,6 +136,24 @@ export default async function EncomendaDetailPage({
   const shipping = Array.isArray(order.shipping_address)
     ? order.shipping_address[0]
     : order.shipping_address;
+  const customer = Array.isArray(order.customer)
+    ? order.customer[0]
+    : order.customer;
+  const customerName = customer
+    ? [customer.first_name, customer.last_name].filter(Boolean).join(' ') || customer.email
+    : null;
+
+  if (!customer?.auth_user_id || customer.auth_user_id !== userId) {
+    return (
+      <main id="main" style={{ background: 'var(--color-dark-base-primary)', padding: '80px 40px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', textAlign: 'center' }}>
+          <Badge size="sm">Não encontrada</Badge>
+          <h1 className="heading-1" style={{ margin: '20px 0 16px', color: 'var(--color-light-base-primary)' }}>Encomenda não encontrada.</h1>
+          <Link href="/encomendas" style={{ color: 'var(--color-accent-100)', fontFamily: 'var(--font-geist-mono)', fontSize: 13, textDecoration: 'none' }}>← Ver todas as encomendas</Link>
+        </div>
+      </main>
+    );
+  }
 
   const dateStr = new Date(order.created_at).toLocaleDateString('pt-PT', {
     day: '2-digit', month: 'long', year: 'numeric',
@@ -127,9 +163,6 @@ export default async function EncomendaDetailPage({
     order.payment_status === 'pending' &&
     order.eupago_reference !== null &&
     order.eupago_entity !== null;
-
-  // Suppress unused userId warning — available for future auth guard
-  void userId;
 
   return (
     <main id="main" style={{ background: 'var(--color-dark-base-primary)', padding: '40px 40px 80px' }}>
@@ -228,10 +261,22 @@ export default async function EncomendaDetailPage({
             {shipping && (
               <Card title="Morada de entrega">
                 <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-light-base-primary)', lineHeight: 1.7 }}>
-                  {shipping.address && <div>{shipping.address}</div>}
-                  {shipping.address2 && <div>{shipping.address2}</div>}
+                  {shipping.address_line_1 && <div>{shipping.address_line_1}</div>}
+                  {shipping.address_line_2 && <div>{shipping.address_line_2}</div>}
                   {shipping.postal_code && shipping.city && <div>{shipping.postal_code} {shipping.city}</div>}
                   {shipping.country && <div>{shipping.country}</div>}
+                </div>
+              </Card>
+            )}
+
+            {customer && (
+              <Card title="Faturação">
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-light-base-primary)', lineHeight: 1.7 }}>
+                  {customerName && <div>{customerName}</div>}
+                  {customer.company_name && <div>{customer.company_name}</div>}
+                  {customer.email && <div>{customer.email}</div>}
+                  {customer.phone && <div>{customer.phone}</div>}
+                  {customer.tax_id && <div><span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>NIF</span> {customer.tax_id}</div>}
                 </div>
               </Card>
             )}

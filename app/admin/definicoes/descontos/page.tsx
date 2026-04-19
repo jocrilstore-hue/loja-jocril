@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
-import { adminGhost, adminPrimary } from "@/components/admin/styles";
+import { adminDisabled } from "@/components/admin/styles";
 import { PageHeader, SettingsTabs, FormRow, AdminInput, AdminToggle } from "@/components/admin/SettingsHelpers";
 
 type Code = { code: string; type: string; value: string; min: string; uses: string; until: string; status: "Ativo" | "Expirado" | "Rascunho" };
@@ -65,10 +65,10 @@ export default function AdminDefinicoesDescontosPage() {
     <AdminShell active="discounts" breadcrumbs={["Admin", "Definições", "Descontos"]}>
       <PageHeader
         title="Códigos de desconto"
-        lede="Crie códigos promocionais reutilizáveis ou únicos. Restrições por produto, categoria, escalão de cliente ou valor mínimo."
+        lede="Vista de leitura dos códigos promocionais. A criação, exportação e regras globais ainda não estão ligadas."
         actions={<>
-          <button style={adminGhost}>Exportar CSV</button>
-          <button style={adminPrimary}>+ Novo código</button>
+          <button style={adminDisabled} disabled title="Exportação ainda não ligada">Exportar CSV</button>
+          <button style={adminDisabled} disabled title="Criação de códigos ainda não ligada">+ Novo código</button>
         </>}
       />
       <SettingsTabs active="discounts" />
@@ -101,7 +101,7 @@ export default function AdminDefinicoesDescontosPage() {
               <span className="text-mono-xs" style={{ color: "var(--color-base-400)" }}>{c.uses}</span>
               <span className="text-mono-xs" style={{ color: "var(--color-base-400)" }}>{c.until}</span>
               <span className="text-mono-xs" style={{ color: STATUS_COLOR[c.status] }}>● {c.status}</span>
-              <span style={{ color: "var(--color-base-600)", cursor: "pointer" }}>⋯</span>
+              <span title="Edição ainda não ligada" style={{ color: "var(--color-base-700)", cursor: "not-allowed" }}>⋯</span>
             </div>
           ))}
         </div>
@@ -111,16 +111,16 @@ export default function AdminDefinicoesDescontosPage() {
         <AdminCard title="Regras globais">
           <div style={{ padding: "2px 18px" }}>
             <FormRow label="Permitir combinação" hint="Os clientes podem aplicar vários códigos na mesma encomenda.">
-              <AdminToggle on={false}/>
+              <AdminToggle on={false} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Aplicar a produtos em promoção" hint="Se desativado, códigos ignoram artigos já com desconto.">
-              <AdminToggle on={false}/>
+              <AdminToggle on={false} disabled title="Regra ainda não persistida"/>
             </FormRow>
             <FormRow label="Desconto máximo por encomenda" hint="Limite aplicado mesmo com código válido.">
-              <AdminInput value="50" width={100} suffix="%"/>
+              <AdminInput value="50" width={100} suffix="%" readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
             <FormRow label="Mínimo de carrinho para desconto" hint="Aplicado por defeito a códigos sem regra própria." last>
-              <AdminInput value="30,00" width={120} suffix="€"/>
+              <AdminInput value="30,00" width={120} suffix="€" readOnly title="Leitura apenas nesta versão"/>
             </FormRow>
           </div>
         </AdminCard>

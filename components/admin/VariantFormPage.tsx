@@ -183,7 +183,7 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {saved && <span className="text-mono-xs" style={{ color: "var(--color-accent-300)" }}>✓ Guardado</span>}
           {apiError && <span className="text-mono-xs" style={{ color: "var(--color-destructive)" }}>{apiError}</span>}
-          <button style={adminGhost}>Cancelar</button>
+          <button style={adminGhost} onClick={() => router.back()}>Cancelar</button>
           <button style={adminPrimary} onClick={save} disabled={saving}>
             {saving ? "A guardar…" : isEdit ? "Guardar alterações" : "Criar variante"}
           </button>
@@ -192,7 +192,7 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
 
       <div style={{ display: "grid", gap: 16 }}>
         {/* IDENTIFICAÇÃO */}
-        <VCard title="Identificação" desc="Campos únicos desta variante">
+        <VCard title="Identificação" desc="Nesta versão, a variante guarda apenas SKU, formato, estado, preço com IVA e stock. Os restantes campos ficam ocultos até terem persistência.">
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             <div>
               <VLabel required>SKU</VLabel>
@@ -207,13 +207,6 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               )}
             </div>
             <div>
-              <VLabel required>URL Slug</VLabel>
-              <div style={{ position: "relative" }}>
-                <input defaultValue={isEdit ? "expositor-a3-6-prateleiras-transparente" : ""} style={inputStyle(slugState === "error")} />
-                <StateIcon state={slugState} />
-              </div>
-            </div>
-            <div>
               <VLabel required>Formato</VLabel>
               <select
                 value={sizeFormat}
@@ -224,15 +217,7 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               </select>
               {!isCustom && <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4 }}>A3 · 297 × 420 mm</div>}
             </div>
-            <div>
-              <VLabel>Orientação</VLabel>
-              <select defaultValue="vertical" style={{ width: "100%", padding: "9px 12px", background: "var(--color-dark-base-primary)", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14, outline: "none" }}>
-                <option value="vertical">Vertical</option>
-                <option value="horizontal">Horizontal</option>
-                <option value="both">Ambas</option>
-              </select>
-            </div>
-            <div style={{ gridColumn: "span 2", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div style={{ gridColumn: "span 2", display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
               <div onClick={() => setIsActive(!isActive)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", border: "1px solid var(--color-base-900)", borderRadius: 2, cursor: "pointer" }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 13, color: "var(--color-light-base-primary)" }}>Ativo</div>
@@ -240,22 +225,9 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
                 </div>
                 <ToggleSwitch on={isActive} />
               </div>
-              <SwitchRow label="Mais vendido" desc="Destacar como best-seller" defaultOn={false} />
             </div>
           </div>
         </VCard>
-
-        {/* DIMENSÕES PERSONALIZADAS */}
-        {isCustom && (
-          <VCard title="Dimensões personalizadas" desc="Usado quando não se aplica formato standard">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-              <VField label="Largura" value="297" unit="mm" />
-              <VField label="Altura" value="420" unit="mm" />
-              <VField label="Espessura" value="5" unit="mm" />
-              <VField label="Profundidade" value="150" unit="mm" />
-            </div>
-          </VCard>
-        )}
 
         {/* PREÇO */}
         <VCard title="Preço" desc="Introduza o preço com IVA — o preço sem IVA é calculado automaticamente (IVA: 23%)">
@@ -272,7 +244,6 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               <input type="number" defaultValue={isEdit ? "42.50" : ""} disabled style={{ ...inputStyle(false), opacity: 0.6, cursor: "not-allowed" }} />
               <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4 }}>Calculado automaticamente</div>
             </div>
-            <VField label="Quantidade mínima" value="1" unit="un" type="number" />
             <div>
               <VLabel>Stock (unidades)</VLabel>
               <div style={{ display: "flex", alignItems: "stretch", border: "1px solid var(--color-base-800)", borderRadius: 2, background: "var(--color-dark-base-primary)" }}>
@@ -281,89 +252,6 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               </div>
             </div>
           </div>
-
-          {/* Escalões de preço desta variante */}
-          <div style={{ marginTop: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <div className="text-mono-xs" style={{ color: "var(--color-base-500)", textTransform: "uppercase" }}>Escalões de preço desta variante</div>
-              <button style={adminGhost}>+ Adicionar escalão</button>
-            </div>
-            <div style={{ border: "1px dashed var(--color-base-800)", borderRadius: 4, overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "100px 100px 120px 100px 40px", gap: 14, padding: "10px 16px", background: "var(--color-dark-base-primary)", borderBottom: "1px dashed var(--color-base-800)" }}>
-                {["Qtd mín.", "Qtd máx.", "Preço un.", "Desconto", ""].map((h) => (
-                  <span key={h} className="text-mono-xs" style={{ color: "var(--color-base-500)", textTransform: "uppercase" }}>{h}</span>
-                ))}
-              </div>
-              {TIER_ROWS.map(([min, max, price, disc], i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "100px 100px 120px 100px 40px", gap: 14, padding: "12px 16px", borderBottom: i < TIER_ROWS.length - 1 ? "1px dashed var(--color-base-900)" : "none", alignItems: "center" }}>
-                  <input type="number" defaultValue={min} style={{ padding: "6px 8px", background: "transparent", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-mono)", fontSize: 12, width: "100%" }} />
-                  <input type="number" defaultValue={typeof max === "number" ? max : ""} placeholder="∞" style={{ padding: "6px 8px", background: "transparent", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-mono)", fontSize: 12, width: "100%" }} />
-                  <input defaultValue={price} style={{ padding: "6px 8px", background: "transparent", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-mono)", fontSize: 12, width: "100%" }} />
-                  <span className="text-mono-xs" style={{ color: disc === "—" ? "var(--color-base-600)" : "var(--color-accent-100)" }}>{disc}</span>
-                  <button style={{ background: "transparent", border: "none", color: "var(--color-base-600)", cursor: "pointer", fontSize: 16 }}>×</button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </VCard>
-
-        {/* EMBALAGEM */}
-        <VCard title="Embalagem" desc="Dimensões e peso para cálculo de envio">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-            <VField label="Comprimento" value="45" unit="cm" />
-            <VField label="Largura" value="32" unit="cm" />
-            <VField label="Altura" value="8" unit="cm" />
-            <VField label="Peso" value="1.8" unit="kg" type="number" />
-          </div>
-        </VCard>
-
-        {/* ÁREA DE IMPRESSÃO */}
-        <VCard title="Área de impressão" desc="Dimensões úteis para impressão e área de segurança">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-            <VField label="Largura impressão" value="280" unit="mm" />
-            <VField label="Altura impressão" value="400" unit="mm" />
-            <VField label="Margem de segurança" value="5" unit="mm" />
-            <VField label="Resolução recomendada" value="300" unit="DPI" type="number" />
-          </div>
-        </VCard>
-
-        {/* IMAGEM TÉCNICA */}
-        <VCard title="Imagem técnica" desc="Diagrama de corte ou ficha técnica em PDF/PNG">
-          <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: 20, alignItems: "center" }}>
-            <div style={{ aspectRatio: "1/1", border: "1px dashed var(--color-base-700)", borderRadius: 4, background: "var(--color-dark-base-primary)", display: "grid", placeItems: "center" }}>
-              <svg width="200" height="150" viewBox="0 0 400 300">
-                <g stroke="var(--color-base-500)" strokeWidth="1" fill="none">
-                  <rect x="80" y="40" width="240" height="220" stroke="var(--color-accent-100)" />
-                  {[1,2,3,4,5].map((i) => <line key={i} x1="80" x2="320" y1={40 + i * 37} y2={40 + i * 37} />)}
-                  <line x1="60" y1="40" x2="75" y2="40" /><line x1="60" y1="260" x2="75" y2="260" /><line x1="67" y1="40" x2="67" y2="260" />
-                  <line x1="80" y1="275" x2="80" y2="285" /><line x1="320" y1="275" x2="320" y2="285" /><line x1="80" y1="280" x2="320" y2="280" />
-                </g>
-                <text x="55" y="155" fill="var(--color-base-400)" fontFamily="monospace" fontSize="10" textAnchor="end">420mm</text>
-                <text x="200" y="298" fill="var(--color-base-400)" fontFamily="monospace" fontSize="10" textAnchor="middle">297mm</text>
-                <text x="85" y="52" fill="var(--color-accent-100)" fontFamily="monospace" fontSize="8">01</text>
-                <text x="85" y="252" fill="var(--color-accent-100)" fontFamily="monospace" fontSize="8">06</text>
-              </svg>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div className="text-mono-xs" style={{ color: "var(--color-base-500)" }}>Formatos aceites: PNG, SVG, PDF · Máx. 10MB</div>
-              <button style={adminGhost}>Carregar imagem técnica</button>
-              <button style={{ ...adminGhost, color: "var(--color-destructive)", borderColor: "rgba(193,18,18,.4)" }}>Remover</button>
-            </div>
-          </div>
-        </VCard>
-
-        {/* ESPECIFICAÇÕES */}
-        <VCard title="Especificações técnicas" desc="Dados específicos desta variante (sobrepõe as especificações do template)">
-          <div style={{ border: "1px dashed var(--color-base-800)", borderRadius: 4, overflow: "hidden" }}>
-            {SPECS.map(([k, v], i) => (
-              <div key={k} style={{ display: "grid", gridTemplateColumns: "200px 1fr auto", gap: 14, padding: "10px 14px", borderBottom: i < SPECS.length - 1 ? "1px dashed var(--color-base-900)" : "none", alignItems: "center" }}>
-                <input defaultValue={k} style={{ padding: "5px 8px", background: "transparent", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-base-400)", fontFamily: "var(--font-geist-mono)", fontSize: 12 }} />
-                <input defaultValue={v} style={{ padding: "5px 8px", background: "transparent", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14 }} />
-                <button style={{ background: "transparent", border: "none", color: "var(--color-base-600)", cursor: "pointer", fontSize: 16 }}>×</button>
-              </div>
-            ))}
-          </div>
-          <button style={{ ...adminGhost, marginTop: 10 }}>+ Adicionar especificação</button>
         </VCard>
       </div>
     </AdminShell>
