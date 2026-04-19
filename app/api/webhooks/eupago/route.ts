@@ -1,0 +1,98 @@
+import { createClient } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+import { verifyCallback } from "@/lib/payments/eupago";
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    console.log("EuPago webhook received:", JSON.stringify(body, null, 2));
+
+    const callback = verifyCallback(body);
+    if (!callback) {
+      console.error("Invalid EuPago callback format");
+      // Return 200 to prevent EuPago infinite retries on bad payloads
+      return NextResponse.json(
+        { success: false, error: "invalid_payload" },
+        { status: 200 }
+      );
+    }
+
+    const {
+      identificador: orderNumber,
+      transacao: transactionId,
+      valor: amount,
+      canal: channel,
+      referencia: reference,
+    } = callback;
+
+    const supabase = await createClient();
+
+    const { data: order, error: findError } = await supabase
+      .from("orders")
+      .select("id, payment_status, total_amount_with_vat")
+      .eq("order_number", orderNumber)
+      .single();
+
+    if (findError || !order) {
+      console.error(`Order not found: ${orderNumber}`);
+      return NextResponse.json({ success: true, message: "Order not found" });
+    }
+
+    if (order.payment_status === "paid") {
+      console.log(`Order ${orderNumber} already marked as paid`);
+      return NextResponse.json({ success: true, message: "Already processed" });
+    }
+
+    const amountDiff = Math.abs(order.total_amount_with_vat - amount);
+    if (amountDiff > 0.01) {
+      console.warn(
+        `Amount mismatch for ${orderNumber}: expected ${order.total_amount_with_vat}, got ${amount}`
+      );
+      return NextResponse.json({ error: "amount_mismatch" }, { status: 200 });
+    }
+
+    const { error: updateError } = await supabase
+      .from("orders")
+      .update({
+        payment_status: "paid",
+        status: "processing",
+        paid_at: new Date().toISOString(),
+        eupago_transaction_id: transactionId,
+      })
+      .eq("id", order.id);
+
+    if (updateError) {
+      console.error("Error updating order payment status:", updateError);
+      return NextResponse.json(
+        { success: false, error: "Failed to update order" },
+        { status: 500 }
+      );
+    }
+
+    console.log(
+      `Order ${orderNumber} paid via ${channel}. Reference: ${reference}, Transaction: ${transactionId}`
+    );
+
+    // NOTE: Email notification (sendPaymentReceived) is deferred to B7.
+
+    return NextResponse.json({
+      success: true,
+      message: "Payment processed",
+    });
+  } catch (error) {
+    console.error("EuPago webhook error:", error);
+    return NextResponse.json({
+      success: false,
+      error: "Internal error",
+    });
+  }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    status: "ok",
+    service: "EuPago Webhook",
+    timestamp: new Date().toISOString(),
+  });
+}

@@ -14,6 +14,7 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [B1 complete handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B1-COMPLETE_handoff.md) | B0+B1 storefront read path live — homepage, PLP, PDP, categorias wired to Supabase |
 | [B2 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B2_handoff.md) | B2 Clerk auth — headless hooks on PT URLs, admin+user gates, middleware |
 | [B3 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B3_handoff.md) | B3 cart state — localStorage context, PDP add, live /carrinho, empty state |
+| [B4a handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4a_handoff.md) | B4a Eupago backend — 5 API routes, zod, webhook, order RPC. B4b = UI wiring |
 
 ## Session Prompts (Ready-to-paste)
 
