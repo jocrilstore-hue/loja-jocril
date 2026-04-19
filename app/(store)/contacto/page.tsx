@@ -14,9 +14,9 @@ const SUBJECTS = [
 ];
 
 const INFO_ROWS: { k: string; v: string[] }[] = [
-  { k: 'Morada',   v: ['Rua da Indústria, Lote 24', '2400-123 Leiria', 'Portugal'] },
-  { k: 'Telefone', v: ['+351 244 832 415'] },
-  { k: 'Email',    v: ['loja@jocril.pt', 'orcamentos@jocril.pt'] },
+  { k: 'Morada',   v: ['Rua Sebastião e Silva 79', '2745-838 Massamá', 'Zona Industrial'] },
+  { k: 'Telefone', v: ['(+351) 21 471 89 03'] },
+  { k: 'Email',    v: ['geral@jocril.pt'] },
   { k: 'Horário',  v: ['Seg–Sex · 09h00 – 18h00', 'Sáb · 09h00 – 13h00'] },
 ];
 
@@ -159,7 +159,7 @@ export default function ContactoPage() {
                 <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 52% 48%, transparent 0, rgba(4,4,4,.5) 60%)' }}/>
                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                   <div style={{ width: 16, height: 16, borderRadius: 8, background: 'var(--color-accent-100)', boxShadow: '0 0 0 6px rgba(240,71,66,.2)' }}/>
-                  <span className="text-mono-xs" style={{ padding: '4px 8px', background: 'var(--color-dark-base-primary)', border: '1px solid var(--color-base-700)', borderRadius: 2, color: 'var(--color-light-base-primary)' }}>Jocril · Leiria</span>
+                  <span className="text-mono-xs" style={{ padding: '4px 8px', background: 'var(--color-dark-base-primary)', border: '1px solid var(--color-base-700)', borderRadius: 2, color: 'var(--color-light-base-primary)' }}>Jocril · Massamá</span>
                 </div>
               </div>
 

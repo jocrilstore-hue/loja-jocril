@@ -63,7 +63,7 @@ export default function TermosPage() {
             "Produtos à medida: prazo definido em orçamento, tipicamente 7–15 dias úteis.",
             "Envios para Portugal continental: DPD, CTT Expresso ou SEUR (1–2 dias úteis).",
             "Envios para ilhas: 4–6 dias úteis. Europa continental: 3–7 dias úteis via DHL.",
-            "Levantamento gratuito na fábrica (Leiria), mediante marcação prévia.",
+            "Levantamento gratuito na fábrica (Massamá), mediante marcação prévia.",
           ],
         },
         {

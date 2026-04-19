@@ -9,7 +9,7 @@ import { listFeaturedProducts, listCategoriesWithCounts } from "@/lib/queries/pr
 import { getCategoryMeta, DEFAULT_IMG } from "@/lib/data/category-groups";
 
 export const metadata: Metadata = {
-  title: { absolute: 'Jocril — Loja Online' },
+  title: { absolute: 'Jocril' },
   description: 'Materiais para Ponto de Venda e Hotelaria em madeira e acrílico. Precisão industrial desde 1994.',
 };
 

@@ -3,7 +3,10 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "jocrilstore@gmail.com";
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || "jocrilstore@gmail.com")
+  .split(",")
+  .map((email) => email.trim())
+  .filter(Boolean);
 
 const accent = "#2DD4CD";
 const textDark = "#1A1A1A";
@@ -87,6 +90,7 @@ export async function sendOrderConfirmation(data: {
     .send({
       from: `Jocril Acrílicos <${EMAIL_FROM}>`,
       to: [data.customerEmail],
+      bcc: ADMIN_EMAILS,
       subject: `Confirmação de Encomenda ${data.orderNumber} - Jocril`,
       html,
     })
@@ -124,7 +128,7 @@ export async function sendAdminNotification(data: {
   void resend.emails
     .send({
       from: `Jocril Acrílicos <${EMAIL_FROM}>`,
-      to: [ADMIN_EMAIL],
+      to: ADMIN_EMAILS,
       subject: `Nova Encomenda ${data.orderNumber} — ${data.customerName}`,
       html,
     })
@@ -161,6 +165,7 @@ export async function sendPaymentReceived(data: {
     .send({
       from: `Jocril Acrílicos <${EMAIL_FROM}>`,
       to: [data.customerEmail],
+      bcc: ADMIN_EMAILS,
       subject: `Pagamento Confirmado — Encomenda ${data.orderNumber} - Jocril`,
       html,
     })
@@ -199,7 +204,7 @@ export async function sendContactMessage(data: {
 
   const result = await resend.emails.send({
     from: `Jocril Acrílicos <${EMAIL_FROM}>`,
-    to: [ADMIN_EMAIL],
+    to: ADMIN_EMAILS,
     replyTo: data.email,
     subject: `Contacto loja — ${data.subject} — ${data.name}`,
     html,

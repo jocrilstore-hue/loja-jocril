@@ -16,7 +16,7 @@ const PROCESSES = [
 
 const STATS = [
   { n: '42',    u: 'anos',           d: 'de atividade desde 1983' },
-  { n: '2 400', u: 'm²',             d: 'de fábrica em Leiria' },
+  { n: '2 400', u: 'm²',             d: 'de fábrica em Massamá' },
   { n: '120 k+',u: 'peças',          d: 'produzidas em 2025' },
   { n: '38',    u: 'colaboradores',  d: 'na equipa Jocril' },
 ];

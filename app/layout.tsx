@@ -7,7 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: {
     template: '%s | Jocril',
-    default: 'Jocril — Loja Online',
+    default: 'Jocril',
   },
   description:
     "Materiais para Ponto de Venda e Hotelaria em madeira e acrílico. Precisão industrial desde 1994.",

@@ -26,19 +26,19 @@ const COLS: { h: string; items: [string, string][] }[] = [
       ["Envios e prazos", "/legais/envios"],
       ["Devoluções", "/legais/devolucoes"],
       ["FAQ", "/faq"],
-      ["Orçamentos custom", "/contacto"],
+      ["Orçamento peças à medida", "/contacto"],
     ],
   },
   {
     h: "Empresa",
     items: [
       ["Sobre a Jocril", "/sobre"],
-      ["Processos", "/processos"],
-      ["Portfolio", "/portfolio"],
       ["Contacto", "/contacto"],
     ],
   },
 ];
+
+const PAYMENT_METHODS = ["MBWay", "Multibanco", "Visa", "Mastercard", "Transferência"];
 
 export default function StoreFooter() {
   return (
@@ -77,46 +77,29 @@ export default function StoreFooter() {
               maxWidth: "36ch",
             }}
           >
-            Ideias &amp; Precisão. Acrílico, madeira, metal. Vialonga, Portugal.
+            Ideias &amp; Precisão. Acrílico, madeira, metal. Massamá, Portugal.
           </p>
+          <div
+            className="text-mono-xs"
+            style={{
+              color: "var(--color-base-500)",
+              display: "grid",
+              gap: 6,
+              marginBottom: 24,
+              lineHeight: 1.6,
+            }}
+          >
+            <span>Tel.: (+351) 21 471 89 03</span>
+            <span>Rua Sebastião e Silva 79 · 2745-838 Massamá</span>
+            <a
+              href="mailto:geral@jocril.pt"
+              style={{ color: "var(--color-base-300)", textDecoration: "none" }}
+            >
+              geral@jocril.pt
+            </a>
+          </div>
           <div style={{ display: "flex", gap: 10 }}>
             <Button variant="pill">Newsletter</Button>
-          </div>
-          <div style={{ marginTop: 24 }}>
-            <div
-              className="text-mono-xs"
-              style={{ color: "var(--color-base-500)" }}
-            >
-              Pagamentos aceites
-            </div>
-            <div
-              style={{
-                marginTop: 10,
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-              }}
-            >
-              {["MBWay", "Multibanco", "Visa", "Mastercard", "Transferência"].map(
-                (m) => (
-                  <span
-                    key={m}
-                    style={{
-                      padding: "4px 10px",
-                      border: "1px solid var(--color-base-800)",
-                      borderRadius: 2,
-                      fontFamily: "var(--font-geist-mono)",
-                      fontSize: 11,
-                      letterSpacing: "-.015rem",
-                      textTransform: "uppercase",
-                      color: "var(--color-base-400)",
-                    }}
-                  >
-                    {m}
-                  </span>
-                )
-              )}
-            </div>
           </div>
         </div>
         {COLS.map((c) => (
@@ -155,6 +138,49 @@ export default function StoreFooter() {
             </ul>
           </div>
         ))}
+      </div>
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "40px auto 0",
+          paddingTop: 22,
+          borderTop: "1px solid var(--color-base-900)",
+        }}
+      >
+        <div
+          className="text-mono-xs"
+          style={{ color: "var(--color-base-500)" }}
+        >
+          Pagamentos aceites
+        </div>
+        <div
+          style={{
+            marginTop: 10,
+            display: "flex",
+            gap: 8,
+            flexWrap: "nowrap",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {PAYMENT_METHODS.map((m) => (
+            <span
+              key={m}
+              style={{
+                padding: "4px 10px",
+                border: "1px solid var(--color-base-800)",
+                borderRadius: 2,
+                fontFamily: "var(--font-geist-mono)",
+                fontSize: 11,
+                letterSpacing: 0,
+                textTransform: "uppercase",
+                color: "var(--color-base-400)",
+              }}
+            >
+              {m}
+            </span>
+          ))}
+        </div>
       </div>
       <div
         style={{

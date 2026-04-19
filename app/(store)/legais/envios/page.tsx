@@ -44,7 +44,7 @@ export default function EnviosPage() {
               ["União Europeia", "DHL", "3–7 dias", "€ 22,00+"],
               ["Reino Unido e Suíça", "DHL", "5–10 dias", "Por orçamento"],
               [
-                "Levantar na fábrica · Leiria",
+                "Levantar na fábrica · Massamá",
                 "—",
                 "Imediato",
                 "Grátis",
@@ -88,7 +88,7 @@ export default function EnviosPage() {
           title: "Danos no transporte e extravios",
           body: [
             "Todas as nossas expedições são seguradas. Se receber uma encomenda com embalagem visivelmente danificada, recusamos a entrega ou efetue reserva por escrito junto do estafeta.",
-            "Reclamações por danos devem ser reportadas em até 24 horas após a receção, acompanhadas de fotografias, para apoio@jocril.pt. Substituímos ou reembolsamos nos termos da garantia aplicável.",
+            "Reclamações por danos devem ser reportadas em até 24 horas após a receção, acompanhadas de fotografias, para geral@jocril.pt. Substituímos ou reembolsamos nos termos da garantia aplicável.",
           ],
         },
       ]}

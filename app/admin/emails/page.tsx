@@ -40,7 +40,7 @@ function EmailPreview({ templateKey }: { templateKey: string }) {
             </div>
           </div>
           <div style={{ padding: "20px 40px", borderTop: "1px solid var(--color-base-800)" }}>
-            <div className="text-mono-xs" style={{ color: "var(--color-base-600)" }}>© Jocril Lda. · apoio@jocril.pt · Cancelar subscrição</div>
+            <div className="text-mono-xs" style={{ color: "var(--color-base-600)" }}>© Jocril Lda. · geral@jocril.pt · Cancelar subscrição</div>
           </div>
         </div>
       </div>

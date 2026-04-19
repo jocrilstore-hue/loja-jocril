@@ -17,7 +17,7 @@ export default function PrivacidadePage() {
           kicker: "Responsável",
           title: "Identificação do responsável pelo tratamento",
           body: [
-            "O responsável pelo tratamento dos dados pessoais recolhidos através deste website é a Jocril — Sociedade Transformadora de Acrílicos, Lda., com sede na Rua da Tipografia 14, 2415-560 Leiria, NIF 500 842 160.",
+            "O responsável pelo tratamento dos dados pessoais recolhidos através deste website é a Jocril — Sociedade Transformadora de Acrílicos, Lda., com sede na Rua Sebastião e Silva 79, 2745-838 Massamá, NIF 500 842 160.",
             "Para qualquer questão relacionada com a proteção de dados pessoais, poderá contactar o nosso Encarregado de Proteção de Dados (DPO) através de dpo@jocril.pt.",
           ],
         },

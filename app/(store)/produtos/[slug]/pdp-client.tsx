@@ -90,7 +90,7 @@ export default function PDPClient({ product, related }: PDPClientProps) {
         <section style={{ borderTop: '1px dashed var(--color-base-800)', borderBottom: '1px dashed var(--color-base-800)' }}>
           <div style={{ maxWidth: 1440, margin: '0 auto', padding: '18px 40px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
             <MetaItem icon="📦" label="Envio 48h"           sub="Stock standard · Portugal continental" />
-            <MetaItem icon="🔧" label="Produção interna"    sub="Fábrica Vialonga · corte laser + colagem" />
+            <MetaItem icon="🔧" label="Produção interna"    sub="Fábrica Massamá · corte laser + colagem" />
             <MetaItem icon="💶" label="Escalões de preço"   sub={`Até ${product.priceTiers.at(-1)?.discount ?? 0}% em grandes quantidades`} />
             <MetaItem icon="↺"  label="Devolução 14 dias"  sub="Peças standard · em estado original" />
           </div>
@@ -354,7 +354,7 @@ function SpecsPanel() {
     ['Número de prateleiras','6'],
     ['Carga por prateleira', 'até 8 kg'],
     ['Acabamento',           'Bordos polidos · colagem estrutural'],
-    ['Origem',               'Produção Jocril · Vialonga, Portugal'],
+    ['Origem',               'Produção Jocril · Massamá, Portugal'],
     ['Personalização',       'Gravação laser · impressão UV · corte à medida'],
     ['Garantia',             '2 anos'],
   ];

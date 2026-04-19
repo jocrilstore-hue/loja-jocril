@@ -73,7 +73,7 @@ export default function ProcessesStrip() {
               margin: 0,
             }}
           >
-            Cada produto do catálogo sai da nossa fábrica em Vialonga.
+            Cada produto do catálogo sai da nossa fábrica em Massamá.
             Controlamos toda a cadeia — do corte ao acabamento — o que nos
             permite oferecer prazos curtos e consistência entre lotes.
           </p>

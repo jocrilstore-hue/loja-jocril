@@ -8,7 +8,7 @@ const SECTIONS = [
   { id: 'envios', title: 'Envios e entregas', items: [
     { q: 'Quais são os prazos de entrega?',    a: 'Produtos em stock são expedidos em 48h úteis. Peças à medida e séries especiais têm prazo definido em orçamento, tipicamente 7–15 dias úteis.' },
     { q: 'Que transportadoras usam?',           a: 'Trabalhamos com DPD, CTT Expresso e Seur para Portugal continental. Para ilhas e Europa usamos DHL.' },
-    { q: 'Posso fazer levantamento na fábrica?',a: 'Sim. Oferecemos levantamento gratuito em Leiria de segunda a sexta-feira, 09h00–18h00. Selecione a opção "Levantar na fábrica" no checkout.' },
+    { q: 'Posso fazer levantamento na fábrica?',a: 'Sim. Oferecemos levantamento gratuito em Massamá de segunda a sexta-feira, 09h00–18h00. Selecione a opção "Levantar na fábrica" no checkout.' },
     { q: 'Fazem entregas internacionais?',      a: 'Sim, enviamos para toda a Europa. Outros destinos por orçamento. Os custos de alfândega são da responsabilidade do comprador.' },
   ]},
   { id: 'devolucoes', title: 'Devoluções e trocas', items: [
@@ -23,7 +23,7 @@ const SECTIONS = [
   ]},
   { id: 'produtos', title: 'Produtos e materiais', items: [
     { q: 'Que acrílicos utilizam?',           a: 'Trabalhamos com acrílico extrudido e fundido de 2 a 25 mm, em mais de 40 cores Altuglas. Também fabricamos em PETG, policarbonato e PVC expandido.' },
-    { q: 'Podem produzir à medida?',          a: 'Sim. Envie esboço, dimensões e quantidade para orcamentos@jocril.pt. Respondemos em 24h úteis com proposta técnica e prazo.' },
+    { q: 'Podem produzir à medida?',          a: 'Sim. Envie esboço, dimensões e quantidade para geral@jocril.pt. Respondemos em 24h úteis com proposta técnica e prazo.' },
     { q: 'Oferecem impressão personalizada?', a: 'Sim. Temos impressão UV direta até 3,2 m de largura, em CMYK + branco + verniz. Para quantidades pequenas usamos serigrafia.' },
   ]},
   { id: 'conta', title: 'Conta e encomendas', items: [

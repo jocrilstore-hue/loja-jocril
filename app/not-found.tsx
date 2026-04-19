@@ -111,7 +111,7 @@ export default function NotFound() {
                 {
                   code: "04",
                   label: "Contactar apoio",
-                  hint: "apoio@jocril.pt · 244 827 141",
+                  hint: "geral@jocril.pt · (+351) 21 471 89 03",
                   href: "/contacto",
                 },
               ].map((r, i, arr) => (

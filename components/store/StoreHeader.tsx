@@ -19,7 +19,8 @@ type Props = {
   onOpenCart?: () => void;
 };
 
-const NAV: { key: Exclude<NavKey, "home">; label: string; href: string }[] = [
+const NAV: { key: NavKey; label: string; href: string }[] = [
+  { key: "home", label: "Início", href: "/" },
   { key: "produtos", label: "Produtos", href: "/produtos" },
   { key: "categorias", label: "Categorias", href: "/categorias" },
   { key: "sobre", label: "Sobre", href: "/sobre" },
@@ -86,7 +87,8 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: 12,
+              flex: "0 0 auto",
+              textDecoration: "none",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -99,61 +101,158 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
               }}
               alt="Jocril"
             />
-            <span
-              className="text-mono-xs"
-              style={{
-                color: "var(--color-base-500)",
-                paddingLeft: 12,
-                borderLeft: "1px solid var(--color-base-800)",
-              }}
-            >
-              Loja Online
-            </span>
           </Link>
 
-          <nav className="store-header-nav">
+          <nav
+            className="store-header-nav"
+            style={{
+              flex: "1 1 auto",
+              justifyContent: "center",
+              marginLeft: 0,
+              minWidth: 0,
+            }}
+          >
             {NAV.map((it) => {
               const isHover = hoverKey === it.key;
               const isActive = active === it.key;
+              const linkStyle: React.CSSProperties = {
+                cursor: "pointer",
+                fontFamily: "var(--font-geist-mono)",
+                fontSize: 12,
+                letterSpacing: 0,
+                textTransform: "uppercase",
+                color:
+                  isActive || isHover
+                    ? "var(--color-accent-100)"
+                    : "var(--color-base-300)",
+                position: "relative",
+                paddingBottom: 3,
+                transition: "color .2s var(--ease-in-out)",
+                textDecoration: "none",
+              };
+
+              const underline = (
+                <span
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    height: 1,
+                    background: "var(--color-accent-100)",
+                    width: isHover || isActive ? "100%" : 0,
+                    transition: "width .3s var(--ease-in-out)",
+                  }}
+                />
+              );
+
+              if (it.key === "categorias") {
+                return (
+                  <div
+                    key={it.key}
+                    onMouseEnter={() => setHoverKey(it.key)}
+                    onMouseLeave={() => setHoverKey(null)}
+                    onFocus={() => setHoverKey(it.key)}
+                    onBlur={(event) => {
+                      const nextFocus = event.relatedTarget as Node | null;
+                      if (!nextFocus || !event.currentTarget.contains(nextFocus)) {
+                        setHoverKey(null);
+                      }
+                    }}
+                    style={{
+                      position: "relative",
+                      padding: "8px 0",
+                      margin: "-8px 0",
+                    }}
+                  >
+                    <Link
+                      href={it.href}
+                      aria-haspopup="menu"
+                      aria-expanded={isHover}
+                      style={linkStyle}
+                    >
+                      {it.label}
+                      {underline}
+                    </Link>
+
+                    {isHover && (
+                      <div
+                        role="menu"
+                        aria-label="Categorias"
+                        style={{
+                          position: "absolute",
+                          top: "calc(100% + 12px)",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          zIndex: 80,
+                          width: 260,
+                          padding: 6,
+                          background: "var(--color-dark-base-secondary)",
+                          border: "1px solid var(--color-base-800)",
+                          borderRadius: 4,
+                          boxShadow: "0 18px 40px rgba(0,0,0,.34)",
+                        }}
+                      >
+                        {CATS.map(([label, href], index) => (
+                          <Link
+                            key={label}
+                            href={href}
+                            role="menuitem"
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              gap: 14,
+                              padding: "10px 12px",
+                              borderRadius: 2,
+                              borderTop:
+                                index === CATS.length - 1
+                                  ? "1px dashed var(--color-base-800)"
+                                  : undefined,
+                              marginTop: index === CATS.length - 1 ? 4 : 0,
+                              textDecoration: "none",
+                              fontFamily: "var(--font-geist-mono)",
+                              fontSize: 12,
+                              letterSpacing: 0,
+                              textTransform: "uppercase",
+                              color:
+                                index === CATS.length - 1
+                                  ? "var(--color-light-base-primary)"
+                                  : "var(--color-base-300)",
+                            }}
+                          >
+                            {label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={it.key}
                   href={it.href}
                   onMouseEnter={() => setHoverKey(it.key)}
                   onMouseLeave={() => setHoverKey(null)}
-                  style={{
-                    cursor: "pointer",
-                    fontFamily: "var(--font-geist-mono)",
-                    fontSize: 12,
-                    letterSpacing: "-.015rem",
-                    textTransform: "uppercase",
-                    color:
-                      isActive || isHover
-                        ? "var(--color-accent-100)"
-                        : "var(--color-base-300)",
-                    position: "relative",
-                    paddingBottom: 3,
-                    transition: "color .2s var(--ease-in-out)",
-                  }}
+                  onFocus={() => setHoverKey(it.key)}
+                  onBlur={() => setHoverKey(null)}
+                  style={linkStyle}
                 >
                   {it.label}
-                  <span
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                      height: 1,
-                      background: "var(--color-accent-100)",
-                      width: isHover || isActive ? "100%" : 0,
-                      transition: "width .3s var(--ease-in-out)",
-                    }}
-                  />
+                  {underline}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="store-header-search">
+          <div
+            className="store-header-search"
+            style={{
+              flex: "0 1 380px",
+              marginLeft: 0,
+            }}
+          >
             <SearchField />
           </div>
 
@@ -179,21 +278,6 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
               </svg>
             </button>
           </div>
-        </div>
-
-        <div className="store-header-tertiary">
-          {CATS.map(([c, h], i) => (
-            <Link
-              key={c}
-              href={h}
-              style={{
-                color:
-                  i === 0 ? "var(--color-light-base-primary)" : undefined,
-              }}
-            >
-              {c}
-            </Link>
-          ))}
         </div>
       </header>
 
@@ -282,58 +366,55 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
             Menu
           </div>
           {NAV.map((it) => (
-            <Link
-              key={it.key}
-              href={it.href}
-              onClick={() => setDrawerOpen(false)}
-              style={{
-                padding: "12px 0",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                fontFamily: "var(--font-geist-sans)",
-                fontSize: 18,
-                letterSpacing: "-.02em",
-                color: "var(--color-light-base-primary)",
-                borderBottom: "1px dashed var(--color-base-900)",
-              }}
-            >
-              {it.label}
-              <span style={{ color: "var(--color-base-600)" }}>→</span>
-            </Link>
-          ))}
-        </nav>
+            <div key={it.key}>
+              <Link
+                href={it.href}
+                onClick={() => setDrawerOpen(false)}
+                style={{
+                  padding: "12px 0",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontFamily: "var(--font-geist-sans)",
+                  fontSize: 18,
+                  letterSpacing: 0,
+                  color: "var(--color-light-base-primary)",
+                  borderBottom: "1px dashed var(--color-base-900)",
+                }}
+              >
+                {it.label}
+                <span style={{ color: "var(--color-base-600)" }}>→</span>
+              </Link>
 
-        <nav
-          style={{
-            padding: "18px 20px",
-            display: "grid",
-            gap: 0,
-            borderBottom: "1px dashed var(--color-base-900)",
-          }}
-        >
-          <div
-            className="text-mono-xs"
-            style={{ color: "var(--color-base-500)", marginBottom: 8 }}
-          >
-            Categorias
-          </div>
-          {CATS.map(([c, h]) => (
-            <Link
-              key={c}
-              href={h}
-              onClick={() => setDrawerOpen(false)}
-              style={{
-                padding: "10px 0",
-                fontFamily: "var(--font-geist-mono)",
-                fontSize: 12,
-                letterSpacing: "-.015rem",
-                textTransform: "uppercase",
-                color: "var(--color-base-300)",
-              }}
-            >
-              {c}
-            </Link>
+              {it.key === "categorias" && (
+                <div
+                  style={{
+                    padding: "8px 0 12px",
+                    display: "grid",
+                    gap: 0,
+                    borderBottom: "1px dashed var(--color-base-900)",
+                  }}
+                >
+                  {CATS.map(([c, h]) => (
+                    <Link
+                      key={c}
+                      href={h}
+                      onClick={() => setDrawerOpen(false)}
+                      style={{
+                        padding: "8px 0 8px 16px",
+                        fontFamily: "var(--font-geist-mono)",
+                        fontSize: 12,
+                        letterSpacing: 0,
+                        textTransform: "uppercase",
+                        color: "var(--color-base-300)",
+                      }}
+                    >
+                      {c}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
 

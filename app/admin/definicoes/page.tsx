@@ -8,7 +8,7 @@ import type { CSSProperties } from "react";
 const store = {
   name: "Jocril — Sociedade Transformadora de Acrílicos, Lda.",
   domain: "jocril.pt", currency: "EUR (€)", locale: "pt-PT",
-  nif: "500 842 160", email: "apoio@jocril.pt",
+  nif: "500 842 160", email: "geral@jocril.pt",
 };
 
 const groups = [

@@ -63,7 +63,7 @@ export default function PLPClient({
   const cols = density === 'dense' ? 4 : 3;
   const headerTitle = categoryName ?? 'Todos os produtos';
   const headerDesc = categoryDescription
-    ?? 'Catálogo completo de produtos em acrílico produzidos na nossa fábrica em Leiria.';
+    ?? 'Catálogo completo de produtos em acrílico produzidos na nossa fábrica em Massamá.';
   const countLabel = totalInCategory ?? products.length;
   const materialOptions = useMemo(() => {
     const counts = new Map<string, number>();

@@ -72,7 +72,7 @@ export default async function CategoriasPage() {
               </h1>
             </div>
             <p className="text-body" style={{ color: 'var(--color-base-300)', maxWidth: '44ch' }}>
-              Produtos desenhados e produzidos na nossa fábrica em Leiria. Corte laser, termoformação a vácuo e impressão UV integrados.
+              Produtos desenhados e produzidos na nossa fábrica em Massamá. Corte laser, termoformação a vácuo e impressão UV integrados.
             </p>
           </div>
         </section>

@@ -43,7 +43,7 @@ export default function ManutencaoPage() {
             className="text-mono-xs"
             style={{ color: "var(--color-base-400)" }}
           >
-            JOCRIL · LOJA ONLINE
+            JOCRIL
           </span>
         </div>
         <span
@@ -181,11 +181,11 @@ export default function ManutencaoPage() {
           >
             Encomendas urgentes? Escreva para{" "}
             <span style={{ color: "var(--color-accent-100)" }}>
-              apoio@jocril.pt
+              geral@jocril.pt
             </span>{" "}
             ou ligue{" "}
             <span style={{ color: "var(--color-accent-100)" }}>
-              +351 244 827 141
+              (+351) 21 471 89 03
             </span>
             .
           </p>

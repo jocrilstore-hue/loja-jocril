@@ -40,7 +40,7 @@ export default function StoreHero() {
               gap: 24,
             }}
           >
-            <Badge size="sm">Loja Online · Catálogo</Badge>
+            <Badge size="sm">Catálogo</Badge>
             <span
               className="text-mono-xs"
               style={{ color: "var(--color-base-600)" }}
@@ -74,7 +74,7 @@ export default function StoreHero() {
               }}
             >
               Catálogo de expositores, caixas, molduras e sinalética em acrílico
-              — produzidos na nossa fábrica em Vialonga. Envio 48h para stock,
+              — produzidos na nossa fábrica em Massamá. Envio 48h para stock,
               5–10 dias úteis por encomenda.
             </p>
           </div>
@@ -84,7 +84,7 @@ export default function StoreHero() {
               Ver catálogo →
             </Button>
             <Button variant="outline" href="/contacto">
-              Orçamento custom
+              Orçamento peças à medida
             </Button>
             <span
               className="text-mono-xs"

@@ -444,7 +444,7 @@ function ShippingOptions({ shipping, setShipping }: { shipping: string; setShipp
   const opts = [
     { k: 'ctt-expresso', n: 'CTT Expresso',           p: 4.90, t: '1–2 dias úteis', desc: 'Entrega ao domicílio · Portugal continental' },
     { k: 'ctt-dist',     n: 'CTT Distribuição',        p: 7.90, t: '2–3 dias úteis', desc: 'Madeira e Açores · tarifa especial' },
-    { k: 'pickup',       n: 'Levantamento na fábrica', p: 0.00, t: 'Pronto em 24h',  desc: 'Vialonga, Loures · por marcação' },
+    { k: 'pickup',       n: 'Levantamento na fábrica', p: 0.00, t: 'Pronto em 24h',  desc: 'Massamá · por marcação' },
   ];
   return (
     <div style={{ marginBottom: 20 }}>

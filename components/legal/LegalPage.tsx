@@ -424,9 +424,9 @@ export default function LegalPage({
                     ["Matrícula", "C.R.C. Leiria"],
                     [
                       "Sede",
-                      "Rua da Tipografia 14 · 2415-560 Leiria · Portugal",
+                      "Rua Sebastião e Silva 79 · 2745-838 Massamá · Portugal",
                     ],
-                    ["Telefone", "+351 244 827 141"],
+                    ["Telefone", "(+351) 21 471 89 03"],
                     ["Email DPO", "dpo@jocril.pt"],
                   ] as [string, string][]
                 ).map(([l, v]) => (

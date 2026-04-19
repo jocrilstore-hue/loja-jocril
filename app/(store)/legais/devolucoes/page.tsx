@@ -106,7 +106,7 @@ export default function DevolucoesPage() {
           kicker: "Defeitos",
           title: "Produtos defeituosos ou danificados",
           body: [
-            "Se receber um produto com defeito ou danificado no transporte, comunique-nos em até 24 horas para apoio@jocril.pt, acompanhado de fotografias detalhadas.",
+            "Se receber um produto com defeito ou danificado no transporte, comunique-nos em até 24 horas para geral@jocril.pt, acompanhado de fotografias detalhadas.",
             "Em caso confirmado, assumimos a totalidade dos custos de devolução e substituímos o produto com prioridade máxima, ou procedemos ao reembolso integral.",
           ],
         },
