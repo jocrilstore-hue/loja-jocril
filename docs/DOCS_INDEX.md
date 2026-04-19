@@ -16,6 +16,16 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [B3 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B3_handoff.md) | B3 cart state — localStorage context, PDP add, live /carrinho, empty state |
 | [B4a handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4a_handoff.md) | B4a Eupago backend — 5 API routes, zod, webhook, order RPC. B4b = UI wiring |
 | [B4b handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4b_handoff.md) | B4b checkout UI — /carrinho step 2+3 wired, MB Way polling, error banners, CSS status vars |
+| [B5–B8 master plan](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B5-B8_MASTER-PLAN.md) | Wave 1 parallel (B5+B6), Wave 2 B7 emails, Wave 3 B8 deploy — human gates documented |
+
+## Session Prompts (Ready-to-paste) — B5–B8
+
+| File | Description |
+|------|-------------|
+| [B5 customer account](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B5_customer-account.md) | /conta, /encomendas, /encomenda/[id] — Clerk + existing GET /api/orders |
+| [B6 admin writes](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B6_admin-writes.md) | Admin mutation APIs + form wiring — Opus 4.7 recommended |
+| [B7 emails](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B7_emails.md) | Resend infra + 3 stripped call sites — needs RESEND_API_KEY first |
+| [B8 deploy](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B8_deploy.md) | Vercel config, env var checklist, post-deploy manual steps |
 
 ## Session Prompts (Ready-to-paste)
 

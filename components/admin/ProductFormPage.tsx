@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import FormCard from "@/components/admin/FormCard";
 import Field from "@/components/admin/Field";
@@ -34,11 +35,18 @@ const ALL_APPS = ["Retalho","Ponto de venda","Cosmética","Hotelaria","Farmácia
 
 export default function ProductFormPage({ mode }: { mode: Mode }) {
   const isEdit = mode === "edit";
+  const router = useRouter();
+  const params = useParams();
+  const productId = params?.id ? String(params.id) : null;
+
   const [tab, setTab] = useState("basic");
   const [slugState, setSlugState] = useState<SlugState>("ok");
   const [skuSlug, setSkuSlug] = useState(isEdit ? "expositor-a3-6-prateleiras" : "");
+  const [productName, setProductName] = useState(isEdit ? "Expositor A3 · 6 prateleiras" : "");
   const [saved, setSaved] = useState(false);
   const [draft, setDraft] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const slugTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const checkSlug = (v: string) => {
@@ -47,14 +55,60 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
     slugTimer.current = setTimeout(() => setSlugState(v.includes("duplicado") ? "error" : "ok"), 900);
   };
 
-  const save = (publish: boolean) => {
-    setSaved(true);
-    setDraft(!publish);
-    setTimeout(() => setSaved(false), 2500);
+  const save = async (publish: boolean) => {
+    if (saving) return;
+    setSaving(true);
+    setApiError(null);
+    try {
+      if (isEdit && productId) {
+        const res = await fetch(`/api/admin/products/${productId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: productName || undefined,
+            slug: skuSlug || undefined,
+            is_active: publish,
+          }),
+        });
+        const json = await res.json();
+        if (!json.success) {
+          setApiError(json.error ?? "Erro ao guardar");
+          return;
+        }
+        setSaved(true);
+        setDraft(!publish);
+        setTimeout(() => setSaved(false), 2500);
+      } else {
+        if (!productName.trim()) {
+          setApiError("Nome é obrigatório");
+          return;
+        }
+        const res = await fetch("/api/admin/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: productName,
+            slug: skuSlug || undefined,
+            is_active: publish,
+            is_featured: false,
+          }),
+        });
+        const json = await res.json();
+        if (!json.success) {
+          setApiError(json.error ?? "Erro ao criar produto");
+          return;
+        }
+        router.push("/admin/produtos");
+      }
+    } catch {
+      setApiError("Erro de ligação ao servidor");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const breadcrumbs = isEdit
-    ? ["Produtos", "Expositor A3 · 6 prateleiras"]
+    ? ["Produtos", productName || "Editar produto"]
     : ["Produtos", "Novo produto"];
 
   return (
@@ -76,8 +130,11 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
           {saved && <span className="text-mono-xs" style={{ color: "var(--color-accent-300)" }}>✓ Guardado</span>}
-          <button style={adminGhost} onClick={() => save(false)}>Guardar rascunho</button>
-          <button style={adminPrimary} onClick={() => save(true)}>Publicar</button>
+          {apiError && <span className="text-mono-xs" style={{ color: "var(--color-destructive)" }}>{apiError}</span>}
+          <button style={adminGhost} onClick={() => save(false)} disabled={saving}>Guardar rascunho</button>
+          <button style={adminPrimary} onClick={() => save(true)} disabled={saving}>
+            {saving ? "A guardar…" : "Publicar"}
+          </button>
         </div>
       </div>
 
@@ -116,6 +173,8 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
           skuSlug={skuSlug}
           setSkuSlug={setSkuSlug}
           checkSlug={checkSlug}
+          productName={productName}
+          setProductName={setProductName}
         />
       )}
       {tab === "images" && <ImagesTab />}
@@ -127,18 +186,20 @@ export default function ProductFormPage({ mode }: { mode: Mode }) {
   );
 }
 
-function BasicInfoTab({ isEdit, slugState, skuSlug, setSkuSlug, checkSlug }: {
+function BasicInfoTab({ isEdit, slugState, skuSlug, setSkuSlug, checkSlug, productName, setProductName }: {
   isEdit: boolean;
   slugState: SlugState;
   skuSlug: string;
   setSkuSlug: (v: string) => void;
   checkSlug: (v: string) => void;
+  productName: string;
+  setProductName: (v: string) => void;
 }) {
   return (
     <div style={{ display: "grid", gap: 20 }}>
       <FormCard title="Informações gerais" desc="Defina os dados principais do produto.">
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <Field label="Nome" defaultValue={isEdit ? "Expositor A3 · 6 prateleiras" : ""} required />
+          <Field label="Nome" value={productName} onChange={(v: string) => setProductName(v)} required />
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
               <label className="text-mono-xs" style={{ color: "var(--color-base-500)", textTransform: "uppercase" }}>

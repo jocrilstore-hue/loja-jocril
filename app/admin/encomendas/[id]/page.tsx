@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { useParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { AdminCard } from "@/components/admin/AdminShell";
 import { adminDanger, adminGhost, adminPrimary } from "@/components/admin/styles";
@@ -35,30 +36,89 @@ const o = {
   ],
 };
 
+type OrderStatus = "pending" | "paid" | "prep" | "shipped" | "delivered" | "returned";
+
+const ORDER_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
+  { value: "pending",   label: "A aguardar" },
+  { value: "paid",      label: "Paga" },
+  { value: "prep",      label: "Em preparação" },
+  { value: "shipped",   label: "Expedida" },
+  { value: "delivered", label: "Entregue" },
+  { value: "returned",  label: "Devolvida" },
+];
+
 export default function AdminEncomendaDetailPage() {
+  const params = useParams();
+  const orderId = params?.id ? String(params.id) : null;
+
   const subtotal = o.items.reduce((s, it) => s + it.qty * it.unit, 0);
   const discount = 120.00, shipping = 16.00, total = subtotal - discount + shipping;
 
   const [note, setNote] = useState("");
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(o.status as OrderStatus);
+  const [statusSaving, setStatusSaving] = useState(false);
+  const [statusMsg, setStatusMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const updateStatus = async (newStatus: OrderStatus) => {
+    if (!orderId || statusSaving) return;
+    setStatusSaving(true);
+    setStatusMsg(null);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setCurrentStatus(newStatus);
+        setStatusMsg({ ok: true, text: "Estado atualizado" });
+      } else {
+        setStatusMsg({ ok: false, text: json.error ?? "Erro ao atualizar" });
+      }
+    } catch {
+      setStatusMsg({ ok: false, text: "Erro de ligação ao servidor" });
+    } finally {
+      setStatusSaving(false);
+      setTimeout(() => setStatusMsg(null), 3000);
+    }
+  };
 
   return (
     <AdminShell active="orders" breadcrumbs={["Encomendas", o.n]}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, marginBottom: 24 }}>
         <div>
-          <div className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>● Encomenda · Paga</div>
+          <div className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>
+            ● Encomenda · {ORDER_STATUS_OPTIONS.find((s) => s.value === currentStatus)?.label ?? currentStatus}
+          </div>
           <h1 style={{ margin: "8px 0 0", fontFamily: "var(--font-geist-sans)", fontSize: 40, letterSpacing: "-.045em", color: "var(--color-light-base-primary)" }}>{o.n}</h1>
           <div style={{ marginTop: 10, display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <Tag>● Paga</Tag>
+            <Tag>● {ORDER_STATUS_OPTIONS.find((s) => s.value === currentStatus)?.label ?? currentStatus}</Tag>
             <Tag muted>Criada · {o.d}</Tag>
             <Tag muted>3 artigos · 12 unidades</Tag>
             <Tag muted>Cliente #24 · 7 encomendas anteriores</Tag>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {statusMsg && (
+            <span className="text-mono-xs" style={{ color: statusMsg.ok ? "var(--color-accent-300)" : "var(--color-destructive)" }}>
+              {statusMsg.ok ? "✓ " : ""}{statusMsg.text}
+            </span>
+          )}
+          <select
+            value={currentStatus}
+            onChange={(e) => updateStatus(e.target.value as OrderStatus)}
+            disabled={statusSaving}
+            aria-label="Estado da encomenda"
+            style={{ padding: "9px 12px", background: "var(--color-dark-base-secondary)", border: "1px solid var(--color-base-800)", borderRadius: 2, color: "var(--color-base-300)", fontFamily: "var(--font-geist-mono)", fontSize: 12, cursor: "pointer" }}
+          >
+            {ORDER_STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
           <button style={adminGhost}>Imprimir fatura</button>
           <button style={adminGhost}>Imprimir guia</button>
           <button style={adminDanger}>Cancelar</button>
-          <button style={adminPrimary}>✓ Marcar como expedida</button>
         </div>
       </div>
 

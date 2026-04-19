@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
+import { sendOrderConfirmation, sendAdminNotification } from "@/lib/email/send";
 
 const customerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -283,7 +284,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // NOTE: Order confirmation + admin notification emails deferred to B7.
+    // Fire-and-forget emails (B7)
+    sendOrderConfirmation({
+      orderNumber: rpcResult.order_number,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      total,
+    });
+    sendAdminNotification({
+      orderNumber: rpcResult.order_number,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      total,
+    });
 
     return NextResponse.json(
       {

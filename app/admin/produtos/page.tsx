@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import AdminShell from "@/components/admin/AdminShell";
@@ -22,18 +22,34 @@ type Prod = {
 
 type SortKey = "n" | "cat" | "priceN" | "stock" | "vars" | "published" | "updIdx";
 
-const products: Prod[] = [
-  { sku: "EXP-A3-06P", n: "Expositor A3 · 6 prateleiras",    cat: "Acrílicos Chão",  price: "€ 42,50",  priceN: 42.50,  stock: 428, vars: 5, published: true,  updated: "15 Abr", updIdx: 2  , img: "/assets/portfolio/carm-premium.avif" },
-  { sku: "EXP-A4-04P", n: "Expositor A4 · 4 prateleiras",    cat: "Acrílicos Chão",  price: "€ 32,80",  priceN: 32.80,  stock: 184, vars: 4, published: true,  updated: "14 Abr", updIdx: 3  , img: "/assets/portfolio/carm.avif" },
-  { sku: "DSP-PAR-A3", n: "Display parede A3 c/ LED",         cat: "Displays Parede", price: "€ 128,00", priceN: 128.00, stock: 62,  vars: 3, published: true,  updated: "12 Abr", updIdx: 5  , img: "/assets/portfolio/rayban.avif" },
-  { sku: "CX-30",      n: "Caixa coletora 30 cm",              cat: "Caixas & Urnas",  price: "€ 68,00",  priceN: 68.00,  stock: 148, vars: 2, published: true,  updated: "11 Abr", updIdx: 6  , img: "/assets/portfolio/fanta.avif" },
-  { sku: "MLD-A2",     n: "Moldura A2 acrílico",               cat: "Molduras",        price: "€ 42,00",  priceN: 42.00,  stock: 220, vars: 6, published: true,  updated: "09 Abr", updIdx: 8  , img: "/assets/portfolio/stoli.avif" },
-  { sku: "URN-50",     n: "Urna sorteio 50 L",                  cat: "Caixas & Urnas",  price: "€ 92,00",  priceN: 92.00,  stock: 14,  vars: 1, published: true,  updated: "08 Abr", updIdx: 9  , img: "/assets/portfolio/heineken-trophy.avif" },
-  { sku: "EXP-A3-FU",  n: "Expositor A3 · Fumado",              cat: "Acrílicos Chão",  price: "€ 46,20",  priceN: 46.20,  stock: 3,   vars: 2, published: true,  updated: "07 Abr", updIdx: 10 , img: "/assets/portfolio/beefeater.avif" },
-  { sku: "DSP-CILIN",  n: "Display cilíndrico ø300",            cat: "Displays",        price: "€ 95,00",  priceN: 95.00,  stock: 48,  vars: 2, published: false, updated: "05 Abr", updIdx: 12 , img: "/assets/portfolio/glade.avif" },
-  { sku: "EXP-A2-08P", n: "Expositor A2 · 8 prateleiras",    cat: "Acrílicos Chão",  price: "€ 74,00",  priceN: 74.00,  stock: 92,  vars: 3, published: true,  updated: "02 Abr", updIdx: 15 , img: "/assets/portfolio/bioderma.avif" },
-  { sku: "EXP-A3-08P", n: "Expositor A3 · 8 prateleiras",    cat: "Acrílicos Chão",  price: "€ 54,00",  priceN: 54.00,  stock: 176, vars: 4, published: true,  updated: "01 Abr", updIdx: 16 , img: "/assets/portfolio/ricola.avif" },
-];
+interface ApiVariant { stock_quantity: number; base_price_including_vat: number }
+interface ApiProduct {
+  id: number; name: string; is_active: boolean; created_at: string; updated_at?: string;
+  variant_count: Array<{ count: number }>;
+  categories: { name: string } | null;
+  variants: ApiVariant[];
+}
+
+function mapProduct(p: ApiProduct, idx: number): Prod {
+  const vs = p.variants ?? [];
+  const totalStock = vs.reduce((s, v) => s + (v.stock_quantity ?? 0), 0);
+  const prices = vs.map((v) => v.base_price_including_vat).filter(Boolean);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const updDate = new Date(p.updated_at ?? p.created_at);
+  return {
+    sku: String(p.id),
+    n: p.name,
+    cat: p.categories?.name ?? "—",
+    price: minPrice > 0 ? `€ ${minPrice.toFixed(2).replace(".", ",")}` : "—",
+    priceN: minPrice,
+    stock: totalStock,
+    vars: p.variant_count?.[0]?.count ?? vs.length,
+    published: p.is_active,
+    updated: updDate.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" }),
+    updIdx: idx,
+    img: "/assets/portfolio/carm-premium.avif",
+  };
+}
 
 const selectStyle: CSSProperties = {
   padding: "9px 12px",
@@ -57,6 +73,8 @@ const headers: { k: string; l: string; sortable: boolean }[] = [
 ];
 
 export default function AdminProductsPage() {
+  const [products, setProducts] = useState<Prod[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("any");
@@ -65,7 +83,17 @@ export default function AdminProductsPage() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  const cats = useMemo(() => Array.from(new Set(products.map((p) => p.cat))).sort(), []);
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success) setProducts((res.data as ApiProduct[]).map(mapProduct));
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const cats = useMemo(() => Array.from(new Set(products.map((p) => p.cat))).sort(), [products]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -93,7 +121,7 @@ export default function AdminProductsPage() {
       });
     }
     return rows;
-  }, [query, cat, state, stockFilter, sortKey, sortDir]);
+  }, [products, query, cat, state, stockFilter, sortKey, sortDir]);
 
   const toggle = (k: string) =>
     setSelected((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
@@ -109,11 +137,14 @@ export default function AdminProductsPage() {
 
   return (
     <AdminShell active="products" breadcrumbs={["Produtos"]}>
+      {loading && (
+        <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginBottom: 16 }}>A carregar…</div>
+      )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <div className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>● Catálogo</div>
           <h1 style={{ margin: "8px 0 0", fontFamily: "var(--font-geist-sans)", fontSize: 40, letterSpacing: "-.045em", color: "var(--color-light-base-primary)" }}>
-            Produtos · 183
+            Produtos · {products.length}
           </h1>
         </div>
         <div style={{ display: "flex", gap: 8 }}>

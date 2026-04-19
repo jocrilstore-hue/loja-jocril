@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
+import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
@@ -51,6 +52,13 @@ const INPUT_STYLE: React.CSSProperties = {
 
 export default function ContaPage() {
   const [tab, setTab] = useState<string>('overview');
+  const { user } = useUser();
+
+  const displayName  = user?.fullName ?? user?.firstName ?? 'Cliente';
+  const displayEmail = user?.primaryEmailAddress?.emailAddress ?? '';
+  const since = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString('pt-PT', { year: 'numeric', month: 'long' })
+    : '—';
 
   return (
     <main id="main">
@@ -59,9 +67,9 @@ export default function ContaPage() {
           <Badge size="sm">A minha conta</Badge>
           <div style={{ marginTop: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 40, marginBottom: 24 }}>
             <div>
-              <h1 className="heading-1" style={{ margin: 0, color: 'var(--color-light-base-primary)' }}>Olá, Maria.</h1>
+              <h1 className="heading-1" style={{ margin: 0, color: 'var(--color-light-base-primary)' }}>Olá, {displayName.split(' ')[0]}.</h1>
               <p style={{ margin: '10px 0 0', fontFamily: 'var(--font-geist-sans)', fontSize: 16, color: 'var(--color-base-400)' }}>
-                Cliente desde <span style={{ color: 'var(--color-light-base-primary)' }}>Janeiro 2024</span> · <span style={{ color: 'var(--color-light-base-primary)' }}>12</span> encomendas · Próximo escalão em <span style={{ color: 'var(--color-accent-100)' }}>€ 148,00</span>
+                {displayEmail && <><span style={{ color: 'var(--color-light-base-primary)' }}>{displayEmail}</span> · </>}Cliente desde <span style={{ color: 'var(--color-light-base-primary)' }}>{since}</span>{/* TODO: B5b — order count + tier progress */}
               </p>
             </div>
             <Button variant="outline">Terminar sessão</Button>
@@ -210,10 +218,11 @@ export default function ContaPage() {
 
           {tab === 'profile' && (
             <Card title="Dados pessoais">
+              {/* TODO: B5b — profile edit form wired to Clerk */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                 {[
-                  ['Nome',    'Maria Silva'],
-                  ['Email',   'maria@agencia.pt'],
+                  ['Nome',    user?.fullName ?? user?.firstName ?? '—'],
+                  ['Email',   user?.primaryEmailAddress?.emailAddress ?? '—'],
                   ['Telefone','+351 912 345 678'],
                   ['NIF',     '218 432 761'],
                   ['Empresa', 'Ponto & Linha, Lda.'],

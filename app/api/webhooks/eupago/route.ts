@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { verifyCallback } from "@/lib/payments/eupago";
+import { sendPaymentReceived } from "@/lib/email/send";
 
 export async function POST(request: Request) {
   try {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
 
     const { data: order, error: findError } = await supabase
       .from("orders")
-      .select("id, payment_status, total_amount_with_vat")
+      .select("id, payment_status, total_amount_with_vat, customer:customers(name, email)")
       .eq("order_number", orderNumber)
       .single();
 
@@ -74,7 +75,17 @@ export async function POST(request: Request) {
       `Order ${orderNumber} paid via ${channel}. Reference: ${reference}, Transaction: ${transactionId}`
     );
 
-    // NOTE: Email notification (sendPaymentReceived) is deferred to B7.
+    // Fire-and-forget payment received email (B7)
+    const customerRaw = order.customer as { name: string; email: string } | { name: string; email: string }[] | null;
+    const customer = Array.isArray(customerRaw) ? customerRaw[0] ?? null : customerRaw;
+    if (customer?.email) {
+      sendPaymentReceived({
+        orderNumber,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        total: order.total_amount_with_vat,
+      });
+    }
 
     return NextResponse.json({
       success: true,

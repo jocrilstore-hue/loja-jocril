@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminDanger, adminGhost, adminPrimary } from "@/components/admin/styles";
@@ -12,20 +12,36 @@ type Order = {
 };
 type SortKey = "n" | "c" | "it" | "v" | "pay" | "s" | "d";
 
-const orders: Order[] = [
-  { n: "JOC-25-04821", c: "Maria Silva",          e: "maria@agencia.pt",          it: 3,  v: 186.40,  s: "paid",      d: "17 Abr · 10:42", dayIdx: 0, pay: "MBWay" },
-  { n: "JOC-25-04820", c: "Ricardo Mota",         e: "ricardo.m@gmail.com",       it: 1,  v: 54.00,   s: "prep",      d: "17 Abr · 10:14", dayIdx: 0, pay: "Multibanco" },
-  { n: "JOC-25-04819", c: "Agência Ponto&Linha",  e: "contas@pontolinha.pt",      it: 12, v: 1284.00, s: "paid",      d: "17 Abr · 09:22", dayIdx: 0, pay: "Transferência" },
-  { n: "JOC-25-04818", c: "Beefeater PT",         e: "procurement@beefeater.pt",  it: 2,  v: 422.00,  s: "shipped",   d: "17 Abr · 08:02", dayIdx: 0, pay: "Cartão" },
-  { n: "JOC-25-04817", c: "Daniel Ferreira",      e: "danferreira@mail.pt",       it: 5,  v: 268.50,  s: "prep",      d: "16 Abr · 19:30", dayIdx: 1, pay: "MBWay" },
-  { n: "JOC-25-04816", c: "Joana Pinto",          e: "j.pinto@outlook.pt",        it: 1,  v: 48.00,   s: "pending",   d: "16 Abr · 18:12", dayIdx: 1, pay: "MBWay" },
-  { n: "JOC-25-04815", c: "Ricola Ibérica",       e: "orders@ricola.es",          it: 8,  v: 832.00,  s: "shipped",   d: "16 Abr · 15:04", dayIdx: 1, pay: "Transferência" },
-  { n: "JOC-25-04814", c: "Bruno Almeida",        e: "bruno.a@mail.pt",           it: 2,  v: 128.00,  s: "delivered", d: "16 Abr · 14:48", dayIdx: 1, pay: "MBWay" },
-  { n: "JOC-25-04813", c: "CARM Vinhos",          e: "shop@carm.pt",              it: 6,  v: 648.00,  s: "delivered", d: "16 Abr · 11:20", dayIdx: 1, pay: "Transferência" },
-  { n: "JOC-25-04812", c: "Sara Martins",         e: "sara.m@gmail.com",          it: 1,  v: 52.00,   s: "returned",  d: "16 Abr · 10:02", dayIdx: 1, pay: "Cartão" },
-  { n: "JOC-25-04811", c: "Heineken PT",          e: "compras@heineken.pt",       it: 4,  v: 1200.00, s: "paid",      d: "16 Abr · 09:48", dayIdx: 1, pay: "Transferência" },
-  { n: "JOC-25-04810", c: "Miguel Teixeira",      e: "m.teixeira@mail.com",       it: 1,  v: 68.00,   s: "pending",   d: "16 Abr · 09:02", dayIdx: 1, pay: "MBWay" },
-];
+const DB_STATUS_MAP: Record<string, Status> = {
+  pending: "pending", paid: "paid",
+  processing: "prep", preparation: "prep", prep: "prep",
+  shipped: "shipped", delivered: "delivered",
+  returned: "returned", cancelled: "returned",
+};
+
+interface ApiOrder {
+  order_number: string; status: string; payment_method: string | null;
+  total_amount_with_vat: number; created_at: string;
+  customer: { name: string; email: string } | null;
+  item_count: Array<{ count: number }>;
+}
+
+function mapOrder(o: ApiOrder): Order {
+  const d = new Date(o.created_at);
+  const dayIdx = Math.floor((Date.now() - d.getTime()) / 86400000);
+  return {
+    n: o.order_number,
+    c: o.customer?.name ?? "—",
+    e: o.customer?.email ?? "—",
+    it: o.item_count?.[0]?.count ?? 0,
+    v: o.total_amount_with_vat ?? 0,
+    s: DB_STATUS_MAP[o.status] ?? "pending",
+    d: d.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" }) + " · " +
+       d.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+    dayIdx,
+    pay: o.payment_method ?? "—",
+  };
+}
 
 const statusMap: Record<Status, { l: string; c: string }> = {
   pending:   { l: "A aguardar", c: "var(--color-base-500)" },
@@ -47,6 +63,8 @@ const headers: { k: SortKey; l: string; sortable: boolean }[] = [
 ];
 
 export default function AdminEncomendasPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [status, setStatus]     = useState<Status | "all">("all");
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery]       = useState("");
@@ -54,6 +72,14 @@ export default function AdminEncomendasPage() {
   const [payment, setPayment]   = useState("any");
   const [sortKey, setSortKey]   = useState<SortKey | null>(null);
   const [sortDir, setSortDir]   = useState<"asc" | "desc">("asc");
+
+  useEffect(() => {
+    fetch("/api/admin/orders")
+      .then((r) => r.json())
+      .then((res) => { if (res.success) setOrders((res.data as ApiOrder[]).map(mapOrder)); })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const baseForTabs = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -65,7 +91,7 @@ export default function AdminEncomendasPage() {
       if (q && !(o.n + " " + o.c + " " + o.e).toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [query, payment, dateRange]);
+  }, [orders, query, payment, dateRange]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -87,7 +113,7 @@ export default function AdminEncomendasPage() {
       });
     }
     return rows;
-  }, [query, status, payment, dateRange, sortKey, sortDir]);
+  }, [orders, query, status, payment, dateRange, sortKey, sortDir]);
 
   const tabs = [
     { k: "all",      t: "Todas",       n: baseForTabs.length },
@@ -113,6 +139,9 @@ export default function AdminEncomendasPage() {
 
   return (
     <AdminShell active="orders" breadcrumbs={["Encomendas"]}>
+      {loading && (
+        <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginBottom: 16 }}>A carregar…</div>
+      )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <div className="text-mono-xs" style={{ color: "var(--color-accent-100)" }}>● Encomendas</div>

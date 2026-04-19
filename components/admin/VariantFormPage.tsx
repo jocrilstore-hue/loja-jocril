@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { useRouter, useParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import ToggleSwitch from "@/components/admin/ToggleSwitch";
 import { adminGhost, adminPrimary } from "@/components/admin/styles";
@@ -95,13 +96,76 @@ function SwitchRow({ label, desc, defaultOn }: { label: string; desc: string; de
 
 export default function VariantFormPage({ mode }: { mode: Mode }) {
   const isEdit = mode === "edit";
+  const router = useRouter();
+  const params = useParams();
+  const productId = params?.id ? String(params.id) : null;
+  const variantId = params?.vid ? String(params.vid) : null;
+
   const [skuState] = useState<FieldState>("ok");
   const [slugState] = useState<FieldState>("ok");
   const [sizeFormat, setSizeFormat] = useState("A3");
   const [isCustom, setIsCustom] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2200); };
+  // Controlled fields for API submission
+  const [sku, setSku] = useState(isEdit ? "EXP-A3-06P-TR" : "");
+  const [priceWithVat, setPriceWithVat] = useState(isEdit ? "52.25" : "");
+  const [stockQty, setStockQty] = useState(isEdit ? "0" : "");
+  const [isActive, setIsActive] = useState(true);
+
+  const save = async () => {
+    if (saving) return;
+    setSaving(true);
+    setApiError(null);
+    try {
+      if (isEdit && productId && variantId) {
+        const res = await fetch(`/api/admin/products/${productId}/variants/${variantId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sku: sku || undefined,
+            size_format: sizeFormat,
+            base_price_including_vat: priceWithVat ? parseFloat(priceWithVat) : undefined,
+            stock_quantity: stockQty !== "" ? parseInt(stockQty, 10) : undefined,
+            is_active: isActive,
+          }),
+        });
+        const json = await res.json();
+        if (!json.success) {
+          setApiError(json.error ?? "Erro ao guardar");
+          return;
+        }
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2200);
+      } else if (!isEdit && productId) {
+        if (!sku.trim()) { setApiError("SKU é obrigatório"); return; }
+        if (!priceWithVat) { setApiError("Preço é obrigatório"); return; }
+        const res = await fetch(`/api/admin/products/${productId}/variants`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sku,
+            size_format: sizeFormat,
+            base_price_including_vat: parseFloat(priceWithVat),
+            stock_quantity: stockQty !== "" ? parseInt(stockQty, 10) : 0,
+            is_active: isActive,
+          }),
+        });
+        const json = await res.json();
+        if (!json.success) {
+          setApiError(json.error ?? "Erro ao criar variante");
+          return;
+        }
+        router.push(`/admin/produtos/${productId}`);
+      }
+    } catch {
+      setApiError("Erro de ligação ao servidor");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const breadcrumbs = ["Produtos", "Expositor A3 · 6 prateleiras", "Variantes", isEdit ? "A3 · Transparente" : "Nova variante"];
 
@@ -118,8 +182,11 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {saved && <span className="text-mono-xs" style={{ color: "var(--color-accent-300)" }}>✓ Guardado</span>}
+          {apiError && <span className="text-mono-xs" style={{ color: "var(--color-destructive)" }}>{apiError}</span>}
           <button style={adminGhost}>Cancelar</button>
-          <button style={adminPrimary} onClick={save}>{isEdit ? "Guardar alterações" : "Criar variante"}</button>
+          <button style={adminPrimary} onClick={save} disabled={saving}>
+            {saving ? "A guardar…" : isEdit ? "Guardar alterações" : "Criar variante"}
+          </button>
         </div>
       </div>
 
@@ -130,7 +197,7 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
             <div>
               <VLabel required>SKU</VLabel>
               <div style={{ position: "relative" }}>
-                <input defaultValue={isEdit ? "EXP-A3-06P-TR" : ""} style={inputStyle(skuState === "error")} />
+                <input value={sku} onChange={(e) => setSku(e.target.value)} style={inputStyle(skuState === "error")} />
                 <StateIcon state={skuState} />
               </div>
               {skuState === "error" && (
@@ -166,7 +233,13 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               </select>
             </div>
             <div style={{ gridColumn: "span 2", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <SwitchRow label="Ativo" desc="Disponível para compra" defaultOn={true} />
+              <div onClick={() => setIsActive(!isActive)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", border: "1px solid var(--color-base-900)", borderRadius: 2, cursor: "pointer" }}>
+                <div>
+                  <div style={{ fontFamily: "var(--font-geist-sans)", fontSize: 13, color: "var(--color-light-base-primary)" }}>Ativo</div>
+                  <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 2 }}>Disponível para compra</div>
+                </div>
+                <ToggleSwitch on={isActive} />
+              </div>
               <SwitchRow label="Mais vendido" desc="Destacar como best-seller" defaultOn={false} />
             </div>
           </div>
@@ -190,7 +263,7 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
             <div>
               <VLabel required>Preço c/ IVA (€)</VLabel>
               <div style={{ position: "relative" }}>
-                <input type="number" step="0.01" defaultValue={isEdit ? "52.25" : ""} style={{ ...inputStyle(false), paddingRight: 36 }} />
+                <input type="number" step="0.01" value={priceWithVat} onChange={(e) => setPriceWithVat(e.target.value)} style={{ ...inputStyle(false), paddingRight: 36 }} />
                 <span style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", color: "var(--color-base-500)", fontFamily: "var(--font-geist-mono)", fontSize: 12 }}>€</span>
               </div>
             </div>
@@ -200,6 +273,13 @@ export default function VariantFormPage({ mode }: { mode: Mode }) {
               <div className="text-mono-xs" style={{ color: "var(--color-base-500)", marginTop: 4 }}>Calculado automaticamente</div>
             </div>
             <VField label="Quantidade mínima" value="1" unit="un" type="number" />
+            <div>
+              <VLabel>Stock (unidades)</VLabel>
+              <div style={{ display: "flex", alignItems: "stretch", border: "1px solid var(--color-base-800)", borderRadius: 2, background: "var(--color-dark-base-primary)" }}>
+                <input type="number" min="0" value={stockQty} onChange={(e) => setStockQty(e.target.value)} style={{ flex: 1, padding: "9px 12px", background: "transparent", border: "none", outline: "none", color: "var(--color-light-base-primary)", fontFamily: "var(--font-geist-sans)", fontSize: 14, minWidth: 0 }} />
+                <span className="text-mono-xs" style={{ padding: "0 10px", display: "grid", placeItems: "center", color: "var(--color-base-500)", borderLeft: "1px solid var(--color-base-800)" }}>un</span>
+              </div>
+            </div>
           </div>
 
           {/* Escalões de preço desta variante */}

@@ -1,8 +1,8 @@
+import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import Badge from '@/components/store/Badge';
-import Button from '@/components/store/Button';
 
 type OrderItem = {
   product_name: string | null;
@@ -82,12 +82,13 @@ function formatReference(ref: string) {
   return ref.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
 }
 
-export default async function OrderDetailPage({
+export default async function EncomendaDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { userId } = await auth();
   const supabase = await createClient();
 
   const { data: order } = await supabase
@@ -108,7 +109,7 @@ export default async function OrderDetailPage({
         <div style={{ maxWidth: 1400, margin: '0 auto', textAlign: 'center' }}>
           <Badge size="sm">Não encontrada</Badge>
           <h1 className="heading-1" style={{ margin: '20px 0 16px', color: 'var(--color-light-base-primary)' }}>Encomenda não encontrada.</h1>
-          <Link href="/conta" style={{ color: 'var(--color-accent-100)', fontFamily: 'var(--font-geist-mono)', fontSize: 13, textDecoration: 'none' }}>← A minha conta</Link>
+          <Link href="/encomendas" style={{ color: 'var(--color-accent-100)', fontFamily: 'var(--font-geist-mono)', fontSize: 13, textDecoration: 'none' }}>← Ver todas as encomendas</Link>
         </div>
       </main>
     );
@@ -119,80 +120,84 @@ export default async function OrderDetailPage({
     : order.shipping_address;
 
   const dateStr = new Date(order.created_at).toLocaleDateString('pt-PT', {
-    day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
-  } as Intl.DateTimeFormatOptions);
+    day: '2-digit', month: 'long', year: 'numeric',
+  });
 
   const showMultibanco =
     order.payment_status === 'pending' &&
     order.eupago_reference !== null &&
     order.eupago_entity !== null;
 
+  // Suppress unused userId warning — available for future auth guard
+  void userId;
+
   return (
-    <main id="main">
-      <section data-screen-label="01 Order header" style={{ padding: '32px 40px 0', background: 'var(--color-dark-base-primary)' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-          <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginBottom: 12 }}>
-            <Link href="/conta" style={{ color: 'var(--color-base-400)', textDecoration: 'none' }}>A minha conta</Link>{' '}
-            <span style={{ color: 'var(--color-base-700)' }}>/</span>{' '}
-            <Link href="/conta?tab=orders" style={{ color: 'var(--color-base-400)', textDecoration: 'none' }}>Encomendas</Link>{' '}
-            <span style={{ color: 'var(--color-base-700)' }}>/</span>{' '}
+    <main id="main" style={{ background: 'var(--color-dark-base-primary)', padding: '40px 40px 80px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+
+        {/* Breadcrumb */}
+        <div style={{ marginBottom: 20 }}>
+          <span className="text-mono-xs" style={{ color: 'var(--color-base-500)' }}>
+            <Link href="/conta" style={{ color: 'var(--color-base-400)', textDecoration: 'none' }}>A minha conta</Link>
+            {' '}<span style={{ color: 'var(--color-base-700)' }}>/</span>{' '}
+            <Link href="/encomendas" style={{ color: 'var(--color-base-400)', textDecoration: 'none' }}>Encomendas</Link>
+            {' '}<span style={{ color: 'var(--color-base-700)' }}>/</span>{' '}
             <span style={{ color: 'var(--color-light-base-primary)' }}>{order.order_number}</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, alignItems: 'end', marginBottom: 28 }}>
+          </span>
+        </div>
+
+        {/* Header */}
+        <div style={{ marginBottom: 32 }}>
+          <Badge size="sm">Encomenda {order.order_number}</Badge>
+          <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 32 }}>
             <div>
-              <Badge size="sm">Encomenda {order.order_number}</Badge>
-              <h1 className="heading-1" style={{ margin: '14px 0 8px', color: 'var(--color-light-base-primary)' }}>
-                {order.order_number}
-                {' — '}
-                <span style={{ color: STATUS_COLORS[order.status] ?? 'var(--color-accent-100)' }}>
-                  {statusLabel(order.status)}
-                </span>
-              </h1>
-              <p className="text-body" style={{ color: 'var(--color-base-400)', margin: 0 }}>
+              <h1 className="heading-1" style={{ margin: 0, color: 'var(--color-light-base-primary)' }}>{order.order_number}</h1>
+              <p style={{ margin: '10px 0 0', fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-base-400)' }}>
                 {dateStr}
+                {' · '}
+                <span style={{ color: STATUS_COLORS[order.status] ?? 'var(--color-base-400)' }}>
+                  ● {statusLabel(order.status)}
+                </span>
                 {' · '}
                 <span style={{ color: PAYMENT_COLORS[order.payment_status] ?? 'var(--color-base-400)' }}>
                   {paymentLabel(order.payment_status)}
                 </span>
               </p>
             </div>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <Button variant="outline">Contactar apoio</Button>
-            </div>
+            <Link href="/encomendas" style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 12, color: 'var(--color-base-400)', textDecoration: 'none' }}>← Voltar</Link>
           </div>
         </div>
-      </section>
 
-      {/* Multibanco pending */}
-      {showMultibanco && (
-        <section style={{ padding: '0 40px 24px', background: 'var(--color-dark-base-primary)' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-            <div style={{ padding: 24, border: '1px dashed var(--color-accent-100)', borderRadius: 6, background: 'rgba(45,212,205,.05)' }}>
-              <span className="text-mono-xs" style={{ color: 'var(--color-accent-100)', display: 'block', marginBottom: 16, textTransform: 'uppercase' }}>Referência Multibanco — pagamento pendente</span>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '8px 40px', justifyContent: 'start' }}>
-                <RefLine label="Entidade"   value={order.eupago_entity!} />
-                <RefLine label="Referência" value={formatReference(order.eupago_reference!)} large />
-                <RefLine label="Valor"      value={`€ ${order.total_amount_with_vat.toFixed(2).replace('.', ',')}`} large accent />
-                {order.payment_deadline && (
-                  <RefLine label="Válida até" value={new Date(order.payment_deadline).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' } as Intl.DateTimeFormatOptions)} />
-                )}
-              </div>
+        {/* Multibanco pending payment box */}
+        {showMultibanco && (
+          <div style={{ marginBottom: 28, padding: 24, border: '1px dashed var(--color-accent-100)', borderRadius: 6, background: 'rgba(45,212,205,.05)' }}>
+            <span className="text-mono-xs" style={{ color: 'var(--color-accent-100)', display: 'block', marginBottom: 16, textTransform: 'uppercase' }}>Referência Multibanco — pagamento pendente</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '8px 40px', justifyContent: 'start' }}>
+              <RefLine label="Entidade"   value={order.eupago_entity!} />
+              <RefLine label="Referência" value={formatReference(order.eupago_reference!)} large />
+              <RefLine label="Valor"      value={`€ ${order.total_amount_with_vat.toFixed(2).replace('.', ',')}`} large accent />
+              {order.payment_deadline && (
+                <RefLine label="Válida até" value={new Date(order.payment_deadline).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' } as Intl.DateTimeFormatOptions)} />
+              )}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Body */}
-      <section style={{ padding: '16px 40px 80px', background: 'var(--color-dark-base-primary)' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24 }}>
-          {/* Items */}
+        {/* Body grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24 }}>
+
+          {/* Items + totals */}
           <div style={{ border: '1px dashed var(--color-base-800)', borderRadius: 6, background: 'var(--color-dark-base-secondary)' }}>
-            <div style={{ padding: '18px 22px', borderBottom: '1px dashed var(--color-base-800)', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ padding: '18px 22px', borderBottom: '1px dashed var(--color-base-800)' }}>
               <span className="text-mono-sm" style={{ color: 'var(--color-base-300)', textTransform: 'uppercase' }}>Artigos · {order.items.length}</span>
             </div>
 
             {order.items.map((it, i) => (
-              <div key={`${it.product_sku ?? ''}-${i}`} style={{ display: 'grid', gridTemplateColumns: '1.3fr auto auto', gap: 16, padding: 18, alignItems: 'center', borderTop: i === 0 ? 'none' : '1px dashed var(--color-base-800)' }}>
+              <div key={`${it.product_sku ?? ''}-${i}`} style={{
+                display: 'grid', gridTemplateColumns: '1fr auto auto',
+                gap: 16, padding: '18px 22px', alignItems: 'center',
+                borderTop: i === 0 ? 'none' : '1px dashed var(--color-base-800)',
+              }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, color: 'var(--color-light-base-primary)', letterSpacing: '-.02em' }}>{it.product_name ?? '—'}</div>
                   {it.size_format && <div className="text-mono-xs" style={{ color: 'var(--color-base-500)', marginTop: 3 }}>{it.size_format}</div>}
@@ -206,10 +211,11 @@ export default async function OrderDetailPage({
               </div>
             ))}
 
-            <div style={{ padding: 22, borderTop: '1px dashed var(--color-base-800)', display: 'grid', gap: 8 }}>
-              <TotalLine label="Subtotal"         value={`€ ${order.subtotal.toFixed(2).replace('.', ',')}`} />
-              <TotalLine label="Envio"             value={order.shipping_cost === 0 ? 'Grátis' : `€ ${order.shipping_cost.toFixed(2).replace('.', ',')}`} />
-              <TotalLine label="IVA 23% incluído"  value="—" muted />
+            {/* Totals */}
+            <div style={{ padding: '18px 22px', borderTop: '1px dashed var(--color-base-800)', display: 'grid', gap: 10 }}>
+              <TotalLine label="Subtotal"  value={`€ ${order.subtotal.toFixed(2).replace('.', ',')}`} />
+              <TotalLine label="Envio"     value={order.shipping_cost === 0 ? 'Grátis' : `€ ${order.shipping_cost.toFixed(2).replace('.', ',')}`} />
+              <TotalLine label="IVA 23% incluído" value="—" muted />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 12, borderTop: '1px dashed var(--color-base-800)', marginTop: 4 }}>
                 <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 18, color: 'var(--color-light-base-primary)', letterSpacing: '-.02em' }}>Total</span>
                 <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 28, color: 'var(--color-light-base-primary)', letterSpacing: '-.035em' }}>€ {order.total_amount_with_vat.toFixed(2).replace('.', ',')}</span>
@@ -220,8 +226,8 @@ export default async function OrderDetailPage({
           {/* Sidebar */}
           <div style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
             {shipping && (
-              <Card title="Entrega">
-                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-light-base-primary)', lineHeight: 1.6 }}>
+              <Card title="Morada de entrega">
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-light-base-primary)', lineHeight: 1.7 }}>
                   {shipping.address && <div>{shipping.address}</div>}
                   {shipping.address2 && <div>{shipping.address2}</div>}
                   {shipping.postal_code && shipping.city && <div>{shipping.postal_code} {shipping.city}</div>}
@@ -237,14 +243,18 @@ export default async function OrderDetailPage({
             )}
 
             <Card title="Precisa de ajuda?">
-              <div style={{ display: 'grid', gap: 8 }}>
-                <Button variant="outline">Contactar apoio</Button>
-                <Button variant="outline">Devolver / trocar</Button>
-              </div>
+              <p style={{ margin: '0 0 14px', fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-base-400)' }}>A nossa equipa responde em horário útil em até 6 horas.</p>
+              <Link href="/contacto" style={{
+                display: 'block', textAlign: 'center', padding: '10px 16px',
+                border: '1px solid var(--color-base-700)', borderRadius: 2,
+                fontFamily: 'var(--font-geist-mono)', fontSize: 12, letterSpacing: '-.015rem',
+                color: 'var(--color-light-base-primary)', textDecoration: 'none',
+                textTransform: 'uppercase',
+              }}>Contactar apoio</Link>
             </Card>
           </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
