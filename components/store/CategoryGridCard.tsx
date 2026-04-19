@@ -32,7 +32,7 @@ export default function CategoryGridCard({ n, name, count, img, desc, from, href
         color: 'inherit',
       }}
     >
-      <div style={{ aspectRatio: '4/3', background: `url(${img}) center/cover` }} />
+      <div style={{ aspectRatio: '1/1', background: `url(${img}) center/cover` }} />
       <div style={{ padding: '16px 18px', borderTop: '1px dashed var(--color-base-700)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span className="text-mono-sm" style={{ color: 'var(--color-accent-100)' }}>{n}</span>

@@ -121,7 +121,7 @@ export default function ContaPage() {
                       { n: 'Moldura 50×70 acrílica',         p: '€ 42,00', img: '/assets/portfolio/beefeater.avif'   },
                     ].map((r) => (
                       <div key={r.n} style={{ border: '1px dashed var(--color-base-800)', borderRadius: 4, overflow: 'hidden', background: 'var(--color-dark-base-primary)' }}>
-                        <div style={{ aspectRatio: '4/3', background: `url(${r.img}) center/cover` }}/>
+                        <div style={{ aspectRatio: '1/1', background: `url(${r.img}) center/cover` }}/>
                         <div style={{ padding: '10px 12px' }}>
                           <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: 'var(--color-light-base-primary)', letterSpacing: '-.02em' }}>{r.n}</div>
                           <div className="text-mono-sm" style={{ color: 'var(--color-accent-100)', marginTop: 4 }}>{r.p}</div>

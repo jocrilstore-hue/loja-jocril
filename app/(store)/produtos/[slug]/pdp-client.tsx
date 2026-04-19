@@ -6,9 +6,10 @@ import Badge from '@/components/store/Badge';
 import Button from '@/components/store/Button';
 import ProductCard, { type ProductMock } from '@/components/store/ProductCard';
 import FooterCTA from '@/components/store/FooterCTA';
+import { useCart } from '@/contexts/cart-context';
 
 export type ColorVariant = { k: string; label: string; swatch: string };
-export type SizeVariant  = { k: string; label: string; dim: string; price: number | null };
+export type SizeVariant  = { k: string; label: string; dim: string; price: number | null; variantId: number; sku: string };
 export type PriceTier    = { min: number; max: number | null; unit: number; discount: number };
 
 export type PDPProduct = {
@@ -37,12 +38,27 @@ export default function PDPClient({ product, related }: PDPClientProps) {
   const [size, setSize]   = useState(product.variants.size[0]?.k ?? '');
   const [qty, setQty]     = useState(10);
   const [tab, setTab]     = useState('specs');
+  const { addToCart } = useCart();
 
   const curSize = product.variants.size.find((s) => s.k === size) ?? product.variants.size[0];
   const tier    = product.priceTiers.find((t) => qty >= t.min && (!t.max || qty <= t.max)) ?? product.priceTiers[0];
   const basePrice = product.from || 1;
   const unit    = curSize?.price ? (tier?.unit ?? 0) * (curSize.price / basePrice) : null;
   const total   = unit ? unit * qty : null;
+
+  const handleAdd = () => {
+    if (!curSize || unit == null) return;
+    addToCart({
+      variantId: curSize.variantId,
+      sku: curSize.sku,
+      productName: product.name,
+      sizeName: curSize.label,
+      quantity: qty,
+      unitPrice: unit,
+      imageUrl: product.images[0],
+      stockQuantity: product.stock.qty,
+    });
+  };
 
   return (
     <>
@@ -66,6 +82,7 @@ export default function PDPClient({ product, related }: PDPClientProps) {
             size={size}   setSize={setSize}
             qty={qty}     setQty={setQty}
             curSize={curSize} tier={tier} unit={unit} total={total}
+            onAdd={handleAdd}
           />
         </section>
 
@@ -130,7 +147,7 @@ function Gallery({ images, cur, setCur }: { images: string[]; cur: number; setCu
   return (
     <div style={{ position: 'sticky', top: 160, alignSelf: 'start' }}>
       <div style={{
-        position: 'relative', aspectRatio: '4/5',
+        position: 'relative', aspectRatio: '1/1',
         border: '1px dashed var(--color-base-700)', borderRadius: 6, overflow: 'hidden',
         background: `url(${images[cur]}) center/cover`,
       }}>
@@ -163,7 +180,7 @@ function Gallery({ images, cur, setCur }: { images: string[]; cur: number; setCu
   );
 }
 
-function InfoRail({ product, color, setColor, size, setSize, qty, setQty, curSize, tier, unit, total }: {
+function InfoRail({ product, color, setColor, size, setSize, qty, setQty, curSize, tier, unit, total, onAdd }: {
   product: PDPProduct;
   color: string; setColor: (c: string) => void;
   size: string;  setSize: (s: string) => void;
@@ -171,6 +188,7 @@ function InfoRail({ product, color, setColor, size, setSize, qty, setQty, curSiz
   curSize: SizeVariant | undefined;
   tier: PriceTier | undefined;
   unit: number | null; total: number | null;
+  onAdd: () => void;
 }) {
   return (
     <div>
@@ -253,13 +271,14 @@ function InfoRail({ product, color, setColor, size, setSize, qty, setQty, curSiz
         </div>
 
         <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: '1fr auto', gap: 8 }}>
-          <button style={{
+          <button type="button" onClick={onAdd} disabled={unit == null} style={{
             height: 48, padding: '0 20px', background: 'var(--color-light-base-secondary)',
-            color: 'var(--color-dark-base-primary)', border: 'none', borderRadius: 2, cursor: 'pointer',
+            color: 'var(--color-dark-base-primary)', border: 'none', borderRadius: 2,
+            cursor: unit == null ? 'not-allowed' : 'pointer', opacity: unit == null ? 0.5 : 1,
             fontFamily: 'var(--font-geist-mono)', fontSize: 13, letterSpacing: '-.015rem', textTransform: 'uppercase',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
           }}>
-            Adicionar ao carrinho →
+            {unit == null ? 'Pedir orçamento' : 'Adicionar ao carrinho →'}
           </button>
           <button title="Guardar" style={{ width: 48, height: 48, background: 'transparent', border: '1px solid var(--color-base-700)', borderRadius: 2, cursor: 'pointer', color: 'var(--color-base-300)', display: 'grid', placeItems: 'center' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -370,7 +389,7 @@ function SpecsPanel() {
 function DimPanel() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
-      <div style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, padding: 32, background: 'var(--color-dark-base-secondary)', aspectRatio: '4/3', display: 'grid', placeItems: 'center' }}>
+      <div style={{ border: '1px dashed var(--color-base-700)', borderRadius: 6, padding: 32, background: 'var(--color-dark-base-secondary)', aspectRatio: '1/1', display: 'grid', placeItems: 'center' }}>
         <svg viewBox="0 0 400 300" width="100%" height="auto" style={{ maxWidth: 420 }}>
           <g stroke="var(--color-base-500)" strokeWidth="1" fill="none">
             <rect x="100" y="40" width="200" height="220" stroke="var(--color-accent-100)" />

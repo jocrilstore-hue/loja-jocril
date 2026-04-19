@@ -19,32 +19,32 @@ export const DEFAULT_IMG = "/assets/portfolio/carm-premium.avif";
 export const CATEGORY_META: Record<string, CategoryMeta> = {
   "acrilicos-chao": {
     group: "Acrílicos",
-    img: "/assets/portfolio/carm-premium.avif",
+    img: "/categories/acrilicos-chao.avif",
     desc: "Expositores verticais com prateleiras, em formatos A5 a A2.",
   },
   "acrilicos-mesa": {
     group: "Acrílicos",
-    img: "/assets/portfolio/carm.avif",
+    img: "/categories/acrilicos-mesa.avif",
     desc: "Peças compactas para balcão e ponto de venda.",
   },
   "acrilicos-parede": {
     group: "Acrílicos",
-    img: "/assets/portfolio/ricola.avif",
+    img: "/categories/acrilicos-parede.avif",
     desc: "Placas, porta-folhetos e painéis iluminados.",
   },
   "caixas-acrilico": {
     group: "Caixas e armazenamento",
-    img: "/assets/portfolio/beefeater.avif",
+    img: "/categories/caixas-acrilico.avif",
     desc: "Com e sem tampa, tamanhos standard e à medida.",
   },
   "tombolas-acrilico": {
     group: "Caixas e armazenamento",
-    img: "/assets/portfolio/fanta.avif",
+    img: "/categories/tombolas-acrilico.avif",
     desc: "Urnas para sorteios, coleta e amostragem.",
   },
   "molduras-acrilico": {
     group: "Impressão e serviços",
-    img: "/assets/portfolio/stoli.avif",
+    img: "/categories/molduras-acrilico.avif",
     desc: "Molduras em acrílico e alumínio, vários formatos.",
   },
 };

@@ -47,7 +47,7 @@ export default function ProductCard({ p }: { p: ProductMock }) {
         <div
           style={{
             position: 'relative',
-            aspectRatio: '4/3',
+            aspectRatio: '1/1',
             overflow: 'hidden',
             background: 'var(--color-dark-base-primary)',
           }}
