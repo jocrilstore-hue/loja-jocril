@@ -75,6 +75,12 @@
   --color-accent-200:          var(--accent-200);
   --color-accent-300:          var(--accent-300);
 
+  /* ---------- STATUS COLORS ---------- */
+  --color-danger:              #ef4444;
+  --color-danger-bg:           rgba(239, 68, 68, 0.1);
+  --color-success:             #22c55e;
+  --color-success-bg:          rgba(34, 197, 94, 0.08);
+
   /* base-* reads darkest→lightest in dark mode (flips on light) */
   --color-base-100:  var(--neutral-100);
   --color-base-200:  var(--neutral-200);
