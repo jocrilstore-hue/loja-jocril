@@ -37,7 +37,50 @@ export async function listProducts(
     return [];
   }
 
-  return (data ?? []).map((r: SearchProductRow) => toUIProductFromSearch(r));
+  const rows: UIProductCard[] = (data ?? []).map((r: SearchProductRow) =>
+    toUIProductFromSearch(r)
+  );
+  if (rows.length === 0) return rows;
+
+  // Follow-up join: search_products RPC does NOT expose sku or material.
+  // Pull both via one batched query keyed on variant_id.
+  const variantIds = rows.map((r: UIProductCard) => Number(r.id));
+  const { data: meta, error: metaErr } = await supabase
+    .from("product_variants")
+    .select(
+      `
+      id,
+      sku,
+      product_templates!inner (
+        material:materials!product_templates_material_id_fkey ( name )
+      )
+      `
+    )
+    .in("id", variantIds);
+
+  if (metaErr) {
+    console.error("[listProducts] meta-join error:", metaErr.message);
+    return rows;
+  }
+
+  type MetaRow = {
+    id: number;
+    sku: string | null;
+    product_templates?: { material?: { name: string | null } | null } | null;
+  };
+
+  const byId = new Map<number, { sku: string; material: string }>();
+  for (const m of (meta ?? []) as unknown as MetaRow[]) {
+    byId.set(m.id, {
+      sku: m.sku ?? "",
+      material: m.product_templates?.material?.name ?? "",
+    });
+  }
+
+  return rows.map((r) => {
+    const fill = byId.get(Number(r.id));
+    return fill ? { ...r, sku: fill.sku || r.sku, material: fill.material } : r;
+  });
 }
 
 // Homepage featured strip. Reads is_featured on the template, shows the default variant.
