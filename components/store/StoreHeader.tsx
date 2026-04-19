@@ -107,6 +107,7 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
             className="store-header-nav"
             style={{
               flex: "1 1 auto",
+              alignItems: "center",
               justifyContent: "center",
               marginLeft: 0,
               minWidth: 0,
@@ -125,6 +126,8 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
                   isActive || isHover
                     ? "var(--color-accent-100)"
                     : "var(--color-base-300)",
+                display: "inline-flex",
+                alignItems: "center",
                 position: "relative",
                 paddingBottom: 3,
                 transition: "color .2s var(--ease-in-out)",
@@ -160,8 +163,9 @@ export default function StoreHeader({ active, onOpenCart }: Props) {
                     }}
                     style={{
                       position: "relative",
-                      padding: "8px 0",
-                      margin: "-8px 0",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      alignSelf: "center",
                     }}
                   >
                     <Link
