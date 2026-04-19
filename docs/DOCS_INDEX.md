@@ -16,6 +16,7 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [B3 handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B3_handoff.md) | B3 cart state — localStorage context, PDP add, live /carrinho, empty state |
 | [B4a handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4a_handoff.md) | B4a Eupago backend — 5 API routes, zod, webhook, order RPC. B4b = UI wiring |
 | [B4b handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B4b_handoff.md) | B4b checkout UI — /carrinho step 2+3 wired, MB Way polling, error banners, CSS status vars |
+| [Session end handoff](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_SESSION-END_handoff.md) | B5+B6+B7+B8 complete — deploy live, full audit with 10 known gaps |
 | [B5–B8 master plan](../AI_OS/SESSION-PROMPTS/SESSIONS/2026-04-19/2026-04-19_B5-B8_MASTER-PLAN.md) | Wave 1 parallel (B5+B6), Wave 2 B7 emails, Wave 3 B8 deploy — human gates documented |
 
 ## Session Prompts (Ready-to-paste) — B5–B8
