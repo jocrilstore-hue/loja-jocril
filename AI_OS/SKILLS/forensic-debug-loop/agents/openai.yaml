@@ -1,4 +1,0 @@
-interface:
-  display_name: "Forensic Debug Loop"
-  short_description: "Disciplined hard-debug workflow"
-  default_prompt: "Use $forensic-debug-loop to debug a stubborn issue with cumulative evidence, regression tests, and live verification."

@@ -23,10 +23,10 @@
 |---|---|---|
 | `references/` | Yes | `agent-teams-reference.md`, `AI_OS_CURRENT_STANDARD.md`, prompt patterns, anti-patterns, bootstrap guides |
 | `templates/` | Yes (master only) | `AI.md`, `AGENTS.md`, `CLAUDE_MD_SNIPPET.md` |
-| `SKILLS/` | Yes | docs-strategy, generate-agents, forensic-debug-loop, my-precious, my-precious-codex, + project-specific |
+| `SKILLS/` | Yes | `AGENTS.md` plus local/project-specific skill overrides only. Do not mirror globally installed Claude/Codex skills here. |
 | `SESSION-PROMPTS/` | Yes | See section 3 |
 
-Template skills should complement, not duplicate, globally installed Claude/Codex skills. Project-specific AI_OS skills may add local facts, task-to-mode mappings, and examples, but global behavior such as prompt-building, model-routing, and provider-specific orchestration belongs in global skills/config.
+Project-specific AI_OS skills may add local facts, task-to-mode mappings, and examples. Global behavior such as prompt-building, model-routing, documentation governance, debugging, design review, and provider-specific orchestration belongs in the active tool's global skill/config system.
 
 ## 2A. Codex Global Structure (if Codex is used)
 

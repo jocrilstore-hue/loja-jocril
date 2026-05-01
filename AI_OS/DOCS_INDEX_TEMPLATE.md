@@ -11,6 +11,7 @@ Last verified: [YYYY-MM-DD]
 |----------|------|-----------|
 | Architecture | docs/ARCHITECTURE.md | Current system structure and data flow |
 | AI Session Entry | AI.md | Universal entry point for any AI session in this project |
+| AI Memory Index | AI_OS/MEMORY_INDEX.md | Ranked AI-facing map of hot workstreams, proven solutions, failed approaches, regression risks, and cold archives |
 | Agent Guidance | AGENTS.md | Operational guidance for Codex, Claude, and other coding agents |
 | Claude Conventions | CLAUDE.md | Claude Code specific conventions for this project |
 | Setup | README.md | Installation and development setup |
@@ -45,6 +46,7 @@ Organized by quarter (YYYY-QN/).
 3. Living documents must reflect current code state. If they're stale, update them now.
 4. Temporary documents must be archived when their purpose is fulfilled.
 5. "Last verified" date must be updated at least monthly.
+6. When a doc, handoff, investigation, or research result becomes the best source for future AI sessions, update `AI_OS/MEMORY_INDEX.md`.
 
 ## Document Types Quick Reference
 

@@ -60,7 +60,7 @@ When project docs describe capabilities that conflict with external knowledge:
 When creating or updating documentation:
 
 - Check if a source-of-truth file already exists before creating a new one
-- Follow the project's naming and placement conventions (see `AI_OS/SKILLS/docs-strategy/SKILL.md`)
+- Follow the project's naming and placement conventions. Use the active tool's docs-strategy skill when available.
 - Do NOT create random markdown files in the project root
 - Do NOT inflate summary/memory files — route detail to dedicated topic files
 - Wrong documentation steers future AI sessions wrong — treat accuracy as critical

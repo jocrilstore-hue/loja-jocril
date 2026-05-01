@@ -29,6 +29,11 @@ If a decision is stable, also add it to AI_DECISION_LOG.md]
 [Bullet list of things that work now and must continue working.
 Be specific — name the behavior, not the file]
 
+### Memory Index Updates
+
+[State exactly which rows were added or changed in `MEMORY_INDEX.md`.
+Use `None` only when the session produced no reusable working solution, failed approach, regression risk, or new best resume point.]
+
 ### Next Step
 
 [ONE concrete action for the next session to start with.
@@ -62,3 +67,4 @@ Example: "Run `pnpm test:integration` to verify current state, then continue wit
 
 A good handoff is read in 30 seconds and tells you exactly what to do next.
 If it takes longer than 30 seconds to read, it's too long.
+If the handoff names a working solution, failed approach, regression risk, or best resume point that future agents should rank highly, `MEMORY_INDEX.md` must point to it.

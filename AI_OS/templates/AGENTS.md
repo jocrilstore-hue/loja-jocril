@@ -27,6 +27,7 @@ sed -n '1,160p' templates/CLAUDE_MD_SNIPPET.md
 ## Touch Points / Key Files
 
 - Universal loader template: `templates/AI.md`
+- `AI_OS/MEMORY_INDEX.md` - ranked memory map for hot work, proven solutions, failed approaches, and regression risks
 - Claude pointer snippet: `templates/CLAUDE_MD_SNIPPET.md`
 - Setup instructions that reference these files: `NEW_PROJECT_SETUP.md`
 

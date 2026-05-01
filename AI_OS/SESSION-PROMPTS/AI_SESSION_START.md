@@ -15,18 +15,19 @@ Load these files in order:
 3. `AI_DECISION_LOG.md`
 4. Root `AGENTS.md` if the project has one
 
-Then identify the session goal and load the most relevant skill only if needed:
+Then identify the session goal and load the most relevant tool-native/global skill only if needed:
 
-- `SKILLS/architect-advisor/SKILL.md` — architecture, planning, systems thinking, trade-off analysis
-- `SKILLS/my-precious/SKILL.md` — Claude-oriented prompt engineering, prompt review, prompt optimization
-- `SKILLS/my-precious-codex/SKILL.md` — Codex/OpenAI-oriented prompt engineering and prompt adaptation
-- `SKILLS/design-reviewer/SKILL.md` — design critique, UX review, visual steering
-- `SKILLS/docs-strategy/SKILL.md` — documentation governance, placement rules, naming, archive decisions
-- `SKILLS/generate-agents/SKILL.md` — hierarchical AGENTS.md generation for AI coding agents
+- architecture, planning, and trade-off analysis: use the active tool's `architect-advisor` skill or equivalent
+- prompt engineering: use Claude-native prompt skills for Claude targets, and Codex `my-precious` / `my-precious-codex` for OpenAI/Codex targets
+- design critique: use the active tool's design-review skill or equivalent
+- documentation governance: use the active tool's docs-strategy skill or equivalent
+- AGENTS.md generation: use the active tool's agent-doc generation skill or equivalent
+
+Only load `SKILLS/<name>/SKILL.md` from this project when that skill is genuinely project-specific and exists locally.
 
 If the task is simple and does not need a specialized skill, stay in general AI_OS mode.
 
-Do not load personal-infrastructure skills by default. Skills such as `SKILLS/gws-manager/SKILL.md` are opt-in and should only be used when the current project or user request actually depends on that personal setup.
+Do not load personal-infrastructure skills by default. Personal skills belong in the user's tool-native global skill system unless the current project explicitly owns a local override.
 
 Then check for session continuity:
 
