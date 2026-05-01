@@ -54,7 +54,7 @@ export default function FAQPage() {
       </section>
 
       <section data-screen-label="02 FAQ body" style={{ padding: '40px 40px 80px', background: 'var(--color-dark-base-primary)' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '240px 1fr', gap: 56 }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '240px 1fr', gap: 76 }}>
           <aside style={{ position: 'sticky', top: 96, alignSelf: 'start' }}>
             <Badge size="xs">Tópicos</Badge>
             <div style={{ marginTop: 16, display: 'grid', gap: 2 }}>

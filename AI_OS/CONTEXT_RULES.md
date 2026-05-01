@@ -219,7 +219,7 @@ If a regression is detected after a change:
 
 ## Documentation Governance Rule
 
-All documentation decisions should follow `SKILLS/docs-strategy/SKILL.md`.
+All documentation decisions should follow the active tool's documentation-governance skill when available, such as Codex `docs-strategy` or the Claude-native equivalent.
 
 Key rules:
 - one source of truth per topic

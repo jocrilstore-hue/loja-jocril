@@ -124,7 +124,7 @@ export default function PesquisaClient({ initialQuery, initialResults }: Pesquis
 
         {/* body */}
         <section data-screen-label="02 Search body" style={{ padding: '32px 40px 80px', background: 'var(--color-dark-base-primary)' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '260px 1fr', gap: 32 }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '260px 1fr', gap: 48 }}>
             {/* left rail */}
             <aside>
               <div style={{ marginBottom: 28 }}>

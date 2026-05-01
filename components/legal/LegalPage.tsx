@@ -114,7 +114,7 @@ export default function LegalPage({
             margin: "0 auto",
             display: "grid",
             gridTemplateColumns: "260px 1fr",
-            gap: 64,
+            gap: 84,
           }}
         >
           {/* ToC rail */}

@@ -17,9 +17,10 @@ For Jocril implementation work, root `AGENTS.md` and `CLAUDE.md` contain the cri
 1. Read `AI_OS/SESSION-PROMPTS/AI_SESSION_START.md`
 2. Follow its boot instructions
 3. Identify the correct skill / mode for the current task
-4. Check for the latest relevant session handoff in `AI_OS/SESSION-PROMPTS/SESSIONS/`
-5. If the project has a root `AGENTS.md`, read it before editing code or docs
-6. Continue work only after producing a short boot summary
+4. Read `AI_OS/MEMORY_INDEX.md` if present to rank hot workstreams, proven behavior, failed approaches, and regression risks
+5. Check for the latest relevant session handoff in `AI_OS/SESSION-PROMPTS/SESSIONS/`
+6. If the project has a root `AGENTS.md`, read it before editing code or docs
+7. Continue work only after producing a short boot summary
 
 If the task is small and does not need a specialized skill, stay in general AI_OS mode.
 
@@ -62,7 +63,7 @@ When project docs describe capabilities that conflict with external knowledge:
 When creating or updating documentation:
 
 - Check if a source-of-truth file already exists before creating a new one
-- Follow the project's naming and placement conventions (see `AI_OS/SKILLS/docs-strategy/SKILL.md`)
+- Follow the project's naming and placement conventions. Use the active tool's docs-strategy skill when available.
 - Do NOT create random markdown files in the project root
 - Do NOT inflate summary/memory files — route detail to dedicated topic files
 - Wrong documentation steers future AI sessions wrong — treat accuracy as critical

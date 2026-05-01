@@ -1,6 +1,6 @@
-# AI Operating System (AI_OS) — Jocril LOJA-ONLINE
+# AI Operating System (AI_OS) — MASTER TEMPLATE
 
-> **This is the project-local AI_OS.** It is adapted from `C:\Users\maria\Desktop\AI_OS`. Project-specific prompts, session logs, and context belong here; future syncs must adapt from the desktop master without replacing local Jocril knowledge.
+> **This is the master template.** This Desktop `AI_OS/` is the canonical source that gets copied into each project's own `AI_OS/` folder. Project-specific prompts, session logs, and context belong in the project's own AI_OS, not here.
 
 Operating rules for working with AI systems across tools (Claude, ChatGPT, Gemini, Codex, Antigravity, etc.).
 
@@ -8,7 +8,7 @@ Operating rules for working with AI systems across tools (Claude, ChatGPT, Gemin
 
 ## Portable vs Global Boundary
 
-The desktop master `AI_OS` is the portable template layer. This project folder is the Jocril adaptation of that layer.
+This master `AI_OS` is the portable, project-facing layer.
 
 Keep these in global tool config, not in the copied project AI_OS:
 
@@ -232,7 +232,7 @@ This applies to every model and every tool.
 
 ## Documentation Governance
 
-See `SKILLS/docs-strategy/SKILL.md`. Key rules:
+Use the active tool's documentation-governance skill when available, such as Codex `docs-strategy` or the Claude-native equivalent. Key rules:
 - One source of truth per topic
 - Predictable naming and placement
 - Wrong documentation steers models wrong — accuracy is critical

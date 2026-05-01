@@ -61,7 +61,7 @@ Operating rules:
 5. Do not overwrite project-specific `CLAUDE.md`, `AGENTS.md`, `AI_DECISION_LOG.md`, dated session handoffs, custom skills, project rules, or repo-specific prompts without explicit justification.
 6. Sync only what should come from the master AI_OS.
 7. Keep personal Codex-global behavior out of the repo. Do not copy `~/.codex` assumptions, personal trigger phrases, global MCP selections, machine-specific paths, or personal-only skills into project files.
-8. Do not copy personal-only skills by default, including `SKILLS/gws-manager/`, `SKILLS/user/`, or any skill tied to Maria-specific accounts, machine paths, or personal infrastructure.
+8. Do not copy personal-only or globally available skills into project `AI_OS/SKILLS/`. Keep local skills only when they encode project-specific facts, fixtures, or workflows.
 9. Do not do broad docs cleanup unless explicitly requested. Audit docs entry health only where it affects the AI layer.
 10. Use minimal scope. No destructive git commands. No commit or push.
 11. If updating a project-specific guidance file would require rewriting its local behavior rather than syncing portable template material, stop and ask before making that change.
@@ -117,7 +117,7 @@ Use these default classifications unless the repo clearly justifies a different 
 - `AI_OS/SESSION-PROMPTS/AI_SESSION_START.md`
 - `AI_OS/SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md`
 - `AI_OS/SESSION-PROMPTS/CODEX-RUNBOOKS/` portable runbooks
-- portable shared skills under `AI_OS/SKILLS/`
+- `AI_OS/SKILLS/AGENTS.md`; preserve project-specific local skill folders only
 
 **Preserve unless explicitly justified:**
 - `AI_OS/AI_DECISION_LOG.md`
@@ -140,7 +140,7 @@ If `MODE` is `audit-only`, do not edit files. Produce the report only.
 If `MODE` is `audit+safe-sync`, do the following:
 
 1. Sync portable AI_OS core files from master.
-2. Sync portable files under `AI_OS/references/`, `AI_OS/templates/`, and `AI_OS/SKILLS/` without deleting project-specific files.
+2. Sync portable files under `AI_OS/references/` and `AI_OS/templates/`, plus `AI_OS/SKILLS/AGENTS.md`; preserve project-specific skill folders and remove mirrored global skill folders when explicitly cleaning duplicates.
 3. Sync `AI_OS/SESSION-PROMPTS/AI_SESSION_START.md`, `AI_OS/SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md`, and portable files under `AI_OS/SESSION-PROMPTS/CODEX-RUNBOOKS/`.
 4. Sync `.claude/` only if `MASTER_CLAUDE` is in scope and the target repository uses Claude Code.
 5. Preserve project-specific rules, handoffs, skills, and root guidance files unless you have explicit justification to change them.

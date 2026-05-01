@@ -75,15 +75,15 @@ Compare each core file against master at `C:\Users\maria\Desktop\AI_OS`:
 
 **Sync folders (add missing, preserve project-specific):**
 - `references/` — copy all from master, keep project-specific extras
-- `SKILLS/` — copy missing portable skills from master, preserve project-specific skills
+- `SKILLS/` — sync `AGENTS.md` from master, preserve project-specific skills, and do not copy mirrored global skills
 - `templates/` — copy all from master so `AI.md` / `AGENTS.md` / `CLAUDE_MD_SNIPPET.md` stay current
 - `SESSION-PROMPTS/AI_SESSION_START.md` — overwrite
 - `SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md` — overwrite
 - `SESSION-PROMPTS/ai-os-migration-audit.md` — overwrite
 
 **Do NOT sync personal-only skills by default:**
-- `SKILLS/gws-manager/`
-- `SKILLS/user/`
+- personal-only skills such as `SKILLS/gws-manager/` or `SKILLS/user/`
+- globally available skills that already live in Claude/Codex native skill systems
 - any skill whose behavior depends on Maria-specific accounts, machine paths, or personal infrastructure
 
 **NEVER touch:**
@@ -134,7 +134,7 @@ Check:
 - Does it include a directory map / JIT index with real paths or search commands?
 - Does it mention that Codex sub-agents/chat agents are not durable memory?
 
-If `AGENTS.md` is missing in a Codex or multi-agent project, recommend generating it via `AI_OS/SKILLS/generate-agents/SKILL.md`.
+If `AGENTS.md` is missing in a Codex or multi-agent project, recommend generating it via the active tool's agent-doc generation skill, such as Codex `generate-agents`.
 If `AGENTS.md` exists but is stale, report the missing or outdated sections.
 
 ### `CLAUDE.md`

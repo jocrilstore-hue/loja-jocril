@@ -30,6 +30,37 @@ Pick on **cost-of-mistakes**, not recency. Newer flagship ≠ better default.
 
 ---
 
+# Adaptive Reasoning Router
+
+Choose depth before choosing a specific model or effort tier.
+
+Use these hardness signals:
+
+- ambiguity: key terms, constraints, or goals are underspecified
+- risk: wrong output would be expensive, destructive, or user-visible
+- novelty: no stable local precedent exists
+- contradiction: docs, code, and observed behavior do not agree
+- dependency count: many systems, files, or tools are involved
+- reversibility: the change is hard to undo cleanly
+- verification cost: proving success is non-trivial
+
+## Reasoning Budget Ladder
+
+| Level | Use when | Typical output |
+|---|---|---|
+| 0. Direct response | low stakes, stable task, obvious answer | short answer or mechanical change |
+| 1. Single refinement pass | mild ambiguity, one deliberate cleanup pass helps | concise recommendation or polished transform |
+| 2. Tool-backed reasoning | current repo or environment state matters | inspected answer with evidence |
+| 3. Verified delivery | code, docs, config, or process changes need proof | implemented change plus fresh verification |
+| 4. Escalated / multi-lane | ambiguity, risk, or coordination materially changes outcome | architecture pass, bounded delegation, or explicit decision point |
+
+Escalate up the ladder when the current level cannot resolve the task safely.
+Stop when the request is satisfied, evidence supports the claims, and another pass is unlikely to materially improve the result.
+
+Use model choice and effort as the last-mile tuning knobs inside the chosen level, not as the first response to ambiguity.
+
+---
+
 # Quick Reference Table
 
 | Task Type | OpenAI | Claude | Gemini | Reasoning |
@@ -296,6 +327,8 @@ When a project copies AI_OS, do not treat this section as permission to hardcode
 ## Reasoning Effort
 
 OpenAI guidance treats reasoning effort as a last-mile tuning knob, not the first fix.
+
+Apply the cross-tool adaptive reasoning router first. Then tune effort inside that chosen depth.
 
 Starting defaults:
 

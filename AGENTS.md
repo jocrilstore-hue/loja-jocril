@@ -9,6 +9,7 @@
 
 - This repo uses project-local `AI_OS/` for cross-tool continuity and session memory.
 - Start general AI sessions from `AI.md` -> `AI_OS/SESSION-PROMPTS/AI_SESSION_START.md`.
+- Use `AI_OS/MEMORY_INDEX.md` to rank hot workstreams, proven paths, failed approaches, and regression risks before opening long handoffs.
 - This root `AGENTS.md` remains the primary Codex/coding-agent operational guide; nearest nested `AGENTS.md` wins when present.
 - `CLAUDE.md` remains Claude-specific project guidance.
 - Durable findings belong in `AI_OS/AI_DECISION_LOG.md` or dated handoffs, not only in chat history.

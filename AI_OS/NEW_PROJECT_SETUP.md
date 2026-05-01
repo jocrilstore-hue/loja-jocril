@@ -265,15 +265,13 @@ Minimum viable docs:
 2. `docs/ARCHITECTURE.md`
 3. `docs/SETUP.md`
 
-Only create more when justified — see `AI_OS/SKILLS/docs-strategy/SKILL.md`.
+Only create more when justified. Use the active tool's docs-strategy skill when available.
 
 ---
 
 ## Step 7: Generate AGENTS.md (recommended for Codex / multi-agent repos)
 
-When the codebase is stable enough, generate the AGENTS.md hierarchy using:
-
-`AI_OS/SKILLS/generate-agents/SKILL.md`
+When the codebase is stable enough, generate the AGENTS.md hierarchy using the active tool's agent-doc generation skill, such as Codex `generate-agents`.
 
 Do this AFTER docs structure is in place — AGENTS generation is downstream of docs strategy.
 
@@ -367,9 +365,7 @@ Run through the `AI_OS/references/AI_OS_CURRENT_STANDARD.md` checklist to verify
 | `AI_OS/SESSION-PROMPTS/AI_SESSION_START.md` | Session boot instructions |
 | `AI_OS/SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md` | Session handoff template |
 | `AI_OS/SESSION-PROMPTS/ai-os-migration-audit.md` | Migration prompt for outdated AI_OS projects |
-| `AI_OS/SKILLS/forensic-debug-loop/` | Disciplined multi-step debugging with 2-strike escalation |
-| `AI_OS/SKILLS/docs-strategy/` | Documentation governance skill |
-| `AI_OS/SKILLS/generate-agents/` | AGENTS.md generation skill |
+| `AI_OS/SKILLS/AGENTS.md` | Rules for local/project-specific AI_OS skill overrides |
 
 ---
 
@@ -402,6 +398,8 @@ your-project/
       AI_OS_CURRENT_STANDARD.md
     SESSION-PROMPTS/
     SKILLS/
+      AGENTS.md
+      ... project-specific skill overrides only, if any
   docs/
     DOCS_INDEX.md       (when ready — with temperature classification)
     ...

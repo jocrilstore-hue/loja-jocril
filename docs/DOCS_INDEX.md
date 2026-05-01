@@ -11,6 +11,7 @@ Single map of all documentation. Update this file whenever a doc is created, upd
 | [Context rules](../AI_OS/CONTEXT_RULES.md) | Context priority, tool boundaries, handoff and decision discipline |
 | [Model selection guide](../AI_OS/MODEL_SELECTION_GUIDE.md) | Model and effort routing across providers |
 | [Decision log](../AI_OS/AI_DECISION_LOG.md) | Durable project decisions future AI sessions must respect |
+| [Memory index](../AI_OS/MEMORY_INDEX.md) | Ranked AI-facing map of hot workstreams, proven paths, failed approaches, regression risks, and cold archives |
 | [AI session start](../AI_OS/SESSION-PROMPTS/AI_SESSION_START.md) | Standard boot sequence for AI sessions |
 | [Session handoff template](../AI_OS/SESSION-PROMPTS/SESSION_HANDOFF_TEMPLATE.md) | Template for substantial session handoffs |
 | [Current AI_OS standard](../AI_OS/references/AI_OS_CURRENT_STANDARD.md) | Local copy of the current master standard used for future audits |
