@@ -1,39 +1,47 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { verifyOrderToken } from "@/lib/orders/token";
 
 interface RouteParams {
   params: Promise<{ orderNumber: string }>;
 }
 
-export async function GET(_request: Request, { params }: RouteParams) {
+// Authorization: Clerk owner (full status) OR guest capability token issued at
+// order creation (?t=..., minimal status). Anonymous callers without a valid
+// token get 404 — previously any caller could poll any order number.
+export async function GET(request: Request, { params }: RouteParams) {
   try {
     const { orderNumber } = await params;
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { userId } = await auth();
+    const guestToken = new URL(request.url).searchParams.get("t");
+    const hasGuestCapability = verifyOrderToken(guestToken, orderNumber);
 
-    if (userId) {
-      const { data: order, error } = await supabase
-        .from("orders")
-        .select("payment_status, status, paid_at, customer:customers(auth_user_id)")
-        .eq("order_number", orderNumber)
-        .single();
+    if (!userId && !hasGuestCapability) {
+      return NextResponse.json(
+        { success: false, error: "Encomenda não encontrada" },
+        { status: 404 }
+      );
+    }
 
-      if (error || !order) {
-        return NextResponse.json(
-          { success: false, error: "Encomenda não encontrada" },
-          { status: 404 }
-        );
-      }
+    const { data: order, error } = await supabase
+      .from("orders")
+      .select("payment_status, status, paid_at, customer:customers(auth_user_id)")
+      .eq("order_number", orderNumber)
+      .single();
 
-      const customer = order.customer as { auth_user_id?: string } | null;
-      if (customer?.auth_user_id && customer.auth_user_id !== userId) {
-        return NextResponse.json(
-          { success: false, error: "Não autorizado" },
-          { status: 403 }
-        );
-      }
+    if (error || !order) {
+      return NextResponse.json(
+        { success: false, error: "Encomenda não encontrada" },
+        { status: 404 }
+      );
+    }
 
+    const customer = order.customer as { auth_user_id?: string } | null;
+    const isOwner = !!userId && !!customer?.auth_user_id && customer.auth_user_id === userId;
+
+    if (isOwner) {
       return NextResponse.json({
         success: true,
         data: {
@@ -42,20 +50,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
           paidAt: order.paid_at,
         },
       });
-    } else {
-      const { data: order, error } = await supabase
-        .from("orders")
-        .select("payment_status")
-        .eq("order_number", orderNumber)
-        .single();
+    }
 
-      if (error || !order) {
-        return NextResponse.json(
-          { success: false, error: "Encomenda não encontrada" },
-          { status: 404 }
-        );
-      }
-
+    if (hasGuestCapability) {
       return NextResponse.json({
         success: true,
         data: {
@@ -63,6 +60,11 @@ export async function GET(_request: Request, { params }: RouteParams) {
         },
       });
     }
+
+    return NextResponse.json(
+      { success: false, error: "Não autorizado" },
+      { status: 403 }
+    );
   } catch (error) {
     console.error("Error fetching order status:", error);
     return NextResponse.json(

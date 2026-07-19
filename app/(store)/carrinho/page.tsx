@@ -12,6 +12,7 @@ import type { CartItem } from '@/lib/types';
 type MultibancoResult = {
   type: 'multibanco';
   orderNumber: string;
+  accessToken: string; // guest capability issued by POST /api/orders
   orderTotal: number;
   entity: string;
   reference: string;
@@ -23,6 +24,7 @@ type MultibancoResult = {
 type MBWayResult = {
   type: 'mbway';
   orderNumber: string;
+  accessToken: string; // guest capability issued by POST /api/orders
   orderTotal: number;
   maskedPhone: string;
   paid: boolean;
@@ -67,10 +69,10 @@ export default function CarrinhoPage() {
   // MB Way payment status polling
   useEffect(() => {
     if (step !== 3 || !orderResult || orderResult.type !== 'mbway' || orderResult.paid) return;
-    const { orderNumber } = orderResult;
+    const { orderNumber, accessToken } = orderResult;
     const interval = setInterval(async () => {
       try {
-        const res  = await fetch(`/api/orders/${orderNumber}/status`);
+        const res  = await fetch(`/api/orders/${orderNumber}/status?t=${encodeURIComponent(accessToken)}`);
         const data = await res.json();
         if (data?.data?.paymentStatus === 'paid') {
           setOrderResult((prev) => {
@@ -155,7 +157,7 @@ export default function CarrinhoPage() {
         return;
       }
 
-      const { orderNumber } = orderData.data;
+      const { orderNumber, accessToken } = orderData.data;
       const orderTotal = total;
       clearCart();
 
@@ -164,7 +166,7 @@ export default function CarrinhoPage() {
         const payRes  = await fetch('/api/payment/multibanco', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId: orderNumber }),
+          body: JSON.stringify({ orderId: orderNumber, accessToken }),
         });
         const payData = await payRes.json();
         if (!payData.success) {
@@ -172,7 +174,7 @@ export default function CarrinhoPage() {
           return;
         }
         setOrderResult({
-          type: 'multibanco', orderNumber, orderTotal,
+          type: 'multibanco', orderNumber, accessToken, orderTotal,
           entity: payData.data.entity,
           reference: payData.data.reference,
           referenceFormatted: payData.data.referenceFormatted,
@@ -185,14 +187,14 @@ export default function CarrinhoPage() {
         const payRes  = await fetch('/api/payment/mbway', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId: orderNumber, phoneNumber: cleaned }),
+          body: JSON.stringify({ orderId: orderNumber, phoneNumber: cleaned, accessToken }),
         });
         const payData = await payRes.json();
         if (!payData.success) {
           setOrderError(payData.error || 'Erro ao iniciar pagamento MB Way. Tente novamente.');
           return;
         }
-        setOrderResult({ type: 'mbway', orderNumber, orderTotal, maskedPhone: payData.data.phone, paid: false });
+        setOrderResult({ type: 'mbway', orderNumber, accessToken, orderTotal, maskedPhone: payData.data.phone, paid: false });
       }
 
       setStep(3);
@@ -491,8 +493,6 @@ function PaymentOptions({ payment, setPayment, mbwayPhone, setMbwayPhone }: {
   const opts = [
     { k: 'mbway',      n: 'MBWay',                   t: 'Aprovação imediata no telemóvel',      icon: '📱' },
     { k: 'multibanco', n: 'Multibanco (Referência)',  t: 'Pague numa caixa ATM ou homebanking',  icon: '🏦' },
-    { k: 'card',       n: 'Cartão de crédito/débito', t: 'Visa · Mastercard · American Express', icon: '💳' },
-    { k: 'wire',       n: 'Transferência bancária',   t: 'Para empresas · IBAN por email',        icon: '✉' },
   ];
   return (
     <div>

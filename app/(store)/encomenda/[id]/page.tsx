@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -106,7 +106,9 @@ export default async function EncomendaDetailPage({
     redirect(`/entrar?redirect_url=${encodeURIComponent(`/encomenda/${id}`)}`);
   }
 
-  const supabase = await createClient();
+  // Clerk auth + ownership check below gate this page; service client needed
+  // once RLS closes anon access to orders.
+  const supabase = createServiceClient();
 
   const { data: order } = await supabase
     .from('orders')

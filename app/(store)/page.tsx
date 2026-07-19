@@ -5,7 +5,7 @@ import FeaturedProducts from "@/components/store/FeaturedProducts";
 import ProcessesStrip from "@/components/store/ProcessesStrip";
 import FooterCTA from "@/components/store/FooterCTA";
 import type { CategoryCardItem } from "@/components/store/CategoriesBlock";
-import { listFeaturedProducts, listCategoriesWithCounts } from "@/lib/queries/products";
+import { listFeaturedProductsResult, listCategoriesWithCounts } from "@/lib/queries/products";
 import { getCategoryMeta, DEFAULT_IMG } from "@/lib/data/category-groups";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export const revalidate = 300;
 
 export default async function Home() {
   const [featured, categories] = await Promise.all([
-    listFeaturedProducts(8),
+    listFeaturedProductsResult(8),
     listCategoriesWithCounts(),
   ]);
 
@@ -36,7 +36,7 @@ export default async function Home() {
     <main id="main">
       <StoreHero />
       <CategoriesBlock cats={cats} />
-      <FeaturedProducts products={featured} />
+      <FeaturedProducts products={featured.products} error={featured.error} />
       <ProcessesStrip />
       <FooterCTA />
     </main>

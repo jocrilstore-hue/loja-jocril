@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/site-url';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://loja.jocril.pt';
+  const base = getSiteUrl();
   const now = new Date();
 
   return [

@@ -9,7 +9,7 @@ import FooterCTA from '@/components/store/FooterCTA';
 import { useCart } from '@/contexts/cart-context';
 
 export type ColorVariant = { k: string; label: string; swatch: string };
-export type SizeVariant  = { k: string; label: string; dim: string; price: number | null; variantId: number; sku: string };
+export type SizeVariant  = { k: string; label: string; dim: string; price: number | null; variantId: number; sku: string; tiers?: PriceTier[] };
 export type PriceTier    = { min: number; max: number | null; unit: number; discount: number };
 
 export type PDPProduct = {
@@ -41,9 +41,21 @@ export default function PDPClient({ product, related }: PDPClientProps) {
   const { addToCart } = useCart();
 
   const curSize = product.variants.size.find((s) => s.k === size) ?? product.variants.size[0];
-  const tier    = product.priceTiers.find((t) => qty >= t.min && (!t.max || qty <= t.max)) ?? product.priceTiers[0];
-  const basePrice = product.from || 1;
-  const unit    = curSize?.price ? (tier?.unit ?? 0) * (curSize.price / basePrice) : null;
+  // Each variant prices by its OWN tier ladder — no proportional scaling from
+  // the slug variant (the server derives the canonical price the same way).
+  const activeTiers = (curSize?.tiers && curSize.tiers.length > 0)
+    ? curSize.tiers
+    : curSize?.price != null
+      ? [{ min: 1, max: null, unit: curSize.price, discount: 0 }]
+      : product.priceTiers;
+  // Mirror the server rule exactly (lib/pricing.ts selectTier): among the
+  // applicable tiers the highest min wins; if NONE applies (qty below every
+  // tier's minimum) the price is the variant's BASE price, not the first tier.
+  const applicableTiers = activeTiers.filter((t) => qty >= t.min && (t.max == null || qty <= t.max));
+  const tier    = applicableTiers.length > 0
+    ? applicableTiers.reduce((a, b) => (b.min > a.min ? b : a))
+    : undefined;
+  const unit    = curSize?.price != null ? (tier ? tier.unit : curSize.price) : null;
   const total   = unit ? unit * qty : null;
 
   const handleAdd = () => {
@@ -55,6 +67,8 @@ export default function PDPClient({ product, related }: PDPClientProps) {
       sizeName: curSize.label,
       quantity: qty,
       unitPrice: unit,
+      basePrice: curSize.price ?? unit,
+      tiers: (curSize.tiers ?? []).map((t) => ({ min: t.min, max: t.max, unit: t.unit })),
       imageUrl: product.images[0],
       stockQuantity: product.stock.qty,
     });
@@ -116,7 +130,7 @@ export default function PDPClient({ product, related }: PDPClientProps) {
           </div>
           {tab === 'specs'   && <SpecsPanel />}
           {tab === 'dim'     && <DimPanel />}
-          {tab === 'tiers'   && <TiersPanel tiers={product.priceTiers} />}
+          {tab === 'tiers'   && <TiersPanel tiers={activeTiers} />}
           {tab === 'faq'     && <FaqPanel />}
           {tab === 'reviews' && <ReviewsPanel />}
         </section>

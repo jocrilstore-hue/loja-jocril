@@ -11,8 +11,9 @@ export default async function PesquisaPage({
   searchParams: Promise<SearchParams>;
 }) {
   const sp = await searchParams;
-  const query = sp.q?.trim() || 'expositor acrilico a3';
-  const results = await listProducts({ search: query, limit: 60 });
+  // Bare /pesquisa shows an empty search state, not preloaded demo results.
+  const query = sp.q?.trim() ?? '';
+  const results = query ? await listProducts({ search: query, limit: 60 }) : [];
 
   return <PesquisaClient initialQuery={query} initialResults={results} />;
 }

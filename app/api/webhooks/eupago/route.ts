@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { verifyCallback } from "@/lib/payments/eupago";
 import { sendPaymentReceived } from "@/lib/email/send";
@@ -27,7 +27,9 @@ export async function POST(request: Request) {
       referencia: reference,
     } = callback;
 
-    const supabase = await createClient();
+    // Authorization: verifyCallback above is fail-closed on EUPAGO_API_KEY.
+    // Service client required once RLS closes anon access to orders.
+    const supabase = createServiceClient();
 
     const { data: order, error: findError } = await supabase
       .from("orders")
@@ -53,7 +55,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "amount_mismatch" }, { status: 200 });
     }
 
-    const { error: updateError } = await supabase
+    // The guard on payment_status keeps this idempotent under concurrent
+    // deliveries; requiring exactly one returned row turns a silent zero-row
+    // update (wrong id, race, RLS) into a retryable 500 instead of success.
+    const { data: updated, error: updateError } = await supabase
       .from("orders")
       .update({
         payment_status: "paid",
@@ -61,10 +66,17 @@ export async function POST(request: Request) {
         paid_at: new Date().toISOString(),
         eupago_transaction_id: transactionId,
       })
-      .eq("id", order.id);
+      .eq("id", order.id)
+      .neq("payment_status", "paid")
+      .select("id");
 
-    if (updateError) {
-      console.error("Error updating order payment status:", updateError);
+    if (updateError || !updated || updated.length !== 1) {
+      if (!updateError && updated && updated.length === 0) {
+        // Lost the race to a concurrent delivery that already marked it paid.
+        console.log(`Order ${orderNumber} already paid (concurrent callback)`);
+        return NextResponse.json({ success: true, message: "Already processed" });
+      }
+      console.error("Error updating order payment status:", updateError, updated);
       return NextResponse.json(
         { success: false, error: "Failed to update order" },
         { status: 500 }

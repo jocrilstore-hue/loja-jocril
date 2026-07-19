@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ptPT } from "@clerk/localizations";
 import { CartProvider } from "@/contexts/cart-context";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     template: '%s | Jocril',
     default: 'Jocril',
@@ -14,6 +18,18 @@ export const metadata: Metadata = {
   icons: {
     icon: "/assets/favicon.svg",
     shortcut: "/assets/favicon.ico",
+  },
+  openGraph: {
+    title: "Jocril",
+    description:
+      "Materiais para Ponto de Venda e Hotelaria em madeira e acrílico. Precisão industrial desde 1994.",
+    url: siteUrl,
+    siteName: "Jocril",
+    locale: "pt_PT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

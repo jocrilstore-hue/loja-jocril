@@ -8,7 +8,13 @@ import ProductCard, { type ProductMock } from './ProductCard';
 // Now rendered with products passed from the homepage server component.
 // (Mock data removed — lives in lib/queries/products.ts → listFeaturedProducts)
 
-export default function FeaturedProducts({ products = [] }: { products?: ProductMock[] }) {
+export default function FeaturedProducts({
+  products = [],
+  error = false,
+}: {
+  products?: ProductMock[];
+  error?: boolean;
+}) {
   const [filter, setFilter] = useState<string>('all');
   const cats = ['all', ...Array.from(new Set(products.map((p) => p.cat).filter(Boolean)))];
   const items = filter === 'all' ? products : products.filter((p) => p.cat === filter);
@@ -73,11 +79,26 @@ export default function FeaturedProducts({ products = [] }: { products?: Product
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          {items.map((p) => (
-            <ProductCard key={p.sku} p={p} />
-          ))}
-        </div>
+        {error && products.length === 0 ? (
+          <div
+            style={{
+              padding: 20,
+              border: '1px dashed var(--color-base-800)',
+              borderRadius: 4,
+              color: 'var(--color-base-400)',
+              fontFamily: 'var(--font-geist-sans)',
+              fontSize: 14,
+            }}
+          >
+            Não foi possível carregar os produtos em destaque. Tente novamente dentro de alguns minutos.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+            {items.map((p) => (
+              <ProductCard key={p.sku} p={p} />
+            ))}
+          </div>
+        )}
 
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center' }}>
           <Button variant="outline" href="/produtos">

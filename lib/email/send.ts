@@ -2,11 +2,23 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || "jocrilstore@gmail.com")
   .split(",")
   .map((email) => email.trim())
   .filter(Boolean);
+
+// EMAIL_FROM is required — do NOT silently fall back to the Resend sandbox
+// sender (onboarding@resend.dev), which would deliver from an unverified domain.
+// Throws a clear configuration error when unset so the misconfiguration surfaces.
+function requireEmailFrom(): string {
+  const from = process.env.EMAIL_FROM;
+  if (!from || from.trim() === "") {
+    throw new Error(
+      "EMAIL_FROM environment variable is not set. Refusing to send email via the Resend sandbox sender."
+    );
+  }
+  return from.trim();
+}
 
 const accent = "#2DD4CD";
 const textDark = "#1A1A1A";
@@ -68,6 +80,17 @@ export async function sendOrderConfirmation(data: {
   customerEmail: string;
   total: number;
 }): Promise<void> {
+  let from: string;
+  try {
+    from = requireEmailFrom();
+  } catch (e) {
+    console.error(
+      `sendOrderConfirmation config error (order ${data.orderNumber}, ${data.customerEmail}):`,
+      e
+    );
+    return;
+  }
+
   const html = baseTemplate(
     `Confirmação de Encomenda ${data.orderNumber} - Jocril`,
     `<div style="text-align:center;margin-bottom:24px;">
@@ -88,13 +111,18 @@ export async function sendOrderConfirmation(data: {
 
   void resend.emails
     .send({
-      from: `Jocril Acrílicos <${EMAIL_FROM}>`,
+      from: `Jocril Acrílicos <${from}>`,
       to: [data.customerEmail],
       bcc: ADMIN_EMAILS,
       subject: `Confirmação de Encomenda ${data.orderNumber} - Jocril`,
       html,
     })
-    .catch((e) => console.error("sendOrderConfirmation failed:", e));
+    .catch((e) =>
+      console.error(
+        `sendOrderConfirmation failed (order ${data.orderNumber}, ${data.customerEmail}):`,
+        e
+      )
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -105,6 +133,17 @@ export async function sendAdminNotification(data: {
   customerEmail: string;
   total: number;
 }): Promise<void> {
+  let from: string;
+  try {
+    from = requireEmailFrom();
+  } catch (e) {
+    console.error(
+      `sendAdminNotification config error (order ${data.orderNumber}, ${data.customerEmail}):`,
+      e
+    );
+    return;
+  }
+
   const html = baseTemplate(
     `Nova Encomenda ${data.orderNumber}`,
     `<h2 style="font-size:20px;font-weight:600;margin:0 0 16px 0;">Nova encomenda recebida</h2>
@@ -127,12 +166,17 @@ export async function sendAdminNotification(data: {
 
   void resend.emails
     .send({
-      from: `Jocril Acrílicos <${EMAIL_FROM}>`,
+      from: `Jocril Acrílicos <${from}>`,
       to: ADMIN_EMAILS,
       subject: `Nova Encomenda ${data.orderNumber} — ${data.customerName}`,
       html,
     })
-    .catch((e) => console.error("sendAdminNotification failed:", e));
+    .catch((e) =>
+      console.error(
+        `sendAdminNotification failed (order ${data.orderNumber}, ${data.customerEmail}):`,
+        e
+      )
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -143,6 +187,17 @@ export async function sendPaymentReceived(data: {
   customerEmail: string;
   total: number;
 }): Promise<void> {
+  let from: string;
+  try {
+    from = requireEmailFrom();
+  } catch (e) {
+    console.error(
+      `sendPaymentReceived config error (order ${data.orderNumber}, ${data.customerEmail}):`,
+      e
+    );
+    return;
+  }
+
   const html = baseTemplate(
     `Pagamento Confirmado — Encomenda ${data.orderNumber} - Jocril`,
     `<div style="text-align:center;margin-bottom:24px;">
@@ -163,13 +218,18 @@ export async function sendPaymentReceived(data: {
 
   void resend.emails
     .send({
-      from: `Jocril Acrílicos <${EMAIL_FROM}>`,
+      from: `Jocril Acrílicos <${from}>`,
       to: [data.customerEmail],
       bcc: ADMIN_EMAILS,
       subject: `Pagamento Confirmado — Encomenda ${data.orderNumber} - Jocril`,
       html,
     })
-    .catch((e) => console.error("sendPaymentReceived failed:", e));
+    .catch((e) =>
+      console.error(
+        `sendPaymentReceived failed (order ${data.orderNumber}, ${data.customerEmail}):`,
+        e
+      )
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -202,8 +262,10 @@ export async function sendContactMessage(data: {
     <div style="margin-top:20px;padding:16px;border:1px dashed ${borderLight};background-color:${bgMuted};white-space:pre-wrap;font-size:15px;">${escapeHtml(data.message)}</div>`
   );
 
+  const from = requireEmailFrom();
+
   const result = await resend.emails.send({
-    from: `Jocril Acrílicos <${EMAIL_FROM}>`,
+    from: `Jocril Acrílicos <${from}>`,
     to: ADMIN_EMAILS,
     replyTo: data.email,
     subject: `Contacto loja — ${data.subject} — ${data.name}`,

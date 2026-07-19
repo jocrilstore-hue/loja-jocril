@@ -1,8 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { sendOrderConfirmation, sendAdminNotification } from "@/lib/email/send";
+import { issueOrderToken } from "@/lib/orders/token";
+import { priceOrder, fromCents, toCents, PricingConfigError, type PriceTierRow } from "@/lib/pricing";
 
 const customerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -30,6 +32,13 @@ const orderItemSchema = z.object({
   sizeFormat: z.string().optional(),
 });
 
+// Server-side shipping tiers. Mirrors the client logic in
+// app/(store)/carrinho/page.tsx (`shippingCost = ctt-expresso ? 4.90 : pickup ? 0 : 7.90`).
+// The client sends only the resulting cost (not the method key), so we validate the
+// submitted shippingCost against this known allow-list rather than derive it from a method.
+const ALLOWED_SHIPPING_COSTS = [0, 4.9, 7.9] as const;
+const PRICE_TOLERANCE = 0.01; // cent-level rounding tolerance
+
 const createOrderSchema = z.object({
   customer: customerSchema,
   shipping: shippingSchema,
@@ -43,10 +52,12 @@ const createOrderSchema = z.object({
   notes: z.string().optional(),
 });
 
-// GET - Fetch order by order_number or user's orders
+// GET - Fetch order by order_number or user's orders.
+// Authorization: Clerk user + ownership (auth_user_id) — enforced below before
+// any data leaves. Service client is required once RLS closes anon access.
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { searchParams } = new URL(request.url);
     const orderNumber = searchParams.get("order_number");
     const { userId } = await auth();
@@ -136,10 +147,14 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Create new order (Atomic via RPC)
+// POST - Create new order (Atomic via RPC).
+// Public (guest checkout). Every monetary value is derived server-side from DB
+// prices (lib/pricing.ts); client values are only compared to detect a stale
+// cart. The RPC is called with the service client — its anon EXECUTE grant is
+// revoked in the RLS cutover migration.
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const body = await request.json();
 
     const parseResult = createOrderSchema.safeParse(body);
@@ -155,39 +170,103 @@ export async function POST(request: Request) {
 
     const { userId } = await auth();
 
-    // Server-side price validation
+    // Canonical server-side pricing: fetch DB base prices + tiers, compute
+    // every amount in cents. Client values are never used as a source.
     const variantIds = items.map((item) => item.variantId);
-    const { data: variants, error: variantError } = await supabase
-      .from("product_variants")
-      .select("id, base_price_including_vat")
-      .in("id", variantIds);
+    const [variantsRes, tiersRes] = await Promise.all([
+      supabase
+        .from("product_variants")
+        .select("id, base_price_including_vat")
+        .in("id", variantIds),
+      supabase
+        .from("price_tiers")
+        .select("product_variant_id, min_quantity, max_quantity, price_per_unit")
+        .in("product_variant_id", variantIds),
+    ]);
 
-    if (variantError || !variants) {
+    if (variantsRes.error || !variantsRes.data) {
+      return NextResponse.json(
+        { success: false, error: "Erro ao validar preços" },
+        { status: 500 }
+      );
+    }
+    if (tiersRes.error) {
       return NextResponse.json(
         { success: false, error: "Erro ao validar preços" },
         { status: 500 }
       );
     }
 
-    const priceMap = new Map(variants.map((v) => [v.id, v.base_price_including_vat]));
+    const baseMap = new Map(variantsRes.data.map((v) => [v.id, v.base_price_including_vat]));
+    const tiersMap = new Map<number, PriceTierRow[]>();
+    for (const t of tiersRes.data ?? []) {
+      const list = tiersMap.get(t.product_variant_id) ?? [];
+      list.push(t);
+      tiersMap.set(t.product_variant_id, list);
+    }
+
     for (const item of items) {
-      const serverPrice = priceMap.get(item.variantId);
-      if (serverPrice === undefined) {
+      if (!baseMap.has(item.variantId)) {
         return NextResponse.json(
           { success: false, error: "Produto não encontrado", code: "PRODUCT_NOT_FOUND" },
           { status: 404 }
         );
       }
-      if (Math.abs(serverPrice - item.unitPrice) > 0.01) {
+    }
+
+    const serverShippingCost = ALLOWED_SHIPPING_COSTS.find(
+      (cost) => Math.abs(cost - shippingCost) <= PRICE_TOLERANCE
+    );
+    if (serverShippingCost === undefined) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "invalid_shipping_cost",
+          message: "Portes de envio inválidos.",
+        },
+        { status: 400 }
+      );
+    }
+
+    let pricing;
+    try {
+      pricing = priceOrder(
+        items.map((item) => ({
+          variantId: item.variantId,
+          quantity: item.quantity,
+          basePriceEuros: baseMap.get(item.variantId)!,
+          tiers: tiersMap.get(item.variantId) ?? [],
+        })),
+        toCents(serverShippingCost)
+      );
+    } catch (e) {
+      if (e instanceof PricingConfigError) {
+        console.error("Pricing configuration error:", e.message);
         return NextResponse.json(
-          {
-            success: false,
-            error: "price_changed",
-            message: "Price has changed. Please refresh your cart.",
-          },
-          { status: 400 }
+          { success: false, error: "Erro de configuração de preços" },
+          { status: 500 }
         );
       }
+      throw e;
+    }
+
+    // UX check only: if the client's cart totals drifted from the canonical
+    // ones (stale prices, tier boundary crossed), ask it to refresh instead of
+    // silently charging a different amount than the user saw.
+    const serverSubtotal = fromCents(pricing.subtotalCents);
+    const serverTotal = fromCents(pricing.totalCents);
+    if (
+      Math.abs(serverSubtotal - subtotal) > PRICE_TOLERANCE ||
+      Math.abs(serverTotal - total) > PRICE_TOLERANCE
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "total_mismatch",
+          message: "Os valores da encomenda não correspondem. Atualize o carrinho.",
+        },
+        { status: 400 }
+      );
     }
 
     const p_customer = {
@@ -208,21 +287,25 @@ export async function POST(request: Request) {
     };
 
     const p_order = {
-      subtotal,
-      shipping_cost: shippingCost,
-      total,
+      subtotal: serverSubtotal,
+      shipping_cost: serverShippingCost,
+      total: serverTotal,
       notes: notes || null,
     };
 
-    const p_items = items.map((item) => ({
-      variant_id: item.variantId,
-      quantity: item.quantity,
-      unit_price: item.unitPrice,
-      total_price: item.totalPrice,
-      product_name: item.productName || null,
-      product_sku: item.productSku || null,
-      size_format: item.sizeFormat || null,
-    }));
+    const lineByVariant = new Map(pricing.lines.map((l) => [l.variantId, l]));
+    const p_items = items.map((item) => {
+      const line = lineByVariant.get(item.variantId)!;
+      return {
+        variant_id: item.variantId,
+        quantity: item.quantity,
+        unit_price: fromCents(line.unitPriceCents),
+        total_price: fromCents(line.lineTotalCents),
+        product_name: item.productName || null,
+        product_sku: item.productSku || null,
+        size_format: item.sizeFormat || null,
+      };
+    });
 
     const { data: rpcResult, error: rpcError } = await supabase.rpc("create_complete_order", {
       p_customer,
@@ -275,13 +358,13 @@ export async function POST(request: Request) {
       orderNumber: rpcResult.order_number,
       customerName: customer.name,
       customerEmail: customer.email,
-      total,
+      total: serverTotal,
     });
     sendAdminNotification({
       orderNumber: rpcResult.order_number,
       customerName: customer.name,
       customerEmail: customer.email,
-      total,
+      total: serverTotal,
     });
 
     return NextResponse.json(
@@ -290,6 +373,9 @@ export async function POST(request: Request) {
         data: {
           orderId: rpcResult.order_id,
           orderNumber: rpcResult.order_number,
+          // Guest capability: grants payment initiation + status polling +
+          // confirmation-page access for THIS order only (HMAC, expires).
+          accessToken: issueOrderToken(rpcResult.order_number),
         },
         message: "Encomenda criada com sucesso",
       },

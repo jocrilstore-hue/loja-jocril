@@ -29,6 +29,20 @@ const defaultCart: Cart = {
   totalPrice: 0,
 };
 
+// Recompute a line's unit price for a new quantity from its tier snapshot.
+// Mirrors the server rule (lib/pricing.ts): highest applicable min_quantity
+// wins; no applicable tier → base price. Items persisted before basePrice/
+// tiers existed keep their original unitPrice.
+function unitPriceForQuantity(item: CartItem, quantity: number): number {
+  if (item.basePrice === undefined) return item.unitPrice;
+  const applicable = (item.tiers ?? []).filter(
+    (t) => quantity >= t.min && (t.max === null || t.max === undefined || quantity <= t.max)
+  );
+  if (applicable.length === 0) return item.basePrice;
+  applicable.sort((a, b) => b.min - a.min);
+  return applicable[0].unit;
+}
+
 function calculateTotals(items: CartItem[]): { totalItems: number; totalPrice: number } {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -75,11 +89,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             existingItem.quantity + item.quantity,
             MAX_CART_QUANTITY
           );
-          newItems[existingItemIndex] = {
+          // Merge takes the incoming price snapshot (fresher than the stored
+          // one) and reprices at the MERGED quantity — price and total must
+          // come from the same quantity, never mixed.
+          const merged: CartItem = {
             ...existingItem,
+            basePrice: item.basePrice ?? existingItem.basePrice,
+            tiers: item.tiers ?? existingItem.tiers,
             quantity: newQuantity,
-            totalPrice: newQuantity * item.unitPrice,
+            unitPrice: item.unitPrice,
+            totalPrice: 0,
           };
+          merged.unitPrice = unitPriceForQuantity(merged, newQuantity);
+          merged.totalPrice = newQuantity * merged.unitPrice;
+          newItems[existingItemIndex] = merged;
         }
       } else {
         const newItem: CartItem = {
@@ -113,10 +136,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const newItems = prevCart.items.map((item) => {
         if (item.variantId === variantId) {
           const newQuantity = Math.min(quantity, MAX_CART_QUANTITY);
+          const newUnitPrice = unitPriceForQuantity(item, newQuantity);
           return {
             ...item,
             quantity: newQuantity,
-            totalPrice: newQuantity * item.unitPrice,
+            unitPrice: newUnitPrice,
+            totalPrice: newQuantity * newUnitPrice,
           };
         }
         return item;

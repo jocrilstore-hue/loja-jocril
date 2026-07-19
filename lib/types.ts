@@ -86,8 +86,14 @@ export type Customer = {
 
 // Cart shape — mirrors the old Jocril storefront's client-side cart.
 // `variantId` is the Supabase numeric ID of the chosen product_variants row.
-// `unitPrice` is captured at add time (already tier-discounted if applicable).
+// `unitPrice` is captured at add time (already tier-discounted if applicable)
+// and RECOMPUTED by the cart context whenever quantity changes, using the
+// `basePrice` + `tiers` snapshot below — so crossing a tier boundary in the
+// cart updates the price the user sees (the server derives the same price).
 // `totalPrice` = quantity * unitPrice, maintained by the cart context.
+// `basePrice`/`tiers` are optional so carts persisted before this field
+// existed still parse; without them the unitPrice simply stays fixed.
+export type CartItemTier = { min: number; max: number | null; unit: number };
 export type CartItem = {
   variantId: number;
   sku: string;
@@ -96,6 +102,8 @@ export type CartItem = {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  basePrice?: number;
+  tiers?: CartItemTier[];
   imageUrl?: string;
   stockQuantity: number;
 };

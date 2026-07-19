@@ -218,9 +218,15 @@ function EntrarForm() {
 
           <p style={{ marginTop: 28, fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: 'var(--color-base-400)', textAlign: 'center' }}>
             {mode === 'login' ? 'Ainda não tem conta? ' : mode === 'register' ? 'Já tem conta? ' : 'Problemas com o código? '}
-            <button type="button" style={{ color: 'var(--color-accent-100)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', fontSize: 'inherit' }} onClick={() => { setError(null); setMode(mode === 'login' ? 'register' : 'login'); }}>
-              {mode === 'login' ? 'Criar conta' : mode === 'register' ? 'Iniciar sessão' : 'Recomeçar'}
-            </button>
+            {mode === 'login' ? (
+              <Link href="/registar" style={{ color: 'var(--color-accent-100)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'none' }}>
+                Criar conta
+              </Link>
+            ) : (
+              <button type="button" style={{ color: 'var(--color-accent-100)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', fontSize: 'inherit' }} onClick={() => { setError(null); setMode(mode === 'register' ? 'login' : 'login'); }}>
+                {mode === 'register' ? 'Iniciar sessão' : 'Recomeçar'}
+              </button>
+            )}
           </p>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import PLPClient from "./produtos-client";
 import {
-  listProducts,
+  listProductsResult,
   getCategoryBySlug,
   type ListProductsParams,
 } from "@/lib/queries/products";
@@ -34,11 +34,12 @@ export default async function ProdutosPage({
     limit: 100,
   };
 
-  const products = await listProducts(params);
+  const { products, error } = await listProductsResult(params);
 
   return (
     <PLPClient
       products={products}
+      fetchError={error}
       categoryName={category?.name ?? null}
       categoryDescription={category?.description ?? null}
       totalInCategory={products.length}

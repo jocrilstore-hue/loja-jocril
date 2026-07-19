@@ -45,8 +45,12 @@ export async function getPDPBySlug(
     .maybeSingle();
 
   if (curErr) {
+    // Distinguish a fetch failure from a genuine not-found: re-throw so the
+    // error boundary (app/error.tsx, 500) fires instead of a misleading 404.
+    // Safe: this dynamic route has no generateStaticParams, so it is never
+    // prerendered at build time.
     console.error("[getPDPBySlug] error:", curErr.message);
-    return null;
+    throw new Error(`Falha ao carregar o produto: ${curErr.message}`);
   }
   if (!current) return null;
 
@@ -93,12 +97,18 @@ export async function getPDPBySlug(
     .eq("product_template_id", templateId)
     .eq("is_active", true);
 
-  // 3. Price tiers for current variant
-  const { data: tiers } = await supabase
+  // 3. Price tiers for ALL sibling variants (one query). Each variant prices
+  // strictly by its OWN tiers — no proportional scaling from the slug variant
+  // (the server rejects scaled prices; see lib/pricing.ts).
+  const siblingIds = (siblings ?? []).map((s) => (s as { id: number }).id);
+  const { data: allTiers } = await supabase
     .from("price_tiers")
-    .select("min_quantity, max_quantity, price_per_unit, discount_percentage")
-    .eq("product_variant_id", cur.id)
+    .select("product_variant_id, min_quantity, max_quantity, price_per_unit, discount_percentage")
+    .in("product_variant_id", siblingIds.length > 0 ? siblingIds : [cur.id])
     .order("min_quantity", { ascending: true });
+  const tiers = (allTiers ?? []).filter(
+    (t) => (t as { product_variant_id: number }).product_variant_id === cur.id
+  );
 
   // 4. Variant images
   const { data: images } = await supabase
@@ -125,7 +135,7 @@ export async function getPDPBySlug(
     imgList.push(cur.main_image_url);
   if (imgList.length === 0) imgList.push("/assets/portfolio/carm-premium.avif");
 
-  // Size variants
+  // Size variants — each carries its own tier ladder for client-side pricing.
   const sizeVariants = (siblings ?? []).map((s) => {
     const sv = s as unknown as {
       id: number;
@@ -142,6 +152,22 @@ export async function getPDPBySlug(
       sv.size_formats?.width_mm && sv.size_formats?.height_mm
         ? `${sv.size_formats.width_mm} × ${sv.size_formats.height_mm} mm`
         : (sv.size_formats?.name ?? "");
+    const ownTiers = (allTiers ?? [])
+      .filter((t) => (t as { product_variant_id: number }).product_variant_id === sv.id)
+      .map((t) => {
+        const row = t as unknown as {
+          min_quantity: number;
+          max_quantity: number | null;
+          price_per_unit: number | string | null;
+          discount_percentage: number | string | null;
+        };
+        return {
+          min: row.min_quantity,
+          max: row.max_quantity,
+          unit: Number(row.price_per_unit ?? sv.base_price_including_vat),
+          discount: Number(row.discount_percentage ?? 0),
+        };
+      });
     return {
       k: sv.url_slug,
       label: sv.size_formats?.name ?? sv.sku,
@@ -149,6 +175,7 @@ export async function getPDPBySlug(
       price: Number(sv.base_price_including_vat),
       variantId: sv.id,
       sku: sv.sku,
+      tiers: ownTiers,
     };
   });
 

@@ -15,9 +15,9 @@ const COLS: { h: string; items: [string, string][] }[] = [
     items: [
       ["Acrílicos Chão", "/produtos?cat=acrilicos-chao"],
       ["Acrílicos Mesa", "/produtos?cat=acrilicos-mesa"],
-      ["Caixas", "/produtos?cat=caixas"],
-      ["Molduras", "/produtos?cat=molduras"],
-      ["Tombolas", "/produtos?cat=tombolas"],
+      ["Caixas", "/produtos?cat=caixas-acrilico"],
+      ["Molduras", "/produtos?cat=molduras-acrilico"],
+      ["Tombolas", "/produtos?cat=tombolas-acrilico"],
     ],
   },
   {
@@ -220,6 +220,19 @@ export default function StoreFooter() {
               {l}
             </Link>
           ))}
+          <a
+            href="https://www.livroreclamacoes.pt/inicio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-mono-xs"
+            style={{
+              color: "#737373",
+              cursor: "pointer",
+              textDecoration: "none",
+            }}
+          >
+            Livro de Reclamações
+          </a>
         </div>
       </div>
     </footer>

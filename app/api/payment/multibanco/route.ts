@@ -1,6 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { verifyOrderToken } from "@/lib/orders/token";
 import {
   createMultibancoReference,
   formatReference,
@@ -9,6 +10,7 @@ import {
 
 const requestSchema = z.object({
   orderId: z.string().min(1),
+  accessToken: z.string().min(1),
 });
 
 export async function POST(request: Request) {
@@ -23,8 +25,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const { orderId } = parsed.data;
-    const supabase = await createClient();
+    const { orderId, accessToken } = parsed.data;
+
+    // Guest capability check — token must match THIS order (see mbway route).
+    if (!verifyOrderToken(accessToken, orderId)) {
+      return NextResponse.json(
+        { success: false, error: "Não autorizado" },
+        { status: 403 }
+      );
+    }
+
+    const supabase = createServiceClient();
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -73,7 +84,9 @@ export async function POST(request: Request) {
       24
     );
 
-    const { error: updateError } = await supabase
+    // Persistence must succeed (exactly one row) before returning the
+    // reference — otherwise the customer pays a reference the DB never linked.
+    const { data: updated, error: updateError } = await supabase
       .from("orders")
       .update({
         payment_method: "multibanco",
@@ -82,10 +95,15 @@ export async function POST(request: Request) {
         payment_deadline: result.deadline.toISOString(),
         payment_status: "pending",
       })
-      .eq("id", order.id);
+      .eq("id", order.id)
+      .select("id");
 
-    if (updateError) {
-      console.error("Error updating order with payment info:", updateError);
+    if (updateError || !updated || updated.length !== 1) {
+      console.error("Error updating order with payment info:", updateError, updated);
+      return NextResponse.json(
+        { success: false, error: "Erro ao registar o pagamento. Contacte-nos." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

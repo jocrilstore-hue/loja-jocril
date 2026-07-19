@@ -16,10 +16,23 @@ export type ListProductsParams = {
   limit?: number;
 };
 
+// Result wrapper so callers can distinguish a genuine "no results" (error: false,
+// empty products) from a fetch failure (error: true). The happy path is unchanged;
+// error is only true when the primary data fetch fails.
+export type ProductListResult = { products: UIProductCard[]; error: boolean };
+
 // PLP + search. Uses the `search_products` RPC that already exists in Supabase.
+// Thin wrapper preserving the original array return for existing callers.
 export async function listProducts(
   params: ListProductsParams = {}
 ): Promise<UIProductCard[]> {
+  return (await listProductsResult(params)).products;
+}
+
+// Same query as listProducts, but returns a distinguishable fetch-error signal.
+export async function listProductsResult(
+  params: ListProductsParams = {}
+): Promise<ProductListResult> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("search_products", {
     search_term: params.search ?? null,
@@ -34,13 +47,13 @@ export async function listProducts(
 
   if (error) {
     console.error("[listProducts] RPC error:", error.message);
-    return [];
+    return { products: [], error: true };
   }
 
   const rows: UIProductCard[] = (data ?? []).map((r: SearchProductRow) =>
     toUIProductFromSearch(r)
   );
-  if (rows.length === 0) return rows;
+  if (rows.length === 0) return { products: rows, error: false };
 
   // Follow-up join: search_products RPC does NOT expose sku or material.
   // Pull both via one batched query keyed on variant_id.
@@ -59,8 +72,10 @@ export async function listProducts(
     .in("id", variantIds);
 
   if (metaErr) {
+    // Partial success: we still have products from the RPC; only the metadata
+    // enrichment failed. Not treated as a fetch error for the UI.
     console.error("[listProducts] meta-join error:", metaErr.message);
-    return rows;
+    return { products: rows, error: false };
   }
 
   type MetaRow = {
@@ -77,16 +92,25 @@ export async function listProducts(
     });
   }
 
-  return rows.map((r) => {
+  const enriched = rows.map((r) => {
     const fill = byId.get(Number(r.id));
     return fill ? { ...r, sku: fill.sku || r.sku, material: fill.material } : r;
   });
+  return { products: enriched, error: false };
 }
 
 // Homepage featured strip. Reads is_featured on the template, shows the default variant.
+// Thin wrapper preserving the original array return for existing callers.
 export async function listFeaturedProducts(
   limit = 8
 ): Promise<UIProductCard[]> {
+  return (await listFeaturedProductsResult(limit)).products;
+}
+
+// Same query as listFeaturedProducts, but returns a distinguishable fetch-error signal.
+export async function listFeaturedProductsResult(
+  limit = 8
+): Promise<ProductListResult> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("product_variants")
@@ -119,12 +143,13 @@ export async function listFeaturedProducts(
 
   if (error) {
     console.error("[listFeaturedProducts] error:", error.message);
-    return [];
+    return { products: [], error: true };
   }
 
-  return (data ?? []).map((row) =>
+  const products = (data ?? []).map((row) =>
     toUIProductFromVariant(row as unknown as VariantJoinRow)
   );
+  return { products, error: false };
 }
 
 export type UICategory = {

@@ -9,6 +9,7 @@ import FooterCTA from '@/components/store/FooterCTA';
 
 export type PLPClientProps = {
   products: ProductMock[];
+  fetchError?: boolean;
   categoryName?: string | null;
   categoryDescription?: string | null;
   totalInCategory?: number;
@@ -46,6 +47,7 @@ function hasTerm(product: ProductMock, term: string) {
 
 export default function PLPClient({
   products,
+  fetchError = false,
   categoryName,
   categoryDescription,
   totalInCategory,
@@ -223,7 +225,9 @@ export default function PLPClient({
             </div>
             {filteredProducts.length === 0 && (
               <div style={{ marginTop: 20, padding: 20, border: '1px dashed var(--color-base-800)', borderRadius: 4, color: 'var(--color-base-400)', fontFamily: 'var(--font-geist-sans)', fontSize: 14 }}>
-                Nenhum produto corresponde aos filtros selecionados.
+                {fetchError && products.length === 0
+                  ? 'Não foi possível carregar os produtos. Tente novamente dentro de alguns minutos.'
+                  : 'Nenhum produto corresponde aos filtros selecionados.'}
               </div>
             )}
           </div>

@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { getSiteUrl } from "@/lib/site-url";
 
 // Environment validation
 const EUPAGO_API_KEY = process.env.EUPAGO_API_KEY;
 const EUPAGO_BASE_URL = process.env.EUPAGO_BASE_URL || "https://clientes.eupago.pt";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jocril-store.vercel.app";
+const SITE_URL = getSiteUrl();
 const WEBHOOK_URL = `${SITE_URL}/api/webhooks/eupago`;
 
 // Response schemas
@@ -253,8 +254,10 @@ export function verifyCallback(payload: unknown): EuPagoCallback | null {
     console.error("Invalid EuPago callback:", payload, parsed.error);
     return null;
   }
-  if (EUPAGO_API_KEY && parsed.data.chave_api !== EUPAGO_API_KEY) {
-    console.error("EuPago callback: API key mismatch");
+  // Fail closed: a missing key must never mean "trusted". Reject when the key
+  // is unset OR does not match the value EuPago sent.
+  if (!EUPAGO_API_KEY || parsed.data.chave_api !== EUPAGO_API_KEY) {
+    console.error("EuPago callback: API key missing or mismatch");
     return null;
   }
   return parsed.data;

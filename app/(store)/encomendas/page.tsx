@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import Badge from '@/components/store/Badge';
 
@@ -48,7 +48,9 @@ function paymentLabel(s: string) {
 
 export default async function EncomendasPage() {
   const { userId } = await auth();
-  const supabase = await createClient();
+  // Query is scoped to the Clerk user's customer row; service client needed
+  // once RLS closes anon access to orders.
+  const supabase = createServiceClient();
 
   let orders: {
     order_number: string;
